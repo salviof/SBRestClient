@@ -19,4 +19,12 @@ public interface ItfTokenGestaoOauth extends ItfTokenGestao {
         return true;
     }
 
+    public String gerarUrlTokenObterChaveAcesso();
+
+    public String gerarUrlInformadaRetornoSolictacaoSucesso();
+
+    public String gerarNovoToken(String pCodigoSolicitacao);
+
+    public String gerarNovoCodigoSolicitacao(String pRespostaServidorAutenticador);
+
 }

@@ -5,6 +5,9 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servicoRegistrado;
 
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.FabPropriedadeModuloIntegracaoOauth;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.InfoPropriedadeConfigRestIntegracao;
+
 /**
  *
  * @author sfurbino

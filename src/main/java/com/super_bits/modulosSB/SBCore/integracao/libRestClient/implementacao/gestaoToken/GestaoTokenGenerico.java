@@ -47,7 +47,7 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
         return tipoAgente;
     }
 
-    protected ConfigModulo getConfig() {
+    protected final ConfigModulo getConfig() {
         return UtilSBApiRestClientReflexao.getConfigmodulo(classeFabricaAcessos);
     }
 
@@ -81,6 +81,12 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
     public boolean excluirToken() {
         token = null;
         return true;
+    }
+
+    @Override
+    public boolean armazenarRespostaToken(JSONObject pJson) {
+        return armazenarRespostaToken(pJson.toString());
+
     }
 
     @Override

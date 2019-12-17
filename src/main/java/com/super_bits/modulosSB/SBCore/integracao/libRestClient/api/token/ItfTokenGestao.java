@@ -34,6 +34,8 @@ public interface ItfTokenGestao {
 
     public boolean armazenarRespostaToken(String pJson);
 
+    public boolean armazenarRespostaToken(JSONObject pJson);
+
     public String loadTokenArmazenado();
 
     public JSONObject loadTokenArmazenadoComoJsonObject();
