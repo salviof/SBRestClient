@@ -56,6 +56,15 @@ public interface ItfFabricaIntegracaoRest {
 
     }
 
+    public default ItfTokenGestao getGestaoToken(ItfUsuario pUsuario) {
+        ItfTokenGestao tokenGestao = MapaTokensGerenciados.getAutenticadorUsuarioLogado(this);
+        if (tokenGestao == null) {
+            tokenGestao = UtilSBApiRestClientReflexao.getNovaInstanciaGestaoAutenticador(this, FabTipoAgenteClienteRest.USUARIO, pUsuario);
+            MapaTokensGerenciados.registrarAutenticadorUsuario(tokenGestao, this.getClass(), pUsuario);
+        }
+        return MapaTokensGerenciados.getAutenticadorUsuario(this, pUsuario);
+    }
+
     public default ConfigModulo getConfiguracao() {
         return UtilSBApiRestClientReflexao.getConfigmodulo(this);
     }

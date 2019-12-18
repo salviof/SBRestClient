@@ -40,7 +40,7 @@ public class MapaTokensGerenciados {
     public static void registrarAutenticador(ItfTokenGestao pAutenticador, String codigoApi) {
         switch (pAutenticador.getTipoAgente()) {
             case USUARIO:
-                AUTENTICADORES_REGISTRADOS.put(getIdentificacaoAPIUsuario(codigoApi), pAutenticador);
+                AUTENTICADORES_REGISTRADOS.put(codigoApi, pAutenticador);
                 break;
             case SISTEMA:
                 AUTENTICADORES_REGISTRADOS.put(getIdentificacaoAPISistema(codigoApi), pAutenticador);
@@ -56,11 +56,22 @@ public class MapaTokensGerenciados {
 
     }
 
-    public static ItfTokenGestao getAutenticadorUsuarioLogado(ItfFabricaIntegracaoRest api) {
-        return AUTENTICADORES_REGISTRADOS.get(getIdentificacaoAPIUsuario(api.getClass().getSimpleName()));
+    public static void registrarAutenticadorUsuarioLogado(ItfTokenGestao pAutenticador, Class<? extends ItfFabricaIntegracaoRest> api) {
+        registrarAutenticador(pAutenticador, getIdentificacaoAPIUsuario(api.getSimpleName()));
+
     }
 
-    public static ItfTokenGestao getAutenticadorUsuarioLogado(ItfFabricaIntegracaoRest api, ItfUsuario pUsuario) {
+    public static void registrarAutenticadorUsuario(ItfTokenGestao pAutenticador, Class<? extends ItfFabricaIntegracaoRest> api, ItfUsuario pUsuario) {
+        registrarAutenticador(pAutenticador, getIdentificacaoAPIUsuario(api.getSimpleName(), pUsuario));
+
+    }
+
+    public static ItfTokenGestao getAutenticadorUsuario(ItfFabricaIntegracaoRest api, ItfUsuario pUsuario) {
+        String identificador = getIdentificacaoAPIUsuario(api.getClass().getSimpleName(), pUsuario);
+        return AUTENTICADORES_REGISTRADOS.get(identificador);
+    }
+
+    public static ItfTokenGestao getAutenticadorUsuarioLogado(ItfFabricaIntegracaoRest api) {
         return AUTENTICADORES_REGISTRADOS.get(getIdentificacaoAPIUsuario(api.getClass().getSimpleName()));
     }
 

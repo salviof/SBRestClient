@@ -5,7 +5,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token;
 
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.FabStatusToken;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author sfurbino
@@ -19,12 +19,16 @@ public interface ItfTokenGestaoOauth extends ItfTokenGestao {
         return true;
     }
 
-    public String gerarUrlTokenObterChaveAcesso();
+    public boolean isCodigoSolicitacaoRegistrado();
 
-    public String gerarUrlInformadaRetornoSolictacaoSucesso();
+    public String getUrlServidorApiRest();
 
-    public String gerarNovoToken(String pCodigoSolicitacao);
+    public String getUrlSolictacaoToken();
 
-    public String gerarNovoCodigoSolicitacao(String pRespostaServidorAutenticador);
+    public String getUrlObterCodigoSolicitacao();
+
+    public String getUrlRetornoReceberCodigoSolicitacao();
+
+    public String extrairNovoCodigoSolicitacao(HttpServletRequest pRespostaServidorAutenticador);
 
 }

@@ -47,7 +47,8 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
         return tipoAgente;
     }
 
-    protected final ConfigModulo getConfig() {
+    @Override
+    public final ConfigModulo getConfig() {
         return UtilSBApiRestClientReflexao.getConfigmodulo(classeFabricaAcessos);
     }
 

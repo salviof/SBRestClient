@@ -5,6 +5,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token;
 
+import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.FabStatusToken;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest;
 import org.json.simple.JSONObject;
@@ -17,6 +18,8 @@ import org.json.simple.JSONObject;
 public interface ItfTokenGestao {
 
     public String getToken();
+
+    public ConfigModulo getConfig();
 
     public boolean isTemTokemAtivo();
 
@@ -39,5 +42,9 @@ public interface ItfTokenGestao {
     public String loadTokenArmazenado();
 
     public JSONObject loadTokenArmazenadoComoJsonObject();
+
+    public default ItfTokenGestaoOauth getComoGestaoOauth() {
+        return (ItfTokenGestaoOauth) this;
+    }
 
 }

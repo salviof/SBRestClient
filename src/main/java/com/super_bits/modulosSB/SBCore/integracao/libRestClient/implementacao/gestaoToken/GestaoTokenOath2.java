@@ -4,6 +4,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken;
 
+import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest;
 
 import java.util.Date;
@@ -12,7 +13,10 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.FabStat
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.InfoTokenOauth2;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.FabPropriedadeModuloIntegracaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import javax.servlet.http.HttpServletRequest;
+import org.coletivojava.fw.api.tratamentoErros.FabErro;
 
 /**
  *
@@ -24,9 +28,9 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
     protected final String chavePrivada;
     protected final String siteCliente;
     protected final String urlServidorApiRest;
-    protected final String urlSolictacaoToken;
+    protected String urlSolictacaoToken;
     protected final String urlObterCodigoSolicitacao;
-    protected final String urlRetornoSolicitacaoSucesso;
+    protected String urlRetornoReceberCodigoSolicitacao;
     protected String codigoSolicitacao;
     protected InfoTokenOauth2 tokenDeAcesso;
 
@@ -34,17 +38,60 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
             FabTipoAgenteClienteRest pTipoAgente, ItfUsuario pUsuario) {
         super(pClasseEndpointsClass,
                 pTipoAgente, pUsuario);
-        chavePrivada = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.CHAVE_PRIVADA);
-        chavePublica = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.CHAVE_PUBLICA);
-        urlServidorApiRest = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API);
-        siteCliente = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH);
-        urlSolictacaoToken = gerarUrlTokenObterChaveAcesso();
-        urlRetornoSolicitacaoSucesso = gerarUrlInformadaRetornoSolictacaoSucesso();
-        urlObterCodigoSolicitacao = gerarNovoCodigoSolicitacao();
+        try {
+            chavePrivada = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.CHAVE_PRIVADA);
+            chavePublica = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.CHAVE_PUBLICA);
+            urlServidorApiRest = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API);
+            siteCliente = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH);
+            urlSolictacaoToken = gerarUrlTokenObterChaveAcesso();
+            urlRetornoReceberCodigoSolicitacao = gerarUrlRetornoReceberCodigoSolicitacao();
+            urlObterCodigoSolicitacao = gerarUrlTokenObterCodigoSolicitacao();
+        } catch (Throwable t) {
+            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro instanciando " + this.getClass().getSimpleName() + ", é uma prática recomendavel adicionar try cath nos metodos geradores", t);
+            throw new UnsupportedOperationException("Erro instanciando " + this.getClass().getSimpleName());
+        }
     }
 
+    @Override
     public boolean isCodigoSolicitacaoRegistrado() {
         return codigoSolicitacao != null;
+    }
+
+    @Override
+    public String getUrlServidorApiRest() {
+        return urlServidorApiRest;
+    }
+
+    @Override
+    public String getUrlSolictacaoToken() {
+        return urlSolictacaoToken;
+    }
+
+    @Override
+    public String getUrlObterCodigoSolicitacao() {
+        return urlObterCodigoSolicitacao;
+    }
+
+    @Override
+    public String getUrlRetornoReceberCodigoSolicitacao() {
+        return urlRetornoReceberCodigoSolicitacao;
+    }
+
+    protected abstract String gerarUrlTokenObterChaveAcesso();
+
+    protected abstract String gerarUrlTokenObterCodigoSolicitacao();
+
+    protected String gerarUrlRetornoReceberCodigoSolicitacao() {
+        UtilSBApiRestClient.gerarUrlRetornoReceberCodigoSolicitacaoPadrao(this);
+        urlRetornoReceberCodigoSolicitacao = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH) + "/solicitacaoAuth2Recept/code/" + tipoAgente.toString() + "/" + classeFabricaAcessos.getSimpleName() + "/";
+        return urlRetornoReceberCodigoSolicitacao;
+    }
+
+    protected abstract String gerarUrlRetornoSucessoGeracaoTokenDeAcesso();
+
+    @Override
+    public String extrairNovoCodigoSolicitacao(HttpServletRequest pRespostaServidorAutenticador) {
+        return codigoSolicitacao;
     }
 
     @Override
