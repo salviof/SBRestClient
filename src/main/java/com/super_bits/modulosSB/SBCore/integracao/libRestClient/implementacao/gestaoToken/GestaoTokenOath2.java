@@ -33,7 +33,8 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
 
     protected String urlSolictacaoToken;
     protected final String urlObterCodigoSolicitacao;
-    protected String urlRetornoReceberCodigoSolicitacao;
+    protected final String urlRetornoReceberCodigoSolicitacao;
+    protected final String urlRetornoSucessoObterToken;
     protected String codigoSolicitacao;
     protected InfoTokenOauth2 tokenDeAcesso;
 
@@ -46,12 +47,38 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
             chavePublica = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.CHAVE_PUBLICA);
             urlServidorApiRest = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API);
             siteCliente = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH);
-            urlSolictacaoToken = gerarUrlTokenObterChaveAcesso();
+            urlRetornoSucessoObterToken = gerarUrlRetornoSucessoGeracaoTokenDeAcesso();
             urlRetornoReceberCodigoSolicitacao = gerarUrlRetornoReceberCodigoSolicitacao();
             urlObterCodigoSolicitacao = gerarUrlTokenObterCodigoSolicitacao();
+            inicioGestaoToken();
         } catch (Throwable t) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro instanciando " + this.getClass().getSimpleName() + ", é uma prática recomendavel adicionar try cath nos metodos geradores", t);
             throw new UnsupportedOperationException("Erro instanciando " + this.getClass().getSimpleName());
+        }
+    }
+
+    @Override
+    public boolean isTemTokemAtivo() {
+
+        return isPossuiTokenValido();
+    }
+
+    @Override
+    public String getToken() {
+
+        if (isTemTokemAtivo()) {
+            return tokenDeAcesso.getTokenValido();
+        }
+        return null;
+
+    }
+
+    private void inicioGestaoToken() {
+
+        try {
+            loadTokenArmazenado();
+        } catch (Throwable t) {
+
         }
     }
 
@@ -88,13 +115,12 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
         UtilSBApiRestClient.gerarUrlRetornoReceberCodigoSolicitacaoPadrao(this);
 
         String nomeModuloGestaoAutenticacao = UtilSBApiRestClientReflexao.getNomeClasseImplementacaoGestaoToken(classeFabricaAcessos);
-
-        urlRetornoReceberCodigoSolicitacao
-                = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH)
-                + "/solicitacaoAuth2Recept/code/"
+        String nomeParametroRespostaCodigo = "code";
+        return getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH)
+                + "/solicitacaoAuth2Recept/" + nomeParametroRespostaCodigo + "/"
                 + UtilSBCoreStringSlugs.gerarSlugSimples(tipoAgente.getRegistro().getNome())
                 + "/" + nomeModuloGestaoAutenticacao + "/";
-        return urlRetornoReceberCodigoSolicitacao;
+
     }
 
     protected abstract String gerarUrlRetornoSucessoGeracaoTokenDeAcesso();
@@ -102,7 +128,9 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
     @Override
     public String extrairNovoCodigoSolicitacao(HttpServletRequest pRespostaServidorAutenticador) {
 
-        UtilSBApiRestClient.receberCodigoSolicitacaoOauth(pRespostaServidorAutenticador);
+        if (!UtilSBApiRestClient.receberCodigoSolicitacaoOauth(pRespostaServidorAutenticador)) {
+            codigoSolicitacao = null;
+        }
         return codigoSolicitacao;
     }
 
@@ -143,10 +171,6 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
         return false;
     }
 
-    public String getUrlAutenticacao(ItfFabricaIntegracaoRest api) {
-        return api.getApiTokenAcesso().getUrlSolicitacaoAutenticacao();
-    }
-
     public String getChavePublica() {
         return chavePublica;
     }
@@ -170,6 +194,7 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
     @Override
     public void setCodigoSolicitacao(String codigoSolicitacao) {
         this.codigoSolicitacao = codigoSolicitacao;
+        urlSolictacaoToken = gerarUrlTokenObterChaveAcesso();
     }
 
 }

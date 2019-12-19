@@ -32,8 +32,6 @@ public interface ItfFabricaIntegracaoRest {
         return UtilSBApiRestClient.getInformacoesConsumoRest(this);
     }
 
-    public ItfApiServicoTokenCliente getApiTokenAcesso();
-
     public default ItfAcaoApiRest getAcao(Object... parametros) {
         return UtilSBApiRestClient.getAcaoDoContexto(this, FabTipoAgenteClienteRest.SISTEMA, null, parametros);
     }

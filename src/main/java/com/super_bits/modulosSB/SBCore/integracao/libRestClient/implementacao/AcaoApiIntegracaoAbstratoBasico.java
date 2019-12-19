@@ -7,6 +7,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringBuscaTrecho;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.RespostaWebServiceRestIntegracao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ConsumoWSExecucao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.FabTipoConexaoRest;
@@ -21,6 +22,8 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.InfoPropriedadeConfigRestIntegracao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -77,7 +80,23 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiRest 
         if (infoRest == null) {
             return getUrlServidor();
         } else {
-            return (getUrlServidor() + infoRest.getPachServico());
+            try {
+                String urlReq = getUrlServidor() + infoRest.getPachServico();
+
+                if (urlReq.contains("{")) {
+                    List<String> parametrosRelatadosUrl = UtilSBCoreStringBuscaTrecho.getPartesEntreChaves(urlReq);
+                    for (String p : parametrosRelatadosUrl) {
+                        String valor = (String) parametros[Integer.valueOf(p)];
+                        urlReq = urlReq.replace("{" + p + "}", valor);
+                    }
+
+                }
+                return urlReq;
+            } catch (Throwable t) {
+                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro criando url de solicitação em " + this.getClass().getSimpleName(), t);
+                return (getUrlServidor() + infoRest.getPachServico());
+            }
+
         }
     }
 
@@ -134,7 +153,7 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiRest 
         }
     }
 
-    private void executarAcao() {
+    protected void executarAcao() {
 
         urlRequisicaoGerada = gerarUrlRequisicao();
 

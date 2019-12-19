@@ -77,6 +77,10 @@ public class MapaTokensGerenciados {
         return AUTENTICADORES_REGISTRADOS.get(pSimplenameGestaoToken);
     }
 
+    public static ItfTokenGestao getAutenticadorSistema(@NotNull final Class<? extends ItfTokenGestao> pSimplenameGestaoToken) {
+        return AUTENTICADORES_REGISTRADOS.get(pSimplenameGestaoToken.getSimpleName());
+    }
+
     public static ItfTokenGestao getAutenticadorUsuario(@NotNull final String pSimplenameGestaoToken, @NotNull ItfUsuario pUsuario) {
         if (pUsuario == null) {
             throw new UnsupportedOperationException("Enviado nulo obtendo chaves de acesso do usuario para integração com " + pSimplenameGestaoToken);

@@ -22,6 +22,7 @@ public @interface InfoConsumoRestService {
 
     public String[] parametrosGet() default {};
 
+    @Deprecated
     public String[] parametrosProcessamento() default {};
 
     public String[] parametrosPost() default {};
