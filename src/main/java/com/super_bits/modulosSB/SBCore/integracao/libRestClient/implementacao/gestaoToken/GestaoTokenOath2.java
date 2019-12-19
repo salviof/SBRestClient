@@ -5,6 +5,7 @@
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringSlugs;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest;
 
 import java.util.Date;
@@ -14,6 +15,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.InfoTok
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.FabPropriedadeModuloIntegracaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClientReflexao;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import javax.servlet.http.HttpServletRequest;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
@@ -28,6 +30,7 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
     protected final String chavePrivada;
     protected final String siteCliente;
     protected final String urlServidorApiRest;
+
     protected String urlSolictacaoToken;
     protected final String urlObterCodigoSolicitacao;
     protected String urlRetornoReceberCodigoSolicitacao;
@@ -83,7 +86,14 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
 
     protected String gerarUrlRetornoReceberCodigoSolicitacao() {
         UtilSBApiRestClient.gerarUrlRetornoReceberCodigoSolicitacaoPadrao(this);
-        urlRetornoReceberCodigoSolicitacao = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH) + "/solicitacaoAuth2Recept/code/" + tipoAgente.toString() + "/" + classeFabricaAcessos.getSimpleName() + "/";
+
+        String nomeModuloGestaoAutenticacao = UtilSBApiRestClientReflexao.getNomeClasseImplementacaoGestaoToken(classeFabricaAcessos);
+
+        urlRetornoReceberCodigoSolicitacao
+                = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH)
+                + "/solicitacaoAuth2Recept/code/"
+                + UtilSBCoreStringSlugs.gerarSlugSimples(tipoAgente.getRegistro().getNome())
+                + "/" + nomeModuloGestaoAutenticacao + "/";
         return urlRetornoReceberCodigoSolicitacao;
     }
 
@@ -91,6 +101,8 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
 
     @Override
     public String extrairNovoCodigoSolicitacao(HttpServletRequest pRespostaServidorAutenticador) {
+
+        UtilSBApiRestClient.receberCodigoSolicitacaoOauth(pRespostaServidorAutenticador);
         return codigoSolicitacao;
     }
 
@@ -155,6 +167,7 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
         return codigoSolicitacao;
     }
 
+    @Override
     public void setCodigoSolicitacao(String codigoSolicitacao) {
         this.codigoSolicitacao = codigoSolicitacao;
     }

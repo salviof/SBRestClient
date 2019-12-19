@@ -31,4 +31,6 @@ public interface ItfTokenGestaoOauth extends ItfTokenGestao {
 
     public String extrairNovoCodigoSolicitacao(HttpServletRequest pRespostaServidorAutenticador);
 
+    public void setCodigoSolicitacao(String pCodigo);
+
 }

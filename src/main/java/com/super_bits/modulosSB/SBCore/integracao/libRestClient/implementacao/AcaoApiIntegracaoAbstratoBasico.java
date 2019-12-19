@@ -192,17 +192,17 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiRest 
         if (tokenGestao == null) {
             switch (tipoAgente) {
                 case USUARIO:
-                    tokenGestao = MapaTokensGerenciados.getAutenticadorUsuarioLogado(fabricaIntegracao);
+                    tokenGestao = MapaTokensGerenciados.getAutenticadorUsuario(fabricaIntegracao.getClasseGestaoOauth(), usuario);
                     if (tokenGestao == null) {
                         tokenGestao = UtilSBApiRestClientReflexao.getNovaInstanciaGestaoAutenticador(fabricaIntegracao, tipoAgente, usuario);
-                        MapaTokensGerenciados.registrarAutenticador(tokenGestao, fabricaIntegracao);
+                        MapaTokensGerenciados.registrarAutenticadorUsuario(tokenGestao, usuario);
                     }
                     break;
                 case SISTEMA:
-                    tokenGestao = MapaTokensGerenciados.getAutenticadorSistemaAtual(fabricaIntegracao);
+                    tokenGestao = MapaTokensGerenciados.getAutenticadorSistema(fabricaIntegracao);
                     if (tokenGestao == null) {
                         tokenGestao = UtilSBApiRestClientReflexao.getNovaInstanciaGestaoAutenticador(fabricaIntegracao, tipoAgente, usuario);
-                        MapaTokensGerenciados.registrarAutenticador(tokenGestao, fabricaIntegracao);
+                        MapaTokensGerenciados.registrarAutenticador(tokenGestao);
                     }
                     break;
                 default:

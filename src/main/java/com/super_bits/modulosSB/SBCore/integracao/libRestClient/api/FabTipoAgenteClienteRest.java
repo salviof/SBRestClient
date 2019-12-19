@@ -18,4 +18,9 @@ public enum FabTipoAgenteClienteRest implements ItfFabrica {
     @InfoObjetoDaFabrica(id = 2, nomeObjeto = "Sistema", classeObjeto = TipoClienteOauth.class)
     SISTEMA;
 
+    @Override
+    public TipoClienteOauth getRegistro() {
+        return (TipoClienteOauth) ItfFabrica.super.getRegistro(); //chamada super do metodo (implementação classe pai)
+    }
+
 }

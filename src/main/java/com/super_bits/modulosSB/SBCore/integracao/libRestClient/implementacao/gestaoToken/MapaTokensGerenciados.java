@@ -8,13 +8,12 @@ import com.google.common.collect.Lists;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreListas;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
-import static com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest.SISTEMA;
-import static com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest.USUARIO;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -25,66 +24,81 @@ public class MapaTokensGerenciados {
     private final static Map<String, ItfTokenGestao> AUTENTICADORES_REGISTRADOS = new HashMap<>();
     private final static Map<String, Class> API_POR_CHAVE_PUBLICA = new HashMap<>();
 
-    private static String getIdentificacaoAPIUsuario(String codigoApi) {
-        return getIdentificacaoAPIUsuario(codigoApi, SBCore.getUsuarioLogado());
+    public static void registrarAutenticador(ItfTokenGestao pAutenticador) {
+        registrarAutenticadorUsuario(pAutenticador, null);
+
     }
 
-    private static String getIdentificacaoAPIUsuario(String codigoApi, ItfUsuario pUsuario) {
-        return codigoApi + pUsuario.getEmail();
+    public static String gerarIdIdentificador(Class<? extends ItfTokenGestao> pClasseGestaoToken, ItfUsuario pUsuario) {
+        if (pClasseGestaoToken == null) {
+            throw new UnsupportedOperationException("Gestor de token não foi enviado");
+        }
+
+        return gerarIdIdentificador(pClasseGestaoToken.getSimpleName(), pUsuario);
+
     }
 
-    private static String getIdentificacaoAPISistema(String codigoApi) {
-        return codigoApi + SBCore.getGrupoProjeto();
-    }
-
-    public static void registrarAutenticador(ItfTokenGestao pAutenticador, String codigoApi) {
-        switch (pAutenticador.getTipoAgente()) {
-            case USUARIO:
-                AUTENTICADORES_REGISTRADOS.put(codigoApi, pAutenticador);
-                break;
-            case SISTEMA:
-                AUTENTICADORES_REGISTRADOS.put(getIdentificacaoAPISistema(codigoApi), pAutenticador);
-                break;
-            default:
-                throw new AssertionError(pAutenticador.getTipoAgente().name());
+    public static String gerarIdIdentificador(String simpleNameGestaoToken, ItfUsuario pUsuario) {
+        if (simpleNameGestaoToken == null) {
+            throw new UnsupportedOperationException("Gestor de token não foi enviado");
+        }
+        if (pUsuario == null) {
+            return simpleNameGestaoToken;
+        } else {
+            return simpleNameGestaoToken + "." + pUsuario.getEmail();
         }
 
     }
 
-    public static void registrarAutenticador(ItfTokenGestao pAutenticador, ItfFabricaIntegracaoRest api) {
-        registrarAutenticador(pAutenticador, api.getClass().getSimpleName());
+    public static String gerarIdIdentificador(ItfTokenGestao pGetao, ItfUsuario pUsuario) {
+        return gerarIdIdentificador(pGetao.getClass(), pUsuario);
 
     }
 
-    public static void registrarAutenticadorUsuarioLogado(ItfTokenGestao pAutenticador, Class<? extends ItfFabricaIntegracaoRest> api) {
-        registrarAutenticador(pAutenticador, getIdentificacaoAPIUsuario(api.getSimpleName()));
-
+    public static void registrarAutenticadorUsuario(ItfTokenGestao pAutenticador, ItfUsuario pUsuario) {
+        AUTENTICADORES_REGISTRADOS.put(gerarIdIdentificador(pAutenticador, pUsuario), pAutenticador);
     }
 
-    public static void registrarAutenticadorUsuario(ItfTokenGestao pAutenticador, Class<? extends ItfFabricaIntegracaoRest> api, ItfUsuario pUsuario) {
-        registrarAutenticador(pAutenticador, getIdentificacaoAPIUsuario(api.getSimpleName(), pUsuario));
-
-    }
-
-    public static ItfTokenGestao getAutenticadorUsuario(ItfFabricaIntegracaoRest api, ItfUsuario pUsuario) {
-        String identificador = getIdentificacaoAPIUsuario(api.getClass().getSimpleName(), pUsuario);
+    /**
+     *
+     * @param gestaoToken
+     * @param pUsuario
+     * @return
+     */
+    public static ItfTokenGestao getAutenticadorUsuario(@NotNull final Class<? extends ItfTokenGestao> gestaoToken, @NotNull ItfUsuario pUsuario) {
+        if (pUsuario == null) {
+            throw new UnsupportedOperationException("Enviado nulo obtendo chaves de acesso do usuario para integração com " + gestaoToken.getSimpleName());
+        }
+        String identificador = gerarIdIdentificador(gestaoToken, pUsuario);
         return AUTENTICADORES_REGISTRADOS.get(identificador);
     }
 
+    public static ItfTokenGestao getAutenticadorSistema(@NotNull final String pSimplenameGestaoToken) {
+        return AUTENTICADORES_REGISTRADOS.get(pSimplenameGestaoToken);
+    }
+
+    public static ItfTokenGestao getAutenticadorUsuario(@NotNull final String pSimplenameGestaoToken, @NotNull ItfUsuario pUsuario) {
+        if (pUsuario == null) {
+            throw new UnsupportedOperationException("Enviado nulo obtendo chaves de acesso do usuario para integração com " + pSimplenameGestaoToken);
+        }
+        String identificador = gerarIdIdentificador(pSimplenameGestaoToken, pUsuario);
+        return AUTENTICADORES_REGISTRADOS.get(identificador);
+    }
+
+    public static ItfTokenGestao getAutenticadorSistema(ItfFabricaIntegracaoRest api) {
+        String identificador = gerarIdIdentificador(api.getClasseGestaoOauth(), null);
+        return AUTENTICADORES_REGISTRADOS.get(identificador);
+    }
+
+    public static ItfTokenGestao getAutenticadorUsuario(ItfFabricaIntegracaoRest api, ItfUsuario pUsuario) {
+
+        return getAutenticadorUsuario(api.getClasseGestaoOauth(),
+                pUsuario);
+    }
+
     public static ItfTokenGestao getAutenticadorUsuarioLogado(ItfFabricaIntegracaoRest api) {
-        return AUTENTICADORES_REGISTRADOS.get(getIdentificacaoAPIUsuario(api.getClass().getSimpleName()));
-    }
-
-    public static ItfTokenGestao getAutenticadorSistemaAtual(ItfFabricaIntegracaoRest api) {
-        return AUTENTICADORES_REGISTRADOS.get(getIdentificacaoAPISistema(api.getClass().getSimpleName()));
-    }
-
-    public static ItfTokenGestao getAutenticadorSistemaAtual(String api) {
-        return AUTENTICADORES_REGISTRADOS.get(getIdentificacaoAPISistema(api));
-    }
-
-    public static ItfTokenGestao getAutenticadorUsuarioLogado(String api) {
-        return AUTENTICADORES_REGISTRADOS.get(getIdentificacaoAPIUsuario(api));
+        ItfTokenGestao gestorTken = api.getGestaoToken(SBCore.getUsuarioLogado());
+        return AUTENTICADORES_REGISTRADOS.get(gerarIdIdentificador(gestorTken, SBCore.getUsuarioLogado()));
     }
 
     public static void printConexoesAtivas() {

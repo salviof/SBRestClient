@@ -181,10 +181,10 @@ public class UtilSBApiRestClient {
                 ItfTokenGestaoOauth conexao = null;
                 switch (tipoCliente.getEnumVinculado()) {
                     case USUARIO:
-                        conexao = MapaTokensGerenciados.getAutenticadorSistemaAtual(nomeModulo).getComoGestaoOauth();
+                        conexao = MapaTokensGerenciados.getAutenticadorUsuario(nomeModulo, SBCore.getUsuarioLogado()).getComoGestaoOauth();
                         break;
                     case SISTEMA:
-                        conexao = MapaTokensGerenciados.getAutenticadorSistemaAtual(nomeModulo).getComoGestaoOauth();
+                        conexao = MapaTokensGerenciados.getAutenticadorSistema(nomeModulo).getComoGestaoOauth();
                         break;
                     default:
                         throw new AssertionError(tipoCliente.getEnumVinculado().name());
@@ -192,8 +192,9 @@ public class UtilSBApiRestClient {
                 }
 
                 if (conexao != null) {
-                    conexao.extrairNovoCodigoSolicitacao(req);
+                    conexao.setCodigoSolicitacao(codigoSolicitacoa);
                     if (UtilSBCoreStringValidador.isNAO_NuloNemBranco(codigoSolicitacoa)) {
+
                         conexao.gerarNovoToken();
                     } else {
                         System.out.println("A conexão Oath existe, porém, o parametro [" + nomeParametro + "] não foi encontrado com o código de soliciação");
@@ -214,7 +215,7 @@ public class UtilSBApiRestClient {
     public static String gerarUrlRetornoReceberCodigoSolicitacaoPadrao(ItfTokenGestaoOauth pEndPoint) {
 
         return pEndPoint.getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH)
-                + "/solicitacaoAuth2Recept/code/" + pEndPoint.getTipoAgente().toString() + "/" + classeFabricaAcessos.getSimpleName() + "/";
+                + "/solicitacaoAuth2Recept/code/" + pEndPoint.getTipoAgente().toString() + "/" + pEndPoint.getClass().getSimpleName() + "/";
     }
 
 }

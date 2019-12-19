@@ -7,9 +7,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringSlugs;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringsCammelCase;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servicoRegistrado.InfoConfigRestClientIntegracao;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfValidacao;
 import org.reflections.ReflectionUtils;
@@ -18,8 +16,6 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgent
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfApiRestHeaderPadrao;
-import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.permissoes.token.ItfTokenAcesso;
-import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabTipoAgenteDoSistema;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
@@ -35,7 +31,11 @@ import org.coletivojava.fw.api.tratamentoErros.FabErro;
 public class UtilSBApiRestClientReflexao {
 
     public static InfoConfigRestClientIntegracao getInfoConfigWebService(ItfFabricaIntegracaoRest p) {
-        return p.getClass().getAnnotation(InfoConfigRestClientIntegracao.class);
+        return getInfoConfigWebService(p.getClass());
+    }
+
+    public static InfoConfigRestClientIntegracao getInfoConfigWebService(Class<? extends ItfFabricaIntegracaoRest> p) {
+        return p.getAnnotation(InfoConfigRestClientIntegracao.class);
     }
 
     public static String getNomeClasseAnotacao(ItfFabricaIntegracaoRest p) {
@@ -53,7 +53,7 @@ public class UtilSBApiRestClientReflexao {
         return "IntegracaoRest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome) + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(p.toString());
     }
 
-    public static String getNomeClasseImplementacaoGestaoToken(ItfFabricaIntegracaoRest p) {
+    public static String getNomeClasseImplementacaoGestaoToken(Class<? extends ItfFabricaIntegracaoRest> p) {
         InfoConfigRestClientIntegracao info = getInfoConfigWebService(p);
         if (info == null) {
             throw new UnsupportedOperationException(InfoConfigRestClientIntegracao.class.getSimpleName() + "Não foi definido para" + p.getClass().getSimpleName());
@@ -61,6 +61,10 @@ public class UtilSBApiRestClientReflexao {
         String nome = info.nomeIntegracao();
 
         return "GestaoTokenRest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome);
+    }
+
+    public static String getNomeClasseImplementacaoGestaoToken(ItfFabricaIntegracaoRest p) {
+        return getNomeClasseImplementacaoGestaoToken(p.getClass());
     }
 
     public static String getNomeClasseImplementacaoGestaoHeaderPadrao(ItfFabricaIntegracaoRest p) {

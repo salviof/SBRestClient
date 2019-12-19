@@ -47,20 +47,24 @@ public interface ItfFabricaIntegracaoRest {
     }
 
     public default ItfTokenGestao getGestaoToken() {
-        ItfTokenGestao tokenGestao = MapaTokensGerenciados.getAutenticadorSistemaAtual(this);
+        ItfTokenGestao tokenGestao = MapaTokensGerenciados.getAutenticadorSistema(this);
         if (tokenGestao == null) {
             tokenGestao = UtilSBApiRestClientReflexao.getNovaInstanciaGestaoAutenticador(this, FabTipoAgenteClienteRest.SISTEMA, null);
-            MapaTokensGerenciados.registrarAutenticador(tokenGestao, this);
+            MapaTokensGerenciados.registrarAutenticador(tokenGestao);
         }
-        return MapaTokensGerenciados.getAutenticadorSistemaAtual(this);
+        return MapaTokensGerenciados.getAutenticadorSistema(this);
 
     }
 
+    public default Class<? extends ItfTokenGestao> getClasseGestaoOauth() {
+        return UtilSBApiRestClientReflexao.getClasseToken(this);
+    }
+
     public default ItfTokenGestao getGestaoToken(ItfUsuario pUsuario) {
-        ItfTokenGestao tokenGestao = MapaTokensGerenciados.getAutenticadorUsuarioLogado(this);
+        ItfTokenGestao tokenGestao = MapaTokensGerenciados.getAutenticadorUsuario(getClasseGestaoOauth(), pUsuario);
         if (tokenGestao == null) {
             tokenGestao = UtilSBApiRestClientReflexao.getNovaInstanciaGestaoAutenticador(this, FabTipoAgenteClienteRest.USUARIO, pUsuario);
-            MapaTokensGerenciados.registrarAutenticadorUsuario(tokenGestao, this.getClass(), pUsuario);
+            MapaTokensGerenciados.registrarAutenticadorUsuario(tokenGestao, pUsuario);
         }
         return MapaTokensGerenciados.getAutenticadorUsuario(this, pUsuario);
     }
