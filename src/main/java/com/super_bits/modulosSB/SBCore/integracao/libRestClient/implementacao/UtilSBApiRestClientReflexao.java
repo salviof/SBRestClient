@@ -7,6 +7,8 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringPosicaoLocalizar;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringsCammelCase;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servicoRegistrado.InfoConfigRestClientIntegracao;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfValidacao;
@@ -40,7 +42,9 @@ public class UtilSBApiRestClientReflexao {
 
     public static String getNomeClasseAnotacao(ItfFabricaIntegracaoRest p) {
         InfoConfigRestClientIntegracao info = getInfoConfigWebService(p);
-        return "InfoIntegracaoRest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiusculaSemCaracterEspecial(info.nomeIntegracao()).replace("-", " ");
+        String nomeClasse = p.getClass().getSimpleName();
+        String descricaoModulo = nomeClasse.substring(UtilSBCoreStringPosicaoLocalizar.getUltimaLetraMaiuscula(nomeClasse), nomeClasse.length());
+        return "InfoIntegracaoRest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiusculaSemCaracterEspecial(info.nomeIntegracao()) + descricaoModulo;
     }
 
     public static String getNomeClasseImplementacao(ItfFabricaIntegracaoRest p) {

@@ -50,7 +50,7 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
             urlRetornoSucessoObterToken = gerarUrlRetornoSucessoGeracaoTokenDeAcesso();
             urlRetornoReceberCodigoSolicitacao = gerarUrlRetornoReceberCodigoSolicitacao();
             urlObterCodigoSolicitacao = gerarUrlTokenObterCodigoSolicitacao();
-            inicioGestaoToken();
+
         } catch (Throwable t) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro instanciando " + this.getClass().getSimpleName() + ", é uma prática recomendavel adicionar try cath nos metodos geradores", t);
             throw new UnsupportedOperationException("Erro instanciando " + this.getClass().getSimpleName());
@@ -71,15 +71,6 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
         }
         return null;
 
-    }
-
-    private void inicioGestaoToken() {
-
-        try {
-            loadTokenArmazenado();
-        } catch (Throwable t) {
-
-        }
     }
 
     @Override

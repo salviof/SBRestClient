@@ -5,6 +5,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken;
 
+import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ItfConfigModulo;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
@@ -35,6 +36,18 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
         usuario = pUsuario;
         configuracoesAmbiente = UtilSBApiRestClientReflexao.getConfigmodulo(pClasseEndpoints);
         classeFabricaAcessos = pClasseEndpoints;
+        inicioGestaoToken();
+
+    }
+
+    protected void inicioGestaoToken() {
+
+        try {
+            String tokenArmazenado = loadTokenArmazenado();
+            token = extrairToken(tokenArmazenado);
+        } catch (Throwable t) {
+
+        }
     }
 
     @Override
@@ -81,6 +94,17 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
     @Override
     public boolean excluirToken() {
         token = null;
+        switch (tipoAgente) {
+            case USUARIO:
+                getConfig().getRepositorioDeArquivosExternos().putConteudoRecursoExterno(usuario.getEmail(), "");
+                break;
+            case SISTEMA:
+                getConfig().getRepositorioDeArquivosExternos().putConteudoRecursoExterno("tokensistema", "");
+                break;
+            default:
+                throw new AssertionError(tipoAgente.name());
+
+        }
         return true;
     }
 
@@ -92,6 +116,11 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
 
     @Override
     public boolean armazenarRespostaToken(String pJson) {
+
+        if (extrairToken(pJson) == null) {
+            return false;
+        }
+        token = extrairToken(pJson);
         switch (tipoAgente) {
             case USUARIO:
                 if (usuario != null) {
@@ -118,13 +147,16 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
             case USUARIO:
                 if (usuario != null) {
 
-                    return getConfig().getRepositorioDeArquivosExternos().getJsonObjeto(usuario.getEmail());
-
+                    JSONObject tokenLoad = getConfig().getRepositorioDeArquivosExternos().getJsonObjeto(usuario.getEmail());
+                    token = extrairToken(tokenLoad);
+                    return tokenLoad;
                 }
-
+                return null;
             case SISTEMA:
-                return getConfig().getRepositorioDeArquivosExternos().getJsonObjeto("tokensistema");
 
+                JSONObject tokenLoad = getConfig().getRepositorioDeArquivosExternos().getJsonObjeto("tokensistema");
+                token = extrairToken(tokenLoad);
+                return tokenLoad;
             default:
 
         }
