@@ -14,6 +14,7 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basic
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
+import org.coletivojava.fw.api.tratamentoErros.FabErro;
 
 /**
  *
@@ -70,6 +71,7 @@ public class MapaTokensGerenciados {
             throw new UnsupportedOperationException("Enviado nulo obtendo chaves de acesso do usuario para integração com " + gestaoToken.getSimpleName());
         }
         String identificador = gerarIdIdentificador(gestaoToken, pUsuario);
+
         return AUTENTICADORES_REGISTRADOS.get(identificador);
     }
 
@@ -77,8 +79,13 @@ public class MapaTokensGerenciados {
         return AUTENTICADORES_REGISTRADOS.get(pSimplenameGestaoToken);
     }
 
+    private static String gerarIdIdentificador(@NotNull final Class<? extends ItfTokenGestao> pSimplenameGestaoToken) {
+        return gerarIdIdentificador(pSimplenameGestaoToken, null);
+    }
+
     public static ItfTokenGestao getAutenticadorSistema(@NotNull final Class<? extends ItfTokenGestao> pSimplenameGestaoToken) {
-        return AUTENTICADORES_REGISTRADOS.get(pSimplenameGestaoToken.getSimpleName());
+
+        return getAutenticadorSistema(pSimplenameGestaoToken.getSimpleName());
     }
 
     public static ItfTokenGestao getAutenticadorUsuario(@NotNull final String pSimplenameGestaoToken, @NotNull ItfUsuario pUsuario) {
@@ -90,8 +97,12 @@ public class MapaTokensGerenciados {
     }
 
     public static ItfTokenGestao getAutenticadorSistema(ItfFabricaIntegracaoRest api) {
-        String identificador = gerarIdIdentificador(api.getClasseGestaoOauth(), null);
-        return AUTENTICADORES_REGISTRADOS.get(identificador);
+        ItfTokenGestao token = AUTENTICADORES_REGISTRADOS.get(gerarIdIdentificador(api.getClasseGestaoOauth()));
+        if (token == null) {
+            api.getGestaoToken();
+        }
+
+        return getAutenticadorSistema(api.getClasseGestaoOauth());
     }
 
     public static ItfTokenGestao getAutenticadorUsuario(ItfFabricaIntegracaoRest api, ItfUsuario pUsuario) {
@@ -101,8 +112,11 @@ public class MapaTokensGerenciados {
     }
 
     public static ItfTokenGestao getAutenticadorUsuarioLogado(ItfFabricaIntegracaoRest api) {
-        ItfTokenGestao gestorTken = api.getGestaoToken(SBCore.getUsuarioLogado());
-        return AUTENTICADORES_REGISTRADOS.get(gerarIdIdentificador(gestorTken, SBCore.getUsuarioLogado()));
+        if (AUTENTICADORES_REGISTRADOS.get(gerarIdIdentificador(api.getClasseGestaoOauth(), SBCore.getUsuarioLogado())) == null) {
+            api.getGestaoToken(SBCore.getUsuarioLogado());
+        }
+
+        return AUTENTICADORES_REGISTRADOS.get(gerarIdIdentificador(api.getClasseGestaoOauth(), SBCore.getUsuarioLogado()));
     }
 
     public static void printConexoesAtivas() {

@@ -8,7 +8,6 @@ import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.InfoConsumoRestService;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.ItfApiServicoTokenCliente;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servicoRegistrado.InfoConfigRestClientIntegracao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiRest;
@@ -45,7 +44,7 @@ public interface ItfFabricaIntegracaoRest {
     }
 
     public default ItfTokenGestao getGestaoToken() {
-        ItfTokenGestao tokenGestao = MapaTokensGerenciados.getAutenticadorSistema(this);
+        ItfTokenGestao tokenGestao = MapaTokensGerenciados.getAutenticadorSistema(this.getClasseGestaoOauth());
         if (tokenGestao == null) {
             tokenGestao = UtilSBApiRestClientReflexao.getNovaInstanciaGestaoAutenticador(this, FabTipoAgenteClienteRest.SISTEMA, null);
             MapaTokensGerenciados.registrarAutenticador(tokenGestao);
