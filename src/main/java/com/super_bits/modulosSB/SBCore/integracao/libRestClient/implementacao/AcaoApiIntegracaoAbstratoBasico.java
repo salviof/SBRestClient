@@ -156,7 +156,6 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiRest 
     protected void executarAcao() {
 
         urlRequisicaoGerada = gerarUrlRequisicao();
-
         tipoRequisicao = gerarTipoRequisicao();
         postarInformacoes = defineRequisicaoPostaInformacoes();
         corpoRequisicaoGerado = gerarCorpoRequisicao();
