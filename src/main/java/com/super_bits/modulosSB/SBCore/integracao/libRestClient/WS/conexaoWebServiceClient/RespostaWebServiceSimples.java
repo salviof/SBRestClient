@@ -115,8 +115,13 @@ public class RespostaWebServiceSimples implements ItfRespostaWebServiceSimples, 
     }
 
     @Override
-    public String getRetorno() {
-        return getRespostaTexto();
+    public Object getRetorno() {
+        if (resp.getRetorno() == null) {
+            return getRespostaTexto();
+        } else {
+            return resp.getRetorno();
+        }
+
     }
 
     @Override
