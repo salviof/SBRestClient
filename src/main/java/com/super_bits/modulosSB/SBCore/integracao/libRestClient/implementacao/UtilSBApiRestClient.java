@@ -7,6 +7,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringListas;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringSlugs;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.FabTipoConexaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.InfoConsumoRestService;
@@ -49,8 +50,8 @@ public class UtilSBApiRestClient {
     public static InfoConsumoRestService getInformacoesConsumoRest(ItfFabricaIntegracaoRest pConexao) {
 
         try {
-            Field camo = pConexao.getClass().getField(pConexao.toString());
-            return camo.getAnnotation(InfoConsumoRestService.class);
+            Field campo = pConexao.getClass().getField(pConexao.toString());
+            return campo.getAnnotation(InfoConsumoRestService.class);
         } catch (Throwable t) {
             return null;
         }
@@ -58,14 +59,17 @@ public class UtilSBApiRestClient {
     }
 
     public static InfoConfigRestClientIntegracao getInfoConfigRest(ItfFabricaIntegracaoRest pConexao) {
-
         try {
-
             return pConexao.getClass().getAnnotation(InfoConfigRestClientIntegracao.class);
         } catch (Throwable t) {
             return null;
         }
 
+    }
+
+    public static RespostaWebServiceSimples getRespostaRest(ChamadaHttpSimples pChamada) {
+        return getRespostaRest(pChamada.getUrlRequisicao(), pChamada.getTipoConexao(), pChamada.isPossuiCorpoComConteudo(),
+                pChamada.getCabecalhos(), pChamada.getCorpo());
     }
 
     public static RespostaWebServiceSimples getRespostaRest(String pURL, FabTipoConexaoRest pTipoConexao,
@@ -169,6 +173,7 @@ public class UtilSBApiRestClient {
 
         try {
             UrlInterpretada parametrosDeUrl;
+
             parametrosDeUrl = UtilFabUrlServlet.getUrlInterpretada(FabUrlServletRecepcaoOauth.class, req);
 
             String nomeParametroRetorno = parametrosDeUrl.getValorComoString(FabUrlServletRecepcaoOauth.NOME_PARAMETRO);
@@ -212,10 +217,16 @@ public class UtilSBApiRestClient {
 
     }
 
-    public static String gerarUrlRetornoReceberCodigoSolicitacaoPadrao(ItfTokenGestaoOauth pEndPoint) {
+    public static String gerarUrlServicoReceberCodigoSolicitacaoPadrao(ItfTokenGestaoOauth pEndPoint) {
+        return gerarUrlServicoReceberCodigoSolicitacaoPadrao(pEndPoint, "code");
+    }
+
+    public static String gerarUrlServicoReceberCodigoSolicitacaoPadrao(ItfTokenGestaoOauth pEndPoint, String pCaminhoParametroCodigo) {
 
         return pEndPoint.getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH)
-                + "/solicitacaoAuth2Recept/code/" + pEndPoint.getTipoAgente().toString() + "/" + pEndPoint.getClass().getSimpleName() + "/";
+                + "/solicitacaoAuth2Recept/" + pCaminhoParametroCodigo + "/" + UtilSBCoreStringSlugs.gerarSlugSimples(pEndPoint.getTipoAgente().getRegistro().getNome())
+                + "/" + pEndPoint.getClass().getSimpleName() + "/";
+
     }
 
 }

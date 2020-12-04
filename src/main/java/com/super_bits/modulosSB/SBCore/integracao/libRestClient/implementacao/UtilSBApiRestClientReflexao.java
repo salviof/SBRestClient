@@ -7,7 +7,6 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringJson;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringPosicaoLocalizar;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringsCammelCase;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servicoRegistrado.InfoConfigRestClientIntegracao;

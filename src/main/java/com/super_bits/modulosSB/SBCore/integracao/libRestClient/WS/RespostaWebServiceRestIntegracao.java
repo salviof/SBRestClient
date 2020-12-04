@@ -6,8 +6,9 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.FabCodigosRetornoHttp;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
-import com.super_bits.modulosSB.SBCore.modulos.Controller.comunicacao.RespostaSimples;
+
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -26,13 +27,23 @@ public class RespostaWebServiceRestIntegracao extends RespostaWebServiceSimples 
     public RespostaWebServiceRestIntegracao(String pResposta, int codigoResposta, String erroUsuario) {
         super(codigoResposta, pResposta, erroUsuario);
 
-        if (UtilSBCoreStringValidador.isNuloOuEmbranco(pResposta) || UtilSBCoreStringValidador.isNAO_NuloNemBranco(erroUsuario) || codigoResposta < 200 || codigoResposta > 250) {
+        if (UtilSBCoreStringValidador.isNuloOuEmbranco(pResposta) || UtilSBCoreStringValidador.isNAO_NuloNemBranco(erroUsuario) || (codigoResposta < 200 || codigoResposta > 299)) {
+
             if (UtilSBCoreStringValidador.isNAO_NuloNemBranco(erroUsuario)) {
                 addErro(erroUsuario);
             } else {
-                addErro("Falha de comunicação");
+                FabCodigosRetornoHttp codigo = FabCodigosRetornoHttp.getCodigoByNumero(codigoResposta);
+                if (codigo != null) {
+                    if (codigoResposta >= 200 && codigoResposta < 300) {
+                        addAlerta(codigo.getDescricao());
+                    }
+                    addErro(codigo.getDescricao());
+                } else {
+                    addErro("Falha de comunicação");
+                }
             }
         } else {
+
             setRetorno(pResposta);
         }
     }

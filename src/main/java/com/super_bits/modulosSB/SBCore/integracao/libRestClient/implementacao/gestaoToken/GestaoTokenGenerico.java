@@ -5,18 +5,20 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken;
 
-import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ItfConfigModulo;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.FabStatusToken;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenDeAcessoExterno;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClientReflexao;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
-import org.json.simple.JSONObject;
 
 /**
+ *
+ *
+ * TODO Avaliar tifificação utilizando o tipo de TOken
  *
  * @author desenvolvedorninja01
  * @since 13/12/2019
@@ -28,7 +30,7 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
     protected final ItfUsuario usuario;
     protected final Class<? extends ItfFabricaIntegracaoRest> classeFabricaAcessos;
     protected final ItfConfigModulo configuracoesAmbiente;
-    private String token;
+    private ItfTokenDeAcessoExterno token;
 
     public GestaoTokenGenerico(Class<? extends ItfFabricaIntegracaoRest> pClasseEndpoints,
             FabTipoAgenteClienteRest pTipoAgente, ItfUsuario pUsuario) {
@@ -36,23 +38,18 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
         usuario = pUsuario;
         configuracoesAmbiente = UtilSBApiRestClientReflexao.getConfigmodulo(pClasseEndpoints);
         classeFabricaAcessos = pClasseEndpoints;
-        inicioGestaoToken();
+        token = loadTokenArmazenado();
 
-    }
-
-    protected void inicioGestaoToken() {
-
-        try {
-            String tokenArmazenado = loadTokenArmazenado();
-            token = extrairToken(tokenArmazenado);
-        } catch (Throwable t) {
-
-        }
     }
 
     @Override
     public boolean isTemTokemAtivo() {
         return token != null;
+    }
+
+    @Override
+    public ItfTokenDeAcessoExterno getTokenCompleto() {
+        return token;
     }
 
     @Override
@@ -67,14 +64,8 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
 
     @Override
     public String getToken() {
-        if (token == null) {
-            try {
-                token = gerarNovoToken();
-            } catch (Throwable t) {
-                token = null;
-            }
-        }
-        return token;
+
+        return token.getToken();
     }
 
     @Override
@@ -108,78 +99,8 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
         return true;
     }
 
-    @Override
-    public boolean armazenarRespostaToken(JSONObject pJson) {
-        return armazenarRespostaToken(pJson.toString());
-
-    }
-
-    @Override
-    public boolean armazenarRespostaToken(String pJson) {
-
-        if (extrairToken(pJson) == null) {
-            return false;
-        }
-        token = extrairToken(pJson);
-        switch (tipoAgente) {
-            case USUARIO:
-                if (usuario != null) {
-                    if (getConfig().getRepositorioDeArquivosExternos().putConteudoRecursoExterno(usuario.getEmail(), pJson)) {
-                        return true;
-                    }
-                }
-
-            case SISTEMA:
-                if (getConfig().getRepositorioDeArquivosExternos().putConteudoRecursoExterno("tokensistema", pJson)) {
-                    return true;
-                }
-
-            default:
-                return false;
-
-        }
-
-    }
-
-    @Override
-    public JSONObject loadTokenArmazenadoComoJsonObject() {
-        switch (tipoAgente) {
-            case USUARIO:
-                if (usuario != null) {
-
-                    JSONObject tokenLoad = getConfig().getRepositorioDeArquivosExternos().getJsonObjeto(usuario.getEmail());
-                    token = extrairToken(tokenLoad);
-                    return tokenLoad;
-                }
-                return null;
-            case SISTEMA:
-
-                JSONObject tokenLoad = getConfig().getRepositorioDeArquivosExternos().getJsonObjeto("tokensistema");
-                token = extrairToken(tokenLoad);
-                return tokenLoad;
-            default:
-
-        }
-        return null;
-    }
-
-    @Override
-    public String loadTokenArmazenado() {
-        switch (tipoAgente) {
-            case USUARIO:
-                if (usuario != null) {
-
-                    return getConfig().getRepositorioDeArquivosExternos().getTexto(usuario.getEmail());
-
-                }
-
-            case SISTEMA:
-                return getConfig().getRepositorioDeArquivosExternos().getTexto("tokensistema");
-
-            default:
-
-        }
-        return null;
+    protected void setToken(ItfTokenDeAcessoExterno pToken) {
+        token = pToken;
     }
 
 }

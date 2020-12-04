@@ -4,13 +4,14 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth;
 
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenDeAcessoExterno;
 import java.util.Date;
 
 /**
  *
  * @author SalvioF
  */
-public class InfoTokenOauth2 {
+public class InfoTokenOauth2 implements ItfTokenDeAcessoExterno {
 
     private String chavePublica;
     private String chavePrivada;
@@ -60,6 +61,26 @@ public class InfoTokenOauth2 {
 
     public void setDataHoraExpirarToken(Date dataHoraExpirarToken) {
         this.dataHoraExpirarToken = dataHoraExpirarToken;
+    }
+
+    @Override
+    public String getToken() {
+        return tokenValido;
+    }
+
+    @Override
+    public boolean isTokenValido() {
+        if (tokenValido == null) {
+            return false;
+
+        }
+        if (getDataHoraExpirarToken() != null) {
+            if (new Date().getTime() >= getDataHoraExpirarToken().getTime()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }

@@ -63,6 +63,7 @@ public enum FabCodigosRetornoHttp {
      * -Status Multi (WebDAV) (RFC 4918)
      */
     COD_207,
+    COD_3XX,
     /**
      * Multiple Choices
      */
@@ -241,5 +242,50 @@ public enum FabCodigosRetornoHttp {
      * Network Authentication Required	[RFC6585]
      */
     COD_511;
+
+    @Override
+    public String toString() {
+        return super.toString().substring(0, 5); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public static FabCodigosRetornoHttp getCodigoByNumero(Integer pCodigo) {
+        for (FabCodigosRetornoHttp codigo : FabCodigosRetornoHttp.class.getEnumConstants()) {
+            if (codigo.toString().equals(pCodigo.toString())) {
+                return codigo;
+            }
+        }
+
+        if (pCodigo >= 300 && pCodigo < 400) {
+            return COD_3XX;
+        }
+        if (pCodigo >= 400 && pCodigo < 500) {
+            return COD_4xx;
+        }
+        if (pCodigo >= 100 && pCodigo < 200) {
+            return COD_100XX;
+        }
+        if (pCodigo >= 500 && pCodigo < 600) {
+            return COD_5XX;
+        }
+
+        return null;
+    }
+
+    public String getDescricao() {
+        // TOD DO descrições em portugues https://pt.wikipedia.org/wiki/Lista_de_c%C3%B3digos_de_estado_HTTP
+        switch (this) {
+            case COD_201:
+            case COD_203:
+            case COD_204:
+            case COD_205:
+            case COD_202:
+            case COD_206:
+            case COD_207:
+                return "Sucesso - codigo " + toString();
+            default:
+                return "ERRO CÓDIGO " + toString() + "-> consulte em https://pt.wikipedia.org/wiki/Lista_de_c%C3%B3digos_de_estado_HTTP";
+
+        }
+    }
 
 }

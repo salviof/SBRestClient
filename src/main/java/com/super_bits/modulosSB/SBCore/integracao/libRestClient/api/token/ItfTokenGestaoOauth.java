@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 12/12/2019
  * @version 1.0
  */
-public interface ItfTokenGestaoOauth extends ItfTokenGestao {
+public interface ItfTokenGestaoOauth extends ItfGestaoTokenDinamico {
 
     @Override
     public default boolean isPossuiAutenticacaoDeUsuario() {
@@ -22,8 +22,6 @@ public interface ItfTokenGestaoOauth extends ItfTokenGestao {
     public boolean isCodigoSolicitacaoRegistrado();
 
     public String getUrlServidorApiRest();
-
-    public String getUrlSolictacaoToken();
 
     public String getUrlObterCodigoSolicitacao();
 

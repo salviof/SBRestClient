@@ -7,7 +7,9 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreClienteRest;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringBuscaTrecho;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreWebBrowser;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.RespostaWebServiceRestIntegracao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ConsumoWSExecucao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.FabTipoConexaoRest;
@@ -21,8 +23,11 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgent
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.FabPropriedadeModuloIntegracaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.InfoPropriedadeConfigRestIntegracao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
+import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -63,6 +68,7 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiRest 
             tipoAgente = pTipoAgente;
         }
         try {
+
             executarAcao();
         } catch (Throwable t) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro criando ação de integração Rest em:" + pIntegracaoEndpoint, t);
@@ -154,25 +160,28 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiRest 
     }
 
     protected void executarAcao() {
+        if (!getTokenGestao().isTemTokemAtivo()) {
+            gerarResposta(null);
+        } else {
+            urlRequisicaoGerada = gerarUrlRequisicao();
+            tipoRequisicao = gerarTipoRequisicao();
+            postarInformacoes = defineRequisicaoPostaInformacoes();
+            corpoRequisicaoGerado = gerarCorpoRequisicao();
+            cabecalhoGerado = gerarCabecalho();
 
-        urlRequisicaoGerada = gerarUrlRequisicao();
-        tipoRequisicao = gerarTipoRequisicao();
-        postarInformacoes = defineRequisicaoPostaInformacoes();
-        corpoRequisicaoGerado = gerarCorpoRequisicao();
-        cabecalhoGerado = gerarCabecalho();
+            consumoWS = new ConsumoWSExecucao() {
 
-        consumoWS = new ConsumoWSExecucao() {
+                @Override
+                public RespostaWebServiceSimples efetuarConexao() {
+                    return UtilSBApiRestClient.getRespostaRest(
+                            urlRequisicaoGerada, tipoRequisicao, postarInformacoes, cabecalhoGerado, corpoRequisicaoGerado);
 
-            @Override
-            public RespostaWebServiceSimples efetuarConexao() {
-                return UtilSBApiRestClient.getRespostaRest(
-                        urlRequisicaoGerada, tipoRequisicao, postarInformacoes, cabecalhoGerado, corpoRequisicaoGerado);
+                }
 
-            }
+            };
 
-        };
-
-        gerarResposta(consumoWS);
+            gerarResposta(consumoWS);
+        }
     }
 
     @Override
@@ -182,8 +191,51 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiRest 
 
     @Override
     public void gerarResposta(ConsumoWSExecucao pConsumoRest) {
-        consumoWS.start();
-        resposta = pConsumoRest.getResposta();
+        if (!getTokenGestao().isTemTokemAtivo()) {
+            if (getTokenGestao() instanceof ItfTokenGestaoOauth) {
+                ItfTokenGestaoOauth tokenOauth = (ItfTokenGestaoOauth) getTokenGestao();
+                resposta = new RespostaWebServiceRestIntegracao(token, 400, "A chamada não foi realizada pois o Token não está ativo, acesse: " + tokenOauth.getUrlObterCodigoSolicitacao());
+
+                if (!SBCore.isEmModoDesenvolvimento()) {
+                    SBCore.enviarAvisoAoUsuario("O acesso ao serviço precisa ser renovado em " + getTokenGestao().getComoGestaoOauth().getUrlObterCodigoSolicitacao());
+
+                }
+
+                if (SBCore.isEmModoDesenvolvimento()) {
+                    SBCore.soutInfoDebug("Modo em desenvolvimento detectado");
+                    Map<String, String> cabecalhos = new HashMap<>();
+                    cabecalhos.put("OPERACAO", "PING");
+                    String urlservicoRetornoCodigoSolicitacao = getTokenGestao().getComoGestaoOauth().getUrlRetornoReceberCodigoSolicitacao() + "/" + UtilSBApiRestClientOauth2.PATH_TESTE_DE_VIDA_SERVICO_RECEPCAO;
+                    RespostaWebServiceSimples resp = UtilSBApiRestClient.getRespostaRest(urlservicoRetornoCodigoSolicitacao, FabTipoConexaoRest.GET,
+                            false, cabecalhos, "Apenas teste");
+                    if (resp == null || !resp.isSucesso()) {
+                        try {
+                            throw new UnsupportedOperationException("O SERVIÇO DE RECEPÇÃO DE CÓDIGOS PARA OBENÇÃO DE CÓDIGO DE ACESSO NÃO ESTÁ ATIVO, ANTES DE INICIAR O TESTE INICIE O SERVIÇO, QUE SE ENCONTRA NO PACOTE DE TESTES DE API, utilize  ServicoRecepcaoOauthTestes.iniciarServico()");
+
+                        } catch (Throwable t) {
+                            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, t.getMessage(), t);
+                        }
+                    } else {
+                        SBCore.enviarMensagemUsuario("Você precisa autenticar seu usuário no servidor, para isso funcionar, além das chaves pública e privadas configuradas, o endereço a seguir precisa estar cadastrado como callbak do oauth:" + getTokenGestao().getComoGestaoOauth().getUrlRetornoReceberCodigoSolicitacao(), FabMensagens.AVISO);
+                        String urlObterCodigoParaAutenticacao = getTokenGestao().getComoGestaoOauth().getUrlObterCodigoSolicitacao();
+                        SBCore.enviarMensagemUsuario("10 segundos para você autenticar o usuário na janela que abriu com o endereço: " + urlObterCodigoParaAutenticacao, FabMensagens.AVISO);
+                        UtilSBCoreWebBrowser.abrirLinkEmBrownser(urlObterCodigoParaAutenticacao);
+                        try {
+                            Thread.sleep(10000);
+                            Thread.sleep(10000000);
+                        } catch (Throwable t) {
+                            System.out.println("Aguardando a validação em 10 segundos");
+                        }
+                    }
+                }
+
+            } else {
+                resposta = new RespostaWebServiceRestIntegracao(token, 400, "A chamada não foi realizada pois o Token não está ativo");
+            }
+        } else {
+            consumoWS.start();
+            resposta = pConsumoRest.getResposta();
+        }
     }
 
     @Override

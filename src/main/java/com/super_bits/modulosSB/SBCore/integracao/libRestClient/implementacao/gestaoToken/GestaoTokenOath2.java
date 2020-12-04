@@ -10,33 +10,36 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgent
 
 import java.util.Date;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.FabStatusToken;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.InfoTokenOauth2;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.FabPropriedadeModuloIntegracaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.ChamadaHttpSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClientOauth2;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClientReflexao;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import javax.servlet.http.HttpServletRequest;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
+import org.json.simple.JSONObject;
 
 /**
  *
  * @author SalvioF
  */
-public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements ItfTokenGestaoOauth {
+public abstract class GestaoTokenOath2 extends GestaoTokenDinamico implements ItfTokenGestaoOauth {
 
     protected final String chavePublica;
     protected final String chavePrivada;
     protected final String siteCliente;
     protected final String urlServidorApiRest;
 
-    protected String urlSolictacaoToken;
     protected final String urlObterCodigoSolicitacao;
     protected final String urlRetornoReceberCodigoSolicitacao;
     protected final String urlRetornoSucessoObterToken;
     protected String codigoSolicitacao;
-    protected InfoTokenOauth2 tokenDeAcesso;
+    protected ChamadaHttpSimples chamadaObterChaveDeAcesso;
 
     public GestaoTokenOath2(Class<? extends ItfFabricaIntegracaoRest> pClasseEndpointsClass,
             FabTipoAgenteClienteRest pTipoAgente, ItfUsuario pUsuario) {
@@ -48,8 +51,8 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
             urlServidorApiRest = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API);
             siteCliente = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH);
             urlRetornoSucessoObterToken = gerarUrlRetornoSucessoGeracaoTokenDeAcesso();
-            urlRetornoReceberCodigoSolicitacao = gerarUrlRetornoReceberCodigoSolicitacao();
-            urlObterCodigoSolicitacao = gerarUrlTokenObterCodigoSolicitacao();
+            urlRetornoReceberCodigoSolicitacao = gerarUrlServicoReceberCodigoSolicitacao();
+            urlObterCodigoSolicitacao = gerarUrlAutenticaoObterCodigoSolicitacaoToken();
 
         } catch (Throwable t) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro instanciando " + this.getClass().getSimpleName() + ", é uma prática recomendavel adicionar try cath nos metodos geradores", t);
@@ -67,10 +70,15 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
     public String getToken() {
 
         if (isTemTokemAtivo()) {
-            return tokenDeAcesso.getTokenValido();
+            return getTokenCompleto().getTokenValido();
         }
         return null;
 
+    }
+
+    @Override
+    public InfoTokenOauth2 getTokenCompleto() {
+        return (InfoTokenOauth2) super.getTokenCompleto(); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -84,11 +92,6 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
     }
 
     @Override
-    public String getUrlSolictacaoToken() {
-        return urlSolictacaoToken;
-    }
-
-    @Override
     public String getUrlObterCodigoSolicitacao() {
         return urlObterCodigoSolicitacao;
     }
@@ -98,19 +101,27 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
         return urlRetornoReceberCodigoSolicitacao;
     }
 
-    protected abstract String gerarUrlTokenObterChaveAcesso();
+    protected abstract ChamadaHttpSimples gerarChamadaTokenObterChaveAcesso();
 
-    protected abstract String gerarUrlTokenObterCodigoSolicitacao();
+    protected abstract String gerarUrlAutenticaoObterCodigoSolicitacaoToken();
 
-    protected String gerarUrlRetornoReceberCodigoSolicitacao() {
-        UtilSBApiRestClient.gerarUrlRetornoReceberCodigoSolicitacaoPadrao(this);
+    protected String gerarUrlServicoReceberCodigoSolicitacao() {
 
+        String urlServicoReceberCodigiodeAcesso = UtilSBApiRestClient.gerarUrlServicoReceberCodigoSolicitacaoPadrao(this);
+        String legado;
         String nomeModuloGestaoAutenticacao = UtilSBApiRestClientReflexao.getNomeClasseImplementacaoGestaoToken(classeFabricaAcessos);
         String nomeParametroRespostaCodigo = "code";
-        return getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH)
+
+        legado = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH)
                 + "/solicitacaoAuth2Recept/" + nomeParametroRespostaCodigo + "/"
                 + UtilSBCoreStringSlugs.gerarSlugSimples(tipoAgente.getRegistro().getNome())
                 + "/" + nomeModuloGestaoAutenticacao + "/";
+        if (!urlServicoReceberCodigiodeAcesso.equals(legado)) {
+            System.out.println("DIFERENÇA:");
+            System.out.println(legado);
+            System.out.println(urlServicoReceberCodigiodeAcesso);
+        }
+        return urlServicoReceberCodigiodeAcesso;
 
     }
 
@@ -127,12 +138,14 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
 
     @Override
     public FabStatusToken getStatusToken() {
-
-        if (tokenDeAcesso != null) {
-            if (tokenDeAcesso.getDataHoraExpirarToken() == null) {
+        if (getTokenCompleto() == null) {
+            return FabStatusToken.SEM_TOKEN;
+        }
+        if (getTokenCompleto().isTokenValido()) {
+            if (getTokenCompleto().getDataHoraExpirarToken() == null) {
                 return FabStatusToken.ATIVO;
             } else {
-                if (tokenDeAcesso.getDataHoraExpirarToken().getTime() < new Date().getTime()) {
+                if (getTokenCompleto().getDataHoraExpirarToken().getTime() < new Date().getTime()) {
                     return FabStatusToken.EXPIRADO;
                 } else {
                     return FabStatusToken.ATIVO;
@@ -185,7 +198,38 @@ public abstract class GestaoTokenOath2 extends GestaoTokenGenerico implements It
     @Override
     public void setCodigoSolicitacao(String codigoSolicitacao) {
         this.codigoSolicitacao = codigoSolicitacao;
-        urlSolictacaoToken = gerarUrlTokenObterChaveAcesso();
+        chamadaObterChaveDeAcesso = gerarChamadaTokenObterChaveAcesso();
+    }
+
+    @Override
+    public InfoTokenOauth2 gerarNovoToken() {
+        try {
+            if (codigoSolicitacao == null) {
+                UtilSBApiRestClientOauth2.solicitarAutenticacaoExterna(this);
+                throw new UnsupportedOperationException("O código de solitação não foi encontrado");
+            }
+            chamadaObterChaveDeAcesso = gerarChamadaTokenObterChaveAcesso();
+            gerarUrlRetornoSucessoGeracaoTokenDeAcesso();
+
+            System.out.println("Gerando token com solicitação" + codigoSolicitacao);
+
+            RespostaWebServiceSimples resp = UtilSBApiRestClient.getRespostaRest(chamadaObterChaveDeAcesso);
+
+            if (resp.isSucesso()) {
+                JSONObject respostaJson = resp.getRespostaComoObjetoJson();
+
+                armazenarRespostaToken(respostaJson.toJSONString());
+                loadTokenArmazenado();
+                return getTokenCompleto();
+            }
+
+        } catch (Throwable t) {
+            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro " + t.getMessage(), t);
+        }
+        codigoSolicitacao = null;
+
+        return null;
+
     }
 
 }
