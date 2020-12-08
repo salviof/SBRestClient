@@ -6,7 +6,7 @@
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken;
 
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfGestaoTokenDinamico;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenDeAcessoExterno;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
@@ -19,7 +19,7 @@ import org.json.simple.parser.JSONParser;
  */
 public abstract class GestaoTokenDinamico extends GestaoTokenGenerico implements ItfGestaoTokenDinamico {
 
-    public GestaoTokenDinamico(Class<? extends ItfFabricaIntegracaoRest> pClasseEndpoints, FabTipoAgenteClienteRest pTipoAgente, ItfUsuario pUsuario) {
+    public GestaoTokenDinamico(Class<? extends ItfFabricaIntegracaoRest> pClasseEndpoints, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario) {
         super(pClasseEndpoints, pTipoAgente, pUsuario);
     }
 

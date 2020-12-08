@@ -4,7 +4,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servletRecepcaoTokenOauth;
 
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.TIPO_PARTE_URL;
 
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.TipoClienteOauth;
@@ -21,7 +21,7 @@ public enum FabUrlServletRecepcaoOauth implements ItfFabUrlServletSBFW, Serializ
 
     @InfoParametroURL(nome = "Nome do Parametro", tipoParametro = TIPO_PARTE_URL.TEXTO)
     NOME_PARAMETRO,
-    @InfoParametroURL(nome = "Tipo Autenticacao", tipoParametro = TIPO_PARTE_URL.OBJETO_COM_CONSTRUCTOR, fabricaObjetosRelacionada = FabTipoAgenteClienteRest.class, tipoEntidade = TipoClienteOauth.class)
+    @InfoParametroURL(nome = "Tipo Autenticacao", tipoParametro = TIPO_PARTE_URL.OBJETO_COM_CONSTRUCTOR, fabricaObjetosRelacionada = FabTipoAgenteClienteApi.class, tipoEntidade = TipoClienteOauth.class)
     TIPO_CLIENTE_OAUTH,
     @InfoParametroURL(nome = "Identificador Api", tipoParametro = TIPO_PARTE_URL.TEXTO)
     IDENTIFICADOR_API,

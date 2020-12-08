@@ -7,18 +7,19 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiCliente;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 
 /**
  *
  * @author sfurbino
- * @since 12/12/2019
- * @version 1.0
  */
-public abstract class AcaoApiIntegracaoComOauthAbstrato extends AcaoApiIntegracaoAbstrato {
+public abstract class AcaoApiIntegracaoSDKEmbarcado extends AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiCliente {
 
-    public AcaoApiIntegracaoComOauthAbstrato(ItfFabricaIntegracaoRest pIntegracaoEndpoint, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
+    @SuppressWarnings("OverridableMethodCallInConstructor")
+    public AcaoApiIntegracaoSDKEmbarcado(ItfFabricaIntegracaoRest pIntegracaoEndpoint, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
         super(pIntegracaoEndpoint, pTipoAgente, pUsuario, pParametros);
+        executarAcao();
     }
 
 }

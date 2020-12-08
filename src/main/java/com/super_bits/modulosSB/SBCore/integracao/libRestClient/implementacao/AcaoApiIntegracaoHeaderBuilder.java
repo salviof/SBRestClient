@@ -19,11 +19,11 @@ import javax.ws.rs.core.HttpHeaders;
  */
 public class AcaoApiIntegracaoHeaderBuilder implements ItfApiRestHeaderPadrao {
 
-    protected final AcaoApiIntegracaoAbstratoBasico acao;
+    protected final AcaoApiIntegracaoRestAbstratoBasico acao;
     protected final Map<String, String> cabecalho;
 
     public AcaoApiIntegracaoHeaderBuilder(ItfAcaoApiRest acao) {
-        this.acao = (AcaoApiIntegracaoAbstratoBasico) acao;
+        this.acao = (AcaoApiIntegracaoRestAbstratoBasico) acao;
         cabecalho = new HashMap<>();
     }
 

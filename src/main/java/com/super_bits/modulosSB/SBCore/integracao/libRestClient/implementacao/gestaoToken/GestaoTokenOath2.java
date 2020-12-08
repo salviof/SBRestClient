@@ -5,8 +5,9 @@
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
+import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringSlugs;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 
 import java.util.Date;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
@@ -18,7 +19,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTok
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.ChamadaHttpSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClientOauth2;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClientReflexao;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBIntegracaoClientReflexao;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import javax.servlet.http.HttpServletRequest;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
@@ -35,29 +36,37 @@ public abstract class GestaoTokenOath2 extends GestaoTokenDinamico implements It
     protected final String siteCliente;
     protected final String urlServidorApiRest;
 
-    protected final String urlObterCodigoSolicitacao;
-    protected final String urlRetornoReceberCodigoSolicitacao;
-    protected final String urlRetornoSucessoObterToken;
+    protected String urlObterCodigoSolicitacao;
+    protected String urlRetornoReceberCodigoSolicitacao;
+    protected String urlRetornoSucessoObterToken;
     protected String codigoSolicitacao;
     protected ChamadaHttpSimples chamadaObterChaveDeAcesso;
 
     public GestaoTokenOath2(Class<? extends ItfFabricaIntegracaoRest> pClasseEndpointsClass,
-            FabTipoAgenteClienteRest pTipoAgente, ItfUsuario pUsuario) {
+            FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario) {
         super(pClasseEndpointsClass,
                 pTipoAgente, pUsuario);
         try {
+            urlServidorApiRest = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API);
             chavePrivada = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.CHAVE_PRIVADA);
             chavePublica = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.CHAVE_PUBLICA);
-            urlServidorApiRest = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API);
             siteCliente = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH);
-            urlRetornoSucessoObterToken = gerarUrlRetornoSucessoGeracaoTokenDeAcesso();
-            urlRetornoReceberCodigoSolicitacao = gerarUrlServicoReceberCodigoSolicitacao();
-            urlObterCodigoSolicitacao = gerarUrlAutenticaoObterCodigoSolicitacaoToken();
+            loadDadosIniciais();
+
+            if (urlServidorApiRest == null) {
+                throw new UnsupportedOperationException("A url do servidor de recepção oauth não foi definida");
+            }
 
         } catch (Throwable t) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro instanciando " + this.getClass().getSimpleName() + ", é uma prática recomendavel adicionar try cath nos metodos geradores", t);
             throw new UnsupportedOperationException("Erro instanciando " + this.getClass().getSimpleName());
         }
+    }
+
+    protected void loadDadosIniciais() {
+        urlRetornoSucessoObterToken = gerarUrlRetornoSucessoGeracaoTokenDeAcesso();
+        urlRetornoReceberCodigoSolicitacao = gerarUrlServicoReceberCodigoSolicitacao();
+        urlObterCodigoSolicitacao = gerarUrlAutenticaoObterCodigoSolicitacaoToken();
     }
 
     @Override
@@ -108,19 +117,7 @@ public abstract class GestaoTokenOath2 extends GestaoTokenDinamico implements It
     protected String gerarUrlServicoReceberCodigoSolicitacao() {
 
         String urlServicoReceberCodigiodeAcesso = UtilSBApiRestClient.gerarUrlServicoReceberCodigoSolicitacaoPadrao(this);
-        String legado;
-        String nomeModuloGestaoAutenticacao = UtilSBApiRestClientReflexao.getNomeClasseImplementacaoGestaoToken(classeFabricaAcessos);
-        String nomeParametroRespostaCodigo = "code";
 
-        legado = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH)
-                + "/solicitacaoAuth2Recept/" + nomeParametroRespostaCodigo + "/"
-                + UtilSBCoreStringSlugs.gerarSlugSimples(tipoAgente.getRegistro().getNome())
-                + "/" + nomeModuloGestaoAutenticacao + "/";
-        if (!urlServicoReceberCodigiodeAcesso.equals(legado)) {
-            System.out.println("DIFERENÇA:");
-            System.out.println(legado);
-            System.out.println(urlServicoReceberCodigiodeAcesso);
-        }
         return urlServicoReceberCodigiodeAcesso;
 
     }

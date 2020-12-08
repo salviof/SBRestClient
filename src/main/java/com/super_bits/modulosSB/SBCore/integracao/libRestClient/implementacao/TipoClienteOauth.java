@@ -4,7 +4,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 
 import com.super_bits.modulosSB.SBCore.modulos.fabrica.ItfFabrica;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoCampo;
@@ -17,22 +17,22 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.ItemSimples;
  *
  * @author SalvioF
  */
-@InfoObjetoSB(plural = "tipo Clientes", tags = {"Tipo Cliente"}, fabricaVinculada = FabTipoAgenteClienteRest.class)
+@InfoObjetoSB(plural = "tipo Clientes", tags = {"Tipo Cliente"}, fabricaVinculada = FabTipoAgenteClienteApi.class)
 public class TipoClienteOauth extends ItemSimples implements ItfBeanVinculadoAEnum {
 
     @InfoCampo(tipo = FabTipoAtributoObjeto.ID)
     private int id;
     @InfoCampo(tipo = FabTipoAtributoObjeto.AAA_NOME)
     private String nome;
-    private FabTipoAgenteClienteRest enumVinculado;
+    private FabTipoAgenteClienteApi enumVinculado;
 
     @Override
     public void setEnumVinculado(ItfFabrica pFabrica) {
-        enumVinculado = (FabTipoAgenteClienteRest) pFabrica;
+        enumVinculado = (FabTipoAgenteClienteApi) pFabrica;
     }
 
     @Override
-    public FabTipoAgenteClienteRest getEnumVinculado() {
+    public FabTipoAgenteClienteApi getEnumVinculado() {
         return enumVinculado;
     }
 

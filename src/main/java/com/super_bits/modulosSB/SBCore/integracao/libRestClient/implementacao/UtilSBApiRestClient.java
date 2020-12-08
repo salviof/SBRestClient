@@ -9,6 +9,7 @@ import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringListas;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringSlugs;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.FabTipoConexaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.InfoConsumoRestService;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
@@ -28,9 +29,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servicoRegistrado.InfoConfigRestClientIntegracao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servletRecepcaoTokenOauth.FabUrlServletRecepcaoOauth;
+
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.FabPropriedadeModuloIntegracaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados;
@@ -38,6 +40,7 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basic
 import com.super_bits.modulosSB.webPaginas.controller.servletes.urls.UrlInterpretada;
 import com.super_bits.modulosSB.webPaginas.controller.servletes.util.UtilFabUrlServlet;
 import javax.servlet.http.HttpServletRequest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiCliente;
 
 /**
  *
@@ -146,13 +149,13 @@ public class UtilSBApiRestClient {
         }
     }
 
-    public static ItfAcaoApiRest getAcaoDoContexto(ItfFabricaIntegracaoRest p, FabTipoAgenteClienteRest pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
-        Class classeImp = UtilSBApiRestClientReflexao.getClasseImplementacao((ItfFabricaIntegracaoRest) p);
+    public static ItfAcaoApiRest getAcaoDoContexto(ItfFabricaIntegracaoApi p, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
+        Class classeImp = UtilSBIntegracaoClientReflexao.getClasseImplementacao((ItfFabricaIntegracaoApi) p);
         try {
-            if (pTipoAgente.equals(FabTipoAgenteClienteRest.USUARIO) && pUsuario == null) {
+            if (pTipoAgente.equals(FabTipoAgenteClienteApi.USUARIO) && pUsuario == null) {
                 pUsuario = SBCore.getUsuarioLogado();
             }
-            return (ItfAcaoApiRest) classeImp.getConstructor(FabTipoAgenteClienteRest.class, ItfUsuario.class, Object[].class).newInstance(pTipoAgente, pUsuario, new Object[]{pParametros});
+            return (ItfAcaoApiRest) classeImp.getConstructor(FabTipoAgenteClienteApi.class, ItfUsuario.class, Object[].class).newInstance(pTipoAgente, pUsuario, new Object[]{pParametros});
         } catch (SecurityException ex) {
             Logger.getLogger(UtilSBApiRestClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {

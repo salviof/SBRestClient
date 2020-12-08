@@ -12,7 +12,7 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.Info
  *
  * @author SalvioF
  */
-public enum FabTipoAgenteClienteRest implements ItfFabrica {
+public enum FabTipoAgenteClienteApi implements ItfFabrica {
     @InfoObjetoDaFabrica(id = 1, nomeObjeto = "Usuário", classeObjeto = TipoClienteOauth.class)
     USUARIO,
     @InfoObjetoDaFabrica(id = 2, nomeObjeto = "Sistema", classeObjeto = TipoClienteOauth.class)

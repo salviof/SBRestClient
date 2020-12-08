@@ -7,6 +7,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.g
 import com.google.common.collect.Lists;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreListas;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
@@ -14,7 +15,6 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basic
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
-import org.coletivojava.fw.api.tratamentoErros.FabErro;
 
 /**
  *
@@ -96,7 +96,7 @@ public class MapaTokensGerenciados {
         return AUTENTICADORES_REGISTRADOS.get(identificador);
     }
 
-    public static ItfTokenGestao getAutenticadorSistema(ItfFabricaIntegracaoRest api) {
+    public static ItfTokenGestao getAutenticadorSistema(ItfFabricaIntegracaoApi api) {
         ItfTokenGestao token = AUTENTICADORES_REGISTRADOS.get(gerarIdIdentificador(api.getClasseGestaoOauth()));
         if (token == null) {
             api.getGestaoToken();
@@ -105,7 +105,7 @@ public class MapaTokensGerenciados {
         return getAutenticadorSistema(api.getClasseGestaoOauth());
     }
 
-    public static ItfTokenGestao getAutenticadorUsuario(ItfFabricaIntegracaoRest api, ItfUsuario pUsuario) {
+    public static ItfTokenGestao getAutenticadorUsuario(ItfFabricaIntegracaoApi api, ItfUsuario pUsuario) {
 
         return getAutenticadorUsuario(api.getClasseGestaoOauth(),
                 pUsuario);

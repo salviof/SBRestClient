@@ -7,7 +7,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.FabStatusToken;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 
 /**
  * @author sfurbino
@@ -32,7 +32,7 @@ public interface ItfTokenGestao {
 
     public FabStatusToken getStatusToken();
 
-    public FabTipoAgenteClienteRest getTipoAgente();
+    public FabTipoAgenteClienteApi getTipoAgente();
 
     public boolean validarToken();
 

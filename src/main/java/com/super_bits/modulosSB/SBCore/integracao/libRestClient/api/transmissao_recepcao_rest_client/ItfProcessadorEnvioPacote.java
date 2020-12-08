@@ -6,8 +6,6 @@
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client;
 
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.FabTipoConexaoRest;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import java.util.Map;
 
 /**
@@ -28,7 +26,5 @@ public interface ItfProcessadorEnvioPacote {
     public Map<String, String> gerarCabecalho();
 
     public String gerarCorpoRequisicao();
-
-    public ItfTokenGestao getTokenGestao();
 
 }
