@@ -64,7 +64,9 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
 
     @Override
     public String getToken() {
-
+        if (token == null) {
+            return null;
+        }
         return token.getToken();
     }
 
