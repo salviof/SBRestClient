@@ -20,4 +20,9 @@ public abstract class GestaoTokenEstatico extends GestaoTokenGenerico {
         super(pClasseEndpoints, pTipoAgente, pUsuario);
     }
 
+    @Override
+    public ItfTokenDeAcessoExterno gerarNovoToken() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

@@ -39,8 +39,19 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.ge
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import com.super_bits.modulosSB.webPaginas.controller.servletes.urls.UrlInterpretada;
 import com.super_bits.modulosSB.webPaginas.controller.servletes.util.UtilFabUrlServlet;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiCliente;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLSession;
+import org.apache.http.conn.ssl.TrustAllStrategy;
+import org.apache.http.ssl.SSLContexts;
 
 /**
  *
@@ -75,40 +86,88 @@ public class UtilSBApiRestClient {
                 pChamada.getCabecalhos(), pChamada.getCorpo());
     }
 
+    private static void configurarAmbienteIgnorarQualidadeCertificadoSSL() {
+        try {
+            SSLContext sslcontext = SSLContexts.custom()
+                    .loadTrustMaterial(new TrustAllStrategy())
+                    .build();
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslcontext.getSocketFactory());
+        } catch (Throwable t) {
+
+        }
+    }
+
     public static RespostaWebServiceSimples getRespostaRest(String pURL, FabTipoConexaoRest pTipoConexao,
             boolean pPostarInformcoesCorpoRequisicao,
             Map<String, String> pCabecalho, String pCorpoRequisicao) {
+        return getRespostaRest(pURL, pTipoConexao, pPostarInformcoesCorpoRequisicao, pCabecalho, pCorpoRequisicao, true);
 
-        try {
+    }
 
-            System.out.println("conectando com" + pURL);
-            HttpURLConnection conn = (HttpURLConnection) new URL(pURL).openConnection();
-            conn.setConnectTimeout(5000);
-            conn.setRequestMethod(pTipoConexao.getMetodoRequest());
-            pCabecalho.keySet().forEach((cabecalho) -> {
-                conn.setRequestProperty(cabecalho, pCabecalho.get(cabecalho));
-            });
+    public static HttpURLConnection getHTTPConexaoPadrao(final String url, final boolean pInorarValidacaoCertificado) throws MalformedURLException, IOException {
+        URL endereco = new URL(url);
 
-            if (pPostarInformcoesCorpoRequisicao) {
+        if (url.startsWith("https")) {
+            HttpsURLConnection conn = (HttpsURLConnection) endereco.openConnection();
 
-                if (pCorpoRequisicao != null) {
-                    conn.setDoOutput(true);
-                    conn.setDoInput(true);
-
-                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream(), Charset.forName("UTF-8").newEncoder());
-                    wr.write(pCorpoRequisicao);
-                    wr.flush();
+            try {
+                if (pInorarValidacaoCertificado) {
+                    SSLContext sslcontext = SSLContexts.custom()
+                            .loadTrustMaterial(new TrustAllStrategy())
+                            .build();
+                    conn.setSSLSocketFactory(sslcontext.getSocketFactory());
+                    HostnameVerifier verificadorDeDominioResaponsavelPromiscuo = new HostnameVerifier() {
+                        @Override
+                        public boolean verify(String string, SSLSession ssls) {
+                            return true;
+                        }
+                    };
+                    conn.setHostnameVerifier(verificadorDeDominioResaponsavelPromiscuo);
                 }
+                return conn;
+            } catch (KeyManagementException | KeyStoreException | NoSuchAlgorithmException t) {
+                throw new UnsupportedOperationException("Falha conectando com " + url + " " + t.getMessage());
             }
+        } else {
+            HttpURLConnection conn = (HttpURLConnection) endereco.openConnection();
+            return conn;
+        }
+
+    }
+
+    /**
+     * TODO: Mudar o padrão para validar o certificado do SSL, porém só pode ser
+     * feito, quando este parametro puder ser configurado nas anotações de de
+     * integrador
+     *
+     * @param url
+     * @return
+     * @throws MalformedURLException
+     * @throws IOException
+     */
+    public static HttpURLConnection getHTTPConexaoPadrao(String url) throws MalformedURLException, IOException {
+        return getHTTPConexaoPadrao(url, true);
+    }
+
+    public static RespostaWebServiceSimples getRespostaRest(String pURL, FabTipoConexaoRest pTipoConexao,
+            boolean pPostarInformcoesCorpoRequisicao,
+            Map<String, String> pCabecalho, String pCorpoRequisicao, boolean ignorarValidacaoCertificadoSSL) {
+        String respostaStr = "";
+        try {
+            // Um get pode ter corpo? validar essa informção antes de ativar
+            //if (pCorpoRequisicao != null && !pCorpoRequisicao.isEmpty()) {
+            //  pPostarInformcoesCorpoRequisicao = true;
+            //}
+            System.out.println("conectando com" + pURL);
+
+            HttpURLConnection conn = getHTTPConexaoPadrao(pURL);
             BufferedReader br = null;
-            String respostaStr = "";
+
             try {
                 br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
             } catch (IOException io) {
                 respostaStr += io.getMessage();
             } catch (Throwable t) {
-                // SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, t.getLocalizedMessage() + t.getMessage(), t);
-                //      return null;
                 respostaStr += t.getMessage();
             }
 
@@ -144,6 +203,15 @@ public class UtilSBApiRestClient {
             conn.disconnect();
 
             return new RespostaWebServiceSimples(codigoResposta, respostaStr, mensagemErro);
+        } catch (SSLHandshakeException sslHadshakError) {
+            if (!respostaStr.isEmpty()) {
+                return new RespostaWebServiceSimples(0, respostaStr, respostaStr);
+            } else {
+                return new RespostaWebServiceSimples(0, "", "Erro de HandShake com a url" + pURL);
+            }
+
+        } catch (SocketTimeoutException socketTimeout) {
+            return new RespostaWebServiceSimples(0, "", "O Servidor não respondeu no praso máximo aguardando retorno em" + pURL);
         } catch (IOException | RuntimeException t) {
             return null;
         }

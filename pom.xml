@@ -37,7 +37,7 @@
             <groupId>br.org.coletivoJava.fw</groupId>
             <artifactId>SBServlets</artifactId>
             <version>1.0.0-RC-SNAPSHOT</version>
-            
+
         </dependency>
 
 
@@ -47,6 +47,11 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>3.0.1</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.13</version>
         </dependency>
 
 
