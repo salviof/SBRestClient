@@ -161,6 +161,24 @@ public class UtilSBApiRestClient {
             System.out.println("conectando com" + pURL);
 
             HttpURLConnection conn = getHTTPConexaoPadrao(pURL);
+
+            conn.setRequestMethod(pTipoConexao.getMetodoRequest());
+            pCabecalho.keySet().forEach((cabecalho) -> {
+                conn.setRequestProperty(cabecalho, pCabecalho.get(cabecalho));
+            });
+
+            if (pPostarInformcoesCorpoRequisicao) {
+
+                if (pCorpoRequisicao != null) {
+                    conn.setDoOutput(true);
+                    conn.setDoInput(true);
+
+                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream(), Charset.forName("UTF-8").newEncoder());
+                    wr.write(pCorpoRequisicao);
+                    wr.flush();
+                }
+            }
+
             BufferedReader br = null;
 
             try {
