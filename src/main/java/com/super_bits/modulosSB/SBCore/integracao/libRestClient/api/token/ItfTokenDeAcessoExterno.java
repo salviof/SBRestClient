@@ -15,4 +15,8 @@ public interface ItfTokenDeAcessoExterno {
 
     public boolean isTokenValido();
 
+    public default TokenDeAcessoExternoChavePublicaPrivada getComoTokenChavePublicaPrivada() {
+        return (TokenDeAcessoExternoChavePublicaPrivada) this;
+    }
+
 }

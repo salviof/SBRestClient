@@ -4,7 +4,6 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringBuscaTrecho;
@@ -21,7 +20,6 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaInt
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.FabPropriedadeModuloIntegracaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.InfoPropriedadeConfigRestIntegracao;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
 import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
@@ -82,8 +80,10 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
 
                 if (urlReq.contains("{")) {
                     List<String> parametrosRelatadosUrl = UtilSBCoreStringBuscaTrecho.getPartesEntreChaves(urlReq);
+
                     for (String p : parametrosRelatadosUrl) {
-                        String valor = (String) parametros[Integer.valueOf(p)];
+                        int idParametro = Integer.valueOf(p);
+                        String valor = String.valueOf(parametros[idParametro]);
                         urlReq = urlReq.replace("{" + p + "}", valor);
                     }
 
@@ -181,6 +181,10 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
         return ((tipoRequisicao.equals(FabTipoConexaoRest.PUT)) || (tipoRequisicao.equals(FabTipoConexaoRest.POST)));
     }
 
+    protected String getCorpoRequisicao() {
+        return corpoRequisicaoGerado;
+    }
+
     @Override
     public void gerarResposta(ConsumoWSExecucao pConsumoRest) {
         if (!getTokenGestao().isTemTokemAtivo()) {
@@ -231,7 +235,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
     }
 
     @Override
-    public String getUrlServidor() {
+    public final String getUrlServidor() {
 
         if (urlServidor == null) {
             ConfigModulo config = getConfiguracao();

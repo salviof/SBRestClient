@@ -39,6 +39,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.ge
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import com.super_bits.modulosSB.webPaginas.controller.servletes.urls.UrlInterpretada;
 import com.super_bits.modulosSB.webPaginas.controller.servletes.util.UtilFabUrlServlet;
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.security.KeyManagementException;
@@ -184,9 +185,9 @@ public class UtilSBApiRestClient {
             try {
                 br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
             } catch (IOException io) {
-                respostaStr += io.getMessage();
+                System.out.println("Erro obtendo stream via " + pURL);
             } catch (Throwable t) {
-                respostaStr += t.getMessage();
+                System.out.println("Erro obtendo stream via " + pURL);
             }
 
             String inputResposta;
@@ -219,7 +220,11 @@ public class UtilSBApiRestClient {
             }
 
             conn.disconnect();
-
+            if (UtilSBCoreStringValidador.isNuloOuEmbranco(respostaStr)) {
+                if (!UtilSBCoreStringValidador.isNuloOuEmbranco(respostaStr)) {
+                    respostaStr = mensagemErro;
+                }
+            }
             return new RespostaWebServiceSimples(codigoResposta, respostaStr, mensagemErro);
         } catch (SSLHandshakeException sslHadshakError) {
             if (!respostaStr.isEmpty()) {
@@ -230,9 +235,16 @@ public class UtilSBApiRestClient {
 
         } catch (SocketTimeoutException socketTimeout) {
             return new RespostaWebServiceSimples(0, "", "O Servidor não respondeu no praso máximo aguardando retorno em" + pURL);
+        } catch (ConnectException execesasoConexao) {
+            return new RespostaWebServiceSimples(0, "", "Falha de conexão com " + pURL + " certifique que o endereço esteja acessível para a aplicação");
+        } catch (IllegalArgumentException argumentoIlegal) {
+            return new RespostaWebServiceSimples(0, "", "Falha conectando com " + pURL + " argumento ilegal um header não permitido?");
         } catch (IOException | RuntimeException t) {
             return null;
+        } catch (Throwable t) {
+            return new RespostaWebServiceSimples(0, "", "Erro não previsto acessando:" + pURL);
         }
+
     }
 
     public static ItfAcaoApiRest getAcaoDoContexto(ItfFabricaIntegracaoApi p, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
