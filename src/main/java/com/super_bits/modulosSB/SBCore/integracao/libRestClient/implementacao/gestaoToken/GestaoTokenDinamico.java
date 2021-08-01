@@ -5,6 +5,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken;
 
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfGestaoTokenDinamico;
@@ -62,7 +63,7 @@ public abstract class GestaoTokenDinamico extends GestaoTokenGenerico implements
             default:
 
         }
-        if (textoArmazenado == null) {
+        if (UtilSBCoreStringValidador.isNuloOuEmbranco(textoArmazenado)) {
             return null;
         }
         setToken(extrairToken(textoArmazenado));
