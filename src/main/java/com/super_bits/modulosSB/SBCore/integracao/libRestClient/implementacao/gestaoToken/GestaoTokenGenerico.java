@@ -43,11 +43,6 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
     }
 
     @Override
-    public boolean isTemTokemAtivo() {
-        return token != null;
-    }
-
-    @Override
     public ItfTokenDeAcessoExterno getTokenCompleto() {
         return token;
     }
@@ -82,6 +77,14 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
             return FabStatusToken.ATIVO;
         }
         return FabStatusToken.SEM_TOKEN;
+    }
+
+    @Override
+    public boolean isTemTokemAtivo() {
+        if (token == null) {
+            return false;
+        }
+        return token.isTokenValido();
     }
 
     @Override

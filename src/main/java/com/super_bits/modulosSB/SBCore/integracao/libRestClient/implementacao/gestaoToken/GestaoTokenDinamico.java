@@ -12,7 +12,6 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfGes
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenDeAcessoExterno;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 /**
  *
@@ -69,6 +68,14 @@ public abstract class GestaoTokenDinamico extends GestaoTokenGenerico implements
         setToken(extrairToken(textoArmazenado));
         return getTokenCompleto();
 
+    }
+
+    @Override
+    public boolean isTemTokemAtivo() {
+        if (getTokenCompleto() == null) {
+            loadTokenArmazenado();
+        }
+        return super.isTemTokemAtivo(); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

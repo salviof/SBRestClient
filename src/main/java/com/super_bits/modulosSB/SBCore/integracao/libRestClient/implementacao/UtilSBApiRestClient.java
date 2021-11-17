@@ -161,7 +161,7 @@ public class UtilSBApiRestClient {
             //}
             System.out.println("conectando com" + pURL);
 
-            HttpURLConnection conn = getHTTPConexaoPadrao(pURL);
+            HttpURLConnection conn = getHTTPConexaoPadrao(pURL, ignorarValidacaoCertificadoSSL);
 
             conn.setRequestMethod(pTipoConexao.getMetodoRequest());
             pCabecalho.keySet().forEach((cabecalho) -> {

@@ -29,7 +29,9 @@ public class AcaoApiIntegracaoHeaderBuilder implements ItfApiRestHeaderPadrao {
 
     @Override
     public Map<String, String> getHeaderPadrao() {
-        buildHeaderPadrao();
+        if (cabecalho.isEmpty()) {
+            buildHeaderPadrao();
+        }
         return cabecalho;
     }
 

@@ -35,7 +35,7 @@ public enum FabTipoCodigoRetornoHttp {
             return ERROS_DO_CLIENTE;
         }
         if (codigo >= 500 && codigo <= 599) {
-            return SUCESSO;
+            return ERRO_DO_SERVICO;
         }
         return FALHA_DE_CONEXAO;
 

@@ -80,7 +80,9 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
 
                 if (urlReq.contains("{")) {
                     List<String> parametrosRelatadosUrl = UtilSBCoreStringBuscaTrecho.getPartesEntreChaves(urlReq);
-
+                    if (parametrosRelatadosUrl.size() != getParametros().length) {
+                        throw new UnsupportedOperationException("São experados" + parametrosRelatadosUrl.size() + " parametros");
+                    }
                     for (String p : parametrosRelatadosUrl) {
                         int idParametro = Integer.valueOf(p);
                         String valor = String.valueOf(parametros[idParametro]);
@@ -152,6 +154,15 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
 
     @Override
     protected void executarAcao() {
+        if (!getTokenGestao().isTemTokemAtivo()) {
+            try {
+                getTokenGestao().gerarNovoToken();
+            } catch (Throwable t) {
+                gerarResposta(null);
+                resposta = new RespostaWebServiceRestIntegracao(t.getMessage(), -1, "Erro indeterminado gerando token de acesso à api." + t.getMessage());
+                return;
+            }
+        }
         if (!getTokenGestao().isTemTokemAtivo()) {
             gerarResposta(null);
         } else {
@@ -226,7 +237,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
                 }
 
             } else {
-                resposta = new RespostaWebServiceRestIntegracao(token, 400, "A chamada não foi realizada pois o Token não está ativo");
+                resposta = new RespostaWebServiceRestIntegracao(token, 400, "A chamada não foi realizada pois não foi possível obter o Token de acesso");
             }
         } else {
             consumoWS.start();

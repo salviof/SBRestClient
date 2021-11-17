@@ -30,6 +30,7 @@ public abstract class ConsumoWSExecucao extends Thread {
             RespostaWebServiceSimples resp = efetuarConexao();
             resposta = resp.getResposta();
             codigoResposta = resp.getCodigoResposta();
+            erroMsg = resp.getRespostaErro();
 
         } finally {
             finalizou = true;

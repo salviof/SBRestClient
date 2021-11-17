@@ -24,7 +24,7 @@ public class TokenDeAcessoExternoSimples implements ItfTokenDeAcessoExterno {
 
     @Override
     public boolean isTokenValido() {
-        return token == null;
+        return token != null;
     }
 
 }
