@@ -28,7 +28,8 @@ public class RepositorioLinkEntidadesGenerico implements ItfServicoLinkDeEntidad
             }
             return null;
         } else {
-            throw new UnsupportedOperationException("O link de entidades persistido não foi implementado");
+            return null;
+            //throw new UnsupportedOperationException("O link de entidades persistido não foi implementado");
         }
     }
 
@@ -44,7 +45,8 @@ public class RepositorioLinkEntidadesGenerico implements ItfServicoLinkDeEntidad
             }
             return null;
         } else {
-            throw new UnsupportedOperationException("O link de entidades persistido não foi implementado");
+            return null;
+            //throw new UnsupportedOperationException("O link de entidades persistido não foi implementado");
         }
     }
 
@@ -57,11 +59,13 @@ public class RepositorioLinkEntidadesGenerico implements ItfServicoLinkDeEntidad
             mapaLigacaoEstatico.get(pEntidade.getSimpleName()).put(String.valueOf(codigoInterno), codigoAPIExterna);
             return true;
         }
-        throw new UnsupportedOperationException("O link de entidades persistido não foi implementado");
+        return false;
+        //throw new UnsupportedOperationException("O link de entidades persistido não foi implementado");
 
     }
 
     @Override
+    @Deprecated
     public <T extends ItfBeanSimplesSomenteLeitura> T getObjetoDTOFromJson(Class<? extends T> pClass, String Json) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

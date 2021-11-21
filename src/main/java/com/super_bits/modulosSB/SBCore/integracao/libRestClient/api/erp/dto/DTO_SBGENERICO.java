@@ -87,6 +87,10 @@ public class DTO_SBGENERICO<T extends ItfDTOSBJSON> extends ItemSimples implemen
         if (!modoPojo) {
             return dtoDecoratorGettersInstanciado.getLista(pNomeAtributop);
         }
+
+        if (!listasArmazenadas.containsKey(pNomeAtributop)) {
+            return null;
+        }
         return listasArmazenadas.get(pNomeAtributop);
     }
 
@@ -94,6 +98,9 @@ public class DTO_SBGENERICO<T extends ItfDTOSBJSON> extends ItemSimples implemen
     public ItfBeanSimples getObjeto(String pNomeAtributop) {
         if (!modoPojo) {
             return dtoDecoratorGettersInstanciado.getObjeto(pNomeAtributop);
+        }
+        if (!objetosArmazenados.containsKey(pNomeAtributop)) {
+            return null;
         }
         return objetosArmazenados.get(pNomeAtributop);
     }

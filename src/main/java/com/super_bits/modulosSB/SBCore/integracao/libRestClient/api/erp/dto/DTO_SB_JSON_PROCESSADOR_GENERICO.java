@@ -7,13 +7,10 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.erp.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreDataHora;
 import jakarta.json.Json;
 import jakarta.json.JsonObjectBuilder;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,14 +42,6 @@ public abstract class DTO_SB_JSON_PROCESSADOR_GENERICO<T> extends StdDeserialize
         objetosArmazenados.put(pAtributo, pObjeto);
     }
 
-    protected void setValor(int pValor) {
-        objectBuilder.add("qtdBoletos", (int) pValor);
-    }
-
-    protected void setValor(String pValor) {
-        objectBuilder.add("qtdBoletos", (String) pValor);
-    }
-
     public void getValorComoInteiro() {
         objectBuilder.build();
     }
@@ -72,7 +61,7 @@ public abstract class DTO_SB_JSON_PROCESSADOR_GENERICO<T> extends StdDeserialize
 
     protected boolean adicionarPropriedadeInteiro(String pnome, JsonNode node, String pCaminho) {
         try {
-            getObjectBuilder().add(pnome, node.get(pCaminho).asInt());
+            getObjectBuilder().add(pnome.toLowerCase(), node.get(pCaminho).asInt());
             return true;
         } catch (Throwable t) {
             return false;
@@ -82,7 +71,7 @@ public abstract class DTO_SB_JSON_PROCESSADOR_GENERICO<T> extends StdDeserialize
     protected boolean adicionarPropriedadeBoolean(String pnome, String valorVerdadeiro, JsonNode node, String pCaminho) {
         try {
 
-            getObjectBuilder().add(pnome, node.get(pCaminho).asText().equals(valorVerdadeiro));
+            getObjectBuilder().add(pnome.toLowerCase(), node.get(pCaminho).asText().equals(valorVerdadeiro));
             return true;
         } catch (Throwable t) {
             return false;
@@ -99,7 +88,7 @@ public abstract class DTO_SB_JSON_PROCESSADOR_GENERICO<T> extends StdDeserialize
             //df.setRoundingMode(RoundingMode.HALF_DOWN);
             //df.format(valor);
             double valorDouble = Double.parseDouble(valor);
-            getObjectBuilder().add(pnome, valorDouble);
+            getObjectBuilder().add(pnome.toLowerCase(), valorDouble);
             return true;
         } catch (Throwable t) {
             return false;
@@ -114,7 +103,7 @@ public abstract class DTO_SB_JSON_PROCESSADOR_GENERICO<T> extends StdDeserialize
                 SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
 
                 Date data = formato.parse(valor);
-                getObjectBuilder().add(pnome, data.getTime());
+                getObjectBuilder().add(pnome.toLowerCase(), data.getTime());
             } else {
                 //getObjectBuilder().add(pnome, 0);
             }
@@ -127,7 +116,7 @@ public abstract class DTO_SB_JSON_PROCESSADOR_GENERICO<T> extends StdDeserialize
 
     protected boolean adicionarPropriedadeString(String pnome, JsonNode node, String caminho) {
         try {
-            getObjectBuilder().add(pnome, node.get(caminho).asText());
+            getObjectBuilder().add(pnome.toLowerCase(), node.get(caminho).asText());
             return true;
         } catch (Throwable t) {
             return false;
@@ -150,7 +139,7 @@ public abstract class DTO_SB_JSON_PROCESSADOR_GENERICO<T> extends StdDeserialize
             }
 
         }
-        adicionarListas(pAtributo, itens);
+        adicionarListas(pAtributo.toLowerCase(), itens);
         return true;
     }
 
@@ -159,7 +148,7 @@ public abstract class DTO_SB_JSON_PROCESSADOR_GENERICO<T> extends StdDeserialize
         try {
             consTructorDTO = classeObjeto.getConstructor(String.class);
             DTO_SBGENERICO objeto = (DTO_SBGENERICO) consTructorDTO.newInstance(node.get(caminho).toString());
-            adicionarObjeto(atributo, objeto);
+            adicionarObjeto(atributo.toLowerCase(), objeto);
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             Logger.getLogger(DTO_SBGENERICO.class.getName()).log(Level.SEVERE, null, ex);
         }

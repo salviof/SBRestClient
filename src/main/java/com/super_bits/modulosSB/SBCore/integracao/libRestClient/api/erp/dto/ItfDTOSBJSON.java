@@ -39,7 +39,7 @@ public interface ItfDTOSBJSON {
             nomeAtributo = nomeOriginalMetodo.replaceFirst("is", "");
         }
 
-        nomeAtributo = nomeAtributo.toLowerCase().charAt(0) + nomeAtributo.substring(1);
+        nomeAtributo = nomeAtributo.toLowerCase().charAt(0) + nomeAtributo.substring(1).toLowerCase();
         try {
             Method metodo = this.getClass().getMethod(nomeOriginalMetodo);
             Class tipoRetorno = metodo.getReturnType();
@@ -57,6 +57,9 @@ public interface ItfDTOSBJSON {
                 }
 
                 if (tipoRetorno.getSimpleName().equals("String")) {
+                    if (!getJsonModoPojo().containsKey(nomeAtributo)) {
+                        return null;
+                    }
                     return getJsonModoPojo().getString(nomeAtributo);
                 }
 
@@ -66,17 +69,16 @@ public interface ItfDTOSBJSON {
                     return getLista(nomeAtributo);
                 }
                 if (tipoRetorno.isAssignableFrom(Date.class)) {
+                    if (!getJsonModoPojo().containsKey(nomeAtributo)) {
+                        return null;
+                    }
                     long valor = getJsonModoPojo().getJsonNumber(nomeAtributo).longValue();
                     return new Date(valor);
                 }
 
-                try {
-                    tipoRetorno.getMethod("getId");
-                    tipoRetorno.getMethod("getNome");
-                    return getObjeto(nomeAtributo);
-                } catch (NoSuchMethodException | SecurityException ex) {
-                    Logger.getLogger(ItfDTOSBJSON.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                //  tipoRetorno.getMethod("getId");
+                //  tipoRetorno.getMethod("getNome");
+                return getObjeto(nomeAtributo);
 
             }
             if (tipoRetorno.isAssignableFrom(List.class)) {
