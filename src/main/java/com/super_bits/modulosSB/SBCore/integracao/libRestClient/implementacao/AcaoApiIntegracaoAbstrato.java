@@ -20,4 +20,10 @@ public abstract class AcaoApiIntegracaoAbstrato extends AcaoApiIntegracaoRestAbs
 
     }
 
+    public AcaoApiIntegracaoAbstrato(String pTipoAplicacao, ItfFabricaIntegracaoRest pIntegracaoEndpoint,
+            FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
+        super(pTipoAplicacao, pIntegracaoEndpoint, pTipoAgente, pUsuario, pParametros);
+
+    }
+
 }

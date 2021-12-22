@@ -30,16 +30,25 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
     protected final ItfUsuario usuario;
     protected final Class<? extends ItfFabricaIntegracaoRest> classeFabricaAcessos;
     protected final ItfConfigModulo configuracoesAmbiente;
+
     private ItfTokenDeAcessoExterno token;
+    private final String tipoAplicacao;
+    private final String identificadorToken;
+
+    @Override
+    public String getIdentificacaoToken() {
+        return identificadorToken;
+    }
 
     public GestaoTokenGenerico(Class<? extends ItfFabricaIntegracaoRest> pClasseEndpoints,
-            FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario) {
+            FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, String pTipoApicacao) {
         tipoAgente = pTipoAgente;
         usuario = pUsuario;
         configuracoesAmbiente = UtilSBIntegracaoClientReflexao.getConfigmodulo(pClasseEndpoints);
         classeFabricaAcessos = pClasseEndpoints;
         token = loadTokenArmazenado();
-
+        tipoAplicacao = pTipoApicacao;
+        identificadorToken = MapaTokensGerenciados.gerarIdIdentificador(this.getClass(), usuario, tipoAplicacao);
     }
 
     @Override

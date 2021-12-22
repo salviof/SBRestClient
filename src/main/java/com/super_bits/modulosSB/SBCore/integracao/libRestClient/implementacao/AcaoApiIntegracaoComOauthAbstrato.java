@@ -21,4 +21,8 @@ public abstract class AcaoApiIntegracaoComOauthAbstrato extends AcaoApiIntegraca
         super(pIntegracaoEndpoint, pTipoAgente, pUsuario, pParametros);
     }
 
+    public AcaoApiIntegracaoComOauthAbstrato(String pTipoApicacao, ItfFabricaIntegracaoRest pIntegracaoEndpoint, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
+        super(pTipoApicacao, pIntegracaoEndpoint, pTipoAgente, pUsuario, pParametros);
+    }
+
 }

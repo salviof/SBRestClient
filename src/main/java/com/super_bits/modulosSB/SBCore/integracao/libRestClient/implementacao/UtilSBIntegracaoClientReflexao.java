@@ -18,6 +18,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTok
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfApiRestHeaderPadrao;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -132,11 +133,33 @@ public class UtilSBIntegracaoClientReflexao {
         return classeAnotacao;
     }
 
-    public static ItfTokenGestao getNovaInstanciaGestaoAutenticador(ItfFabricaIntegracaoApi pApi, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario) {
+    public static ItfTokenGestao getNovaInstanciaGestaoAutenticador(ItfFabricaIntegracaoApi pApi, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, String pApiIdentificador) {
         Class classe = getClasseToken(pApi);
+        boolean possuiEspecificacaoDeApi = true;
+        Constructor constructorGestaoToken = null;
         try {
-            ItfTokenGestao pNovaGestaoToken = (ItfTokenGestao) classe.getConstructor(FabTipoAgenteClienteApi.class, ItfUsuario.class).newInstance(pTipoAgente, pUsuario);
-            return pNovaGestaoToken;
+            constructorGestaoToken = classe.getConstructor(FabTipoAgenteClienteApi.class, ItfUsuario.class, String.class);
+        } catch (NoSuchMethodException ex) {
+            possuiEspecificacaoDeApi = false;
+            try {
+                constructorGestaoToken = classe.getConstructor(FabTipoAgenteClienteApi.class, ItfUsuario.class);
+            } catch (NoSuchMethodException ex1) {
+                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro obtendo gestor de tolen do cliente rest para:" + pApi + " " + classe.getSimpleName() + " não possui um código adequado", ex1);
+            } catch (SecurityException ex1) {
+                Logger.getLogger(UtilSBIntegracaoClientReflexao.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        } catch (SecurityException ex) {
+
+        }
+        ItfTokenGestao novaGestaoToken;
+        try {
+            if (possuiEspecificacaoDeApi) {
+                novaGestaoToken = (ItfTokenGestao) constructorGestaoToken.newInstance(pTipoAgente, pUsuario, pApiIdentificador);
+            } else {
+                novaGestaoToken = (ItfTokenGestao) constructorGestaoToken.newInstance(pTipoAgente, pUsuario);
+            }
+
+            return novaGestaoToken;
         } catch (Throwable t) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro obtendo gestor de tolen do cliente rest para:" + pApi, t);
         }

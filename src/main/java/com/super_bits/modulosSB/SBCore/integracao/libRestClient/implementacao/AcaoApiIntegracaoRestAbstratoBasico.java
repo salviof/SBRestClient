@@ -47,7 +47,11 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
     private String urlServidor;
 
     public AcaoApiIntegracaoRestAbstratoBasico(ItfFabricaIntegracaoRest pIntegracaoEndpoint, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
-        super(pIntegracaoEndpoint, pTipoAgente, pUsuario, pParametros);
+        this(null, pIntegracaoEndpoint, pTipoAgente, pUsuario, pParametros);
+    }
+
+    public AcaoApiIntegracaoRestAbstratoBasico(String pTipoAplicacao, ItfFabricaIntegracaoRest pIntegracaoEndpoint, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
+        super(pTipoAplicacao, pIntegracaoEndpoint, pTipoAgente, pUsuario, pParametros);
         try {
 
             infoRest = UtilSBApiRestClient.getInformacoesConsumoRest(pIntegracaoEndpoint);

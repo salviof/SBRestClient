@@ -46,4 +46,6 @@ public interface ItfTokenGestao {
         return (ItfGestaoTokenDinamico) this;
     }
 
+    public String getIdentificacaoToken();
+
 }

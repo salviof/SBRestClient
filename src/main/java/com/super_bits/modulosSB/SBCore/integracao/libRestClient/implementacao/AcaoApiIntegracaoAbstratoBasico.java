@@ -5,8 +5,6 @@
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoApi;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.InfoConsumoRestService;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
@@ -29,12 +27,13 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiClien
     private final ItfUsuario usuario;
     protected Object[] parametros;
     private final FabTipoAgenteClienteApi tipoAgente;
+    private final String idTipoAplicacao;
 
-    public AcaoApiIntegracaoAbstratoBasico(ItfFabricaIntegracaoRest pIntegracaoEndpoint, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
-
+    public AcaoApiIntegracaoAbstratoBasico(String pTipoAplicacao, ItfFabricaIntegracaoRest pIntegracaoEndpoint, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
         parametros = pParametros;
         usuario = pUsuario;
         fabricaIntegracao = pIntegracaoEndpoint;
+        idTipoAplicacao = pTipoAplicacao;
         if (pParametros != null) {
             parametros = (Object[]) pParametros[0];
         } else {
@@ -46,6 +45,11 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiClien
         } else {
             tipoAgente = pTipoAgente;
         }
+    }
+
+    public AcaoApiIntegracaoAbstratoBasico(ItfFabricaIntegracaoRest pIntegracaoEndpoint, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
+
+        this(null, pIntegracaoEndpoint, pTipoAgente, pUsuario, pParametros);
     }
 
     protected abstract void executarAcao();
@@ -72,19 +76,20 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiClien
 
     @Override
     public ItfTokenGestao getTokenGestao() {
+
         if (tokenGestao == null) {
             switch (tipoAgente) {
                 case USUARIO:
-                    tokenGestao = MapaTokensGerenciados.getAutenticadorUsuario(fabricaIntegracao.getClasseGestaoOauth(), usuario);
+                    tokenGestao = MapaTokensGerenciados.getAutenticadorUsuario(fabricaIntegracao.getClasseGestaoOauth(), usuario, idTipoAplicacao);
                     if (tokenGestao == null) {
-                        tokenGestao = UtilSBIntegracaoClientReflexao.getNovaInstanciaGestaoAutenticador(fabricaIntegracao, tipoAgente, usuario);
-                        MapaTokensGerenciados.registrarAutenticadorUsuario(tokenGestao, usuario);
+                        tokenGestao = UtilSBIntegracaoClientReflexao.getNovaInstanciaGestaoAutenticador(fabricaIntegracao, tipoAgente, usuario, idTipoAplicacao);
+                        MapaTokensGerenciados.registrarAutenticadorUsuario(tokenGestao, usuario, idTipoAplicacao);
                     }
                     break;
                 case SISTEMA:
                     tokenGestao = MapaTokensGerenciados.getAutenticadorSistema(fabricaIntegracao);
                     if (tokenGestao == null) {
-                        tokenGestao = UtilSBIntegracaoClientReflexao.getNovaInstanciaGestaoAutenticador(fabricaIntegracao, tipoAgente, usuario);
+                        tokenGestao = UtilSBIntegracaoClientReflexao.getNovaInstanciaGestaoAutenticador(fabricaIntegracao, tipoAgente, usuario, idTipoAplicacao);
                         MapaTokensGerenciados.registrarAutenticador(tokenGestao);
                     }
                     break;

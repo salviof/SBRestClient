@@ -17,7 +17,7 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basic
 public abstract class GestaoTokenEstatico extends GestaoTokenGenerico {
 
     public GestaoTokenEstatico(Class<? extends ItfFabricaIntegracaoRest> pClasseEndpoints, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario) {
-        super(pClasseEndpoints, pTipoAgente, pUsuario);
+        super(pClasseEndpoints, pTipoAgente, pUsuario, null);
     }
 
     @Override

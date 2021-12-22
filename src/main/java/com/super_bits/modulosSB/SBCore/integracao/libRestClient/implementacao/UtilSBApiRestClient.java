@@ -53,6 +53,7 @@ import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLSession;
 import org.apache.http.conn.ssl.TrustAllStrategy;
 import org.apache.http.ssl.SSLContexts;
+import org.coletivojava.fw.api.objetoNativo.controller.sistemaErp.ItfSistemaErp;
 
 /**
  *
@@ -253,24 +254,25 @@ public class UtilSBApiRestClient {
             if (pTipoAgente.equals(FabTipoAgenteClienteApi.USUARIO) && pUsuario == null) {
                 pUsuario = SBCore.getUsuarioLogado();
             }
+            if (pParametros != null && pParametros.length == 2) {
+                if (pParametros[1] instanceof ItfSistemaErp) {
+                    ItfSistemaErp sistema = (ItfSistemaErp) pParametros[1];
+                    return (ItfAcaoApiRest) classeImp.getConstructor(String.class, FabTipoAgenteClienteApi.class, ItfUsuario.class, Object[].class).newInstance(sistema.getDominio(), pTipoAgente, pUsuario, new Object[]{pParametros});
+                }
+            }
+
             return (ItfAcaoApiRest) classeImp.getConstructor(FabTipoAgenteClienteApi.class, ItfUsuario.class, Object[].class).newInstance(pTipoAgente, pUsuario, new Object[]{pParametros});
-        } catch (SecurityException ex) {
-            Logger.getLogger(UtilSBApiRestClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(UtilSBApiRestClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(UtilSBApiRestClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(UtilSBApiRestClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(UtilSBApiRestClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchMethodException ex) {
+        } catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException ex) {
             Logger.getLogger(UtilSBApiRestClient.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
 
     public static boolean receberCodigoSolicitacaoOauth(HttpServletRequest req) {
+        return receberCodigoSolicitacaoOauth(req, null);
+    }
+
+    public static boolean receberCodigoSolicitacaoOauth(HttpServletRequest req, String pidAplicacaoERP) {
 
         try {
             UrlInterpretada parametrosDeUrl;
@@ -287,7 +289,7 @@ public class UtilSBApiRestClient {
                 ItfTokenGestaoOauth conexao = null;
                 switch (tipoCliente.getEnumVinculado()) {
                     case USUARIO:
-                        conexao = MapaTokensGerenciados.getAutenticadorUsuario(nomeModulo, SBCore.getUsuarioLogado()).getComoGestaoOauth();
+                        conexao = MapaTokensGerenciados.getAutenticadorUsuario(nomeModulo, SBCore.getUsuarioLogado(), pidAplicacaoERP).getComoGestaoOauth();
                         break;
                     case SISTEMA:
                         conexao = MapaTokensGerenciados.getAutenticadorSistema(nomeModulo).getComoGestaoOauth();

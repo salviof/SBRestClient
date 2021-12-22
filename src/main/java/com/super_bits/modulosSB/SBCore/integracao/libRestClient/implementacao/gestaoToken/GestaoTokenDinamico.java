@@ -20,23 +20,30 @@ import org.json.simple.JSONObject;
 public abstract class GestaoTokenDinamico extends GestaoTokenGenerico implements ItfGestaoTokenDinamico {
 
     public GestaoTokenDinamico(Class<? extends ItfFabricaIntegracaoRest> pClasseEndpoints, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario) {
-        super(pClasseEndpoints, pTipoAgente, pUsuario);
+        super(pClasseEndpoints, pTipoAgente, pUsuario, null);
+
+    }
+
+    public GestaoTokenDinamico(Class<? extends ItfFabricaIntegracaoRest> pClasseEndpoints, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, String pTipoAplicacao) {
+        super(pClasseEndpoints, pTipoAgente, pUsuario, pTipoAplicacao);
+
     }
 
     @Override
     public JSONObject loadTokenArmazenadoComoJsonObject() {
+
         switch (tipoAgente) {
             case USUARIO:
                 if (usuario != null) {
 
-                    JSONObject tokenLoad = getConfig().getRepositorioDeArquivosExternos().getJsonObjeto(usuario.getEmail());
+                    JSONObject tokenLoad = getConfig().getRepositorioDeArquivosExternos().getJsonObjeto(getIdentificacaoToken());
                     //    token = extrairToken(tokenLoad);
                     return tokenLoad;
                 }
                 return null;
             case SISTEMA:
 
-                JSONObject tokenLoad = getConfig().getRepositorioDeArquivosExternos().getJsonObjeto("tokensistema");
+                JSONObject tokenLoad = getConfig().getRepositorioDeArquivosExternos().getJsonObjeto(getIdentificacaoToken());
                 //  token = extrairToken(tokenLoad);
                 return tokenLoad;
             default:
@@ -52,12 +59,12 @@ public abstract class GestaoTokenDinamico extends GestaoTokenGenerico implements
             case USUARIO:
                 if (usuario != null) {
 
-                    textoArmazenado = getConfig().getRepositorioDeArquivosExternos().getTexto(usuario.getEmail());
+                    textoArmazenado = getConfig().getRepositorioDeArquivosExternos().getTexto(getIdentificacaoToken());
 
                 }
                 break;
             case SISTEMA:
-                textoArmazenado = getConfig().getRepositorioDeArquivosExternos().getTexto("tokensistema");
+                textoArmazenado = getConfig().getRepositorioDeArquivosExternos().getTexto(getIdentificacaoToken());
 
             default:
 
@@ -88,13 +95,13 @@ public abstract class GestaoTokenDinamico extends GestaoTokenGenerico implements
         switch (tipoAgente) {
             case USUARIO:
                 if (usuario != null) {
-                    if (getConfig().getRepositorioDeArquivosExternos().putConteudoRecursoExterno(usuario.getEmail(), pToken)) {
+                    if (getConfig().getRepositorioDeArquivosExternos().putConteudoRecursoExterno(getIdentificacaoToken(), pToken)) {
                         return true;
                     }
                 }
 
             case SISTEMA:
-                if (getConfig().getRepositorioDeArquivosExternos().putConteudoRecursoExterno("tokensistema", pToken)) {
+                if (getConfig().getRepositorioDeArquivosExternos().putConteudoRecursoExterno(getIdentificacaoToken(), pToken)) {
                     return true;
                 }
 
