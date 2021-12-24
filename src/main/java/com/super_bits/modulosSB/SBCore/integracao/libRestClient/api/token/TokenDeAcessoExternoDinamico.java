@@ -13,7 +13,7 @@ import java.util.Date;
  */
 public class TokenDeAcessoExternoDinamico extends TokenDeAcessoExternoSimples {
 
-    private Date dataHoraExpira;
+    private final Date dataHoraExpira;
 
     public TokenDeAcessoExternoDinamico(String pToken, Date pDataHoraExipira) {
         super(pToken);
