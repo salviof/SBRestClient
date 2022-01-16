@@ -326,8 +326,16 @@ public class UtilSBApiRestClient {
 
     public static String gerarUrlServicoReceberCodigoSolicitacaoPadrao(ItfTokenGestaoOauth pEndPoint, String pCaminhoParametroCodigo) {
 
-        return pEndPoint.getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH)
-                + "/solicitacaoAuth2Recept/" + pCaminhoParametroCodigo + "/" + UtilSBCoreStringSlugs.gerarSlugSimples(pEndPoint.getTipoAgente().getRegistro().getNome())
+        return gerarUrlServicoReceberCodigoSolicitacaoPadrao(pEndPoint.getClass(), pEndPoint.getTipoAgente(), pCaminhoParametroCodigo, pEndPoint.getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH));
+
+    }
+
+    public static String gerarUrlServicoReceberCodigoSolicitacaoPadrao(Class<? extends ItfTokenGestaoOauth> pEndPoint, FabTipoAgenteClienteApi pTipoAgente, String pCaminhoParametroCodigo,
+            String pUrlHostRecepcao
+    ) {
+
+        return pUrlHostRecepcao
+                + "/solicitacaoAuth2Recept/" + pCaminhoParametroCodigo + "/" + UtilSBCoreStringSlugs.gerarSlugSimples(pTipoAgente.getRegistro().getNome())
                 + "/" + pEndPoint.getClass().getSimpleName() + "/";
 
     }
