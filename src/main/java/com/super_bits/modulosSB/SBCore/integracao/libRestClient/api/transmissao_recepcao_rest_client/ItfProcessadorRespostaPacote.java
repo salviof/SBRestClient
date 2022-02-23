@@ -19,9 +19,9 @@ public interface ItfProcessadorRespostaPacote {
         return FabTipoArquivoImportacao.JSON;
     }
 
-    public default String getMensagemAmigavel(String pErro) {
+    public default String gerarMensagemAmigavel(String pMensagem) {
 
-        return pErro;
+        return pMensagem;
 
     }
 

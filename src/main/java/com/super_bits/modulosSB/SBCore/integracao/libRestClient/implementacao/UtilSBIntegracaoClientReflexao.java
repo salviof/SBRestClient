@@ -119,9 +119,13 @@ public class UtilSBIntegracaoClientReflexao {
         return classeAnotacao;
     }
 
-    public static Class getClasseImplementacao(ItfFabricaIntegracaoApi pApi) {
-        String caminhoCompleto = getPacoteImplementacao(pApi)
+    public static String getNomeCanonicoClasseImplementacao(ItfFabricaIntegracaoApi pApi) {
+        return getPacoteImplementacao(pApi)
                 + "." + getNomeClasseImplementacao(pApi);
+    }
+
+    public static Class getClasseImplementacao(ItfFabricaIntegracaoApi pApi) {
+        String caminhoCompleto = getNomeCanonicoClasseImplementacao(pApi);
         Class classeValidacao = (Class<? extends ItfValidacao>) ReflectionUtils.forName(caminhoCompleto);
         return classeValidacao;
     }

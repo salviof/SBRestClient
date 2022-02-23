@@ -28,6 +28,7 @@ public abstract class ConsumoWSExecucao extends Thread {
     public synchronized void run() {
         try {
             RespostaWebServiceSimples resp = efetuarConexao();
+            respostaWS = new RespostaWebServiceRestIntegracao(resp);
             resposta = resp.getResposta();
             codigoResposta = resp.getCodigoResposta();
             erroMsg = resp.getRespostaErro();

@@ -17,6 +17,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_
 import java.util.Map;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.FabPropriedadeModuloIntegracaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.InfoPropriedadeConfigRestIntegracao;
@@ -123,6 +124,8 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
             case INDETERMINADO:
 
                 break;
+            case OPTIONS:
+                return false;
 
             default:
                 throw new AssertionError(infoRest.tipoConexao().name());
@@ -180,8 +183,8 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
 
                 @Override
                 public RespostaWebServiceSimples efetuarConexao() {
-                    return UtilSBApiRestClient.getRespostaRest(
-                            urlRequisicaoGerada, tipoRequisicao, postarInformacoes, cabecalhoGerado, corpoRequisicaoGerado);
+                    return buildResposta(UtilSBApiRestClient.getRespostaRest(
+                            urlRequisicaoGerada, tipoRequisicao, postarInformacoes, cabecalhoGerado, corpoRequisicaoGerado));
 
                 }
 
@@ -189,6 +192,10 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
 
             gerarResposta(consumoWS);
         }
+    }
+
+    protected RespostaWebServiceSimples buildResposta(RespostaWebServiceSimples pRespostaWSSemTratamento) {
+        return pRespostaWSSemTratamento;
     }
 
     @Override
@@ -264,8 +271,8 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
     }
 
     @Override
-    public RespostaWebServiceSimples getResposta() {
-        return (RespostaWebServiceSimples) resposta;
+    public ItfRespostaWebServiceSimples getResposta() {
+        return (ItfRespostaWebServiceSimples) resposta;
     }
 
     public int getQuantidadeParametrosEnviados() {

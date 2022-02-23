@@ -14,6 +14,7 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basic
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBIntegracaoClientReflexao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiCliente;
+import static com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados.gerarIdIdentificador;
 
 /**
  *
@@ -61,7 +62,8 @@ public interface ItfFabricaIntegracaoApi {
             tokenGestao = UtilSBIntegracaoClientReflexao.getNovaInstanciaGestaoAutenticador(this, FabTipoAgenteClienteApi.USUARIO, pUsuario, pIdentificadorApi);
             MapaTokensGerenciados.registrarAutenticadorUsuario(tokenGestao, pUsuario, pIdentificadorApi);
         }
-        return MapaTokensGerenciados.getAutenticadorUsuario(this, pUsuario);
+
+        return MapaTokensGerenciados.getAutenticadorUsuario(tokenGestao.getClass(), pUsuario, pIdentificadorApi);
     }
 
     public default ItfTokenGestao getGestaoToken(ItfUsuario pUsuario) {

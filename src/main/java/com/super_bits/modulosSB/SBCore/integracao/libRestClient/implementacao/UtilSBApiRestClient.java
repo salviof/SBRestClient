@@ -36,9 +36,12 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servletRecep
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.FabPropriedadeModuloIntegracaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados;
+import com.super_bits.modulosSB.SBCore.modulos.erp.ItfSistemaERP;
+import com.super_bits.modulosSB.SBCore.modulos.erp.SolicitacaoControllerERP;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import com.super_bits.modulosSB.webPaginas.controller.servletes.urls.UrlInterpretada;
 import com.super_bits.modulosSB.webPaginas.controller.servletes.util.UtilFabUrlServlet;
+import java.lang.reflect.Constructor;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -53,7 +56,6 @@ import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLSession;
 import org.apache.http.conn.ssl.TrustAllStrategy;
 import org.apache.http.ssl.SSLContexts;
-import org.coletivojava.fw.api.objetoNativo.controller.sistemaErp.ItfSistemaErp;
 
 /**
  *
@@ -248,22 +250,46 @@ public class UtilSBApiRestClient {
 
     }
 
+    private static String getSistemaByParametros(Object[] pParametros) {
+        for (Object pr : pParametros) {
+            if (pr instanceof ItfSistemaERP) {
+                ItfSistemaERP sistema = (ItfSistemaERP) pr;
+                return sistema.getHashChavePublica();
+            }
+            if (pr instanceof SolicitacaoControllerERP) {
+                SolicitacaoControllerERP solicitacao = (SolicitacaoControllerERP) pr;
+                return solicitacao.getErpServico();
+            }
+        }
+        return null;
+    }
+
     public static ItfAcaoApiRest getAcaoDoContexto(ItfFabricaIntegracaoApi p, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
         Class classeImp = UtilSBIntegracaoClientReflexao.getClasseImplementacao((ItfFabricaIntegracaoApi) p);
         try {
             if (pTipoAgente.equals(FabTipoAgenteClienteApi.USUARIO) && pUsuario == null) {
                 pUsuario = SBCore.getUsuarioLogado();
             }
-            if (pParametros != null && pParametros.length == 2) {
-                if (pParametros[1] instanceof ItfSistemaErp) {
-                    ItfSistemaErp sistema = (ItfSistemaErp) pParametros[1];
-                    return (ItfAcaoApiRest) classeImp.getConstructor(String.class, FabTipoAgenteClienteApi.class, ItfUsuario.class, Object[].class).newInstance(sistema.getDominio(), pTipoAgente, pUsuario, new Object[]{pParametros});
-                }
+            String identificacao = getSistemaByParametros(pParametros);
+
+            if (identificacao != null) {
+
+                Constructor constructorERP = classeImp.getConstructor(String.class, FabTipoAgenteClienteApi.class,
+                        ItfUsuario.class,
+                        Object[].class);
+                return (ItfAcaoApiRest) constructorERP.newInstance(identificacao,
+                        pTipoAgente, SBCore.getUsuarioLogado(),
+                        new Object[]{pParametros});
+
             }
 
             return (ItfAcaoApiRest) classeImp.getConstructor(FabTipoAgenteClienteApi.class, ItfUsuario.class, Object[].class).newInstance(pTipoAgente, pUsuario, new Object[]{pParametros});
         } catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException ex) {
-            Logger.getLogger(UtilSBApiRestClient.class.getName()).log(Level.SEVERE, null, ex);
+            if (classeImp != null) {
+                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Nenhum constructo válido foi encontrado para classse " + classeImp.getSimpleName(), ex);
+            } else {
+                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Nenhuma implementação encontrada no caminho: " + UtilSBIntegracaoClientReflexao.getNomeCanonicoClasseImplementacao(p), ex);
+            }
         }
         return null;
     }
@@ -289,10 +315,12 @@ public class UtilSBApiRestClient {
                 ItfTokenGestaoOauth conexao = null;
                 switch (tipoCliente.getEnumVinculado()) {
                     case USUARIO:
-                        conexao = MapaTokensGerenciados.getAutenticadorUsuario(nomeModulo, SBCore.getUsuarioLogado(), pidAplicacaoERP).getComoGestaoOauth();
+                        conexao = (ItfTokenGestaoOauth) MapaTokensGerenciados
+                                .getAutenticadorUsuario(nomeModulo, SBCore.getUsuarioLogado(), pidAplicacaoERP);
+
                         break;
                     case SISTEMA:
-                        conexao = MapaTokensGerenciados.getAutenticadorSistema(nomeModulo).getComoGestaoOauth();
+                        conexao = (ItfTokenGestaoOauth) MapaTokensGerenciados.getAutenticadorSistema(nomeModulo);
                         break;
                     default:
                         throw new AssertionError(tipoCliente.getEnumVinculado().name());
@@ -308,6 +336,7 @@ public class UtilSBApiRestClient {
                         System.out.println("A conexão Oath existe, porém, o parametro [" + nomeParametro + "] não foi encontrado com o código de soliciação");
                     }
                 } else {
+
                     System.out.println("COnexões não encontradas, as conexoões deste modulo registradas são:");
                     MapaTokensGerenciados.printConexoesAtivas();
                 }

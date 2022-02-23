@@ -65,7 +65,12 @@ public class ChamadaHttpSimples {
     }
 
     public String getUrlRequisicao() {
-        return getEnderecoHost() + getPath();
+        if (getPath() != null) {
+            return getEnderecoHost() + getPath();
+        } else {
+            return getEnderecoHost();
+        }
+
     }
 
     public boolean isPossuiCorpoComConteudo() {

@@ -13,7 +13,7 @@ public enum FabTipoCodigoRetornoHttp {
     INFORMATIVO,
     SUCESSO,
     REDIRECIONAMENTO,
-    ERROS_DO_CLIENTE,
+    ACESSO_NEGADO,
     ERRO_DO_SERVICO,
     FALHA_DE_CONEXAO;
 
@@ -27,12 +27,11 @@ public enum FabTipoCodigoRetornoHttp {
         if (codigo >= 200 && codigo <= 299) {
             return SUCESSO;
         }
-
         if (codigo >= 300 && codigo <= 399) {
             return REDIRECIONAMENTO;
         }
         if (codigo >= 400 && codigo <= 499) {
-            return ERROS_DO_CLIENTE;
+            return ACESSO_NEGADO;
         }
         if (codigo >= 500 && codigo <= 599) {
             return ERRO_DO_SERVICO;

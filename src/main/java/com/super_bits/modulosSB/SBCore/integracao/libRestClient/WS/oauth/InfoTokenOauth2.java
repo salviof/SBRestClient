@@ -18,6 +18,7 @@ public class InfoTokenOauth2 implements ItfTokenDeAcessoExterno {
     private String tokenValido;
     private String tokenRefresh;
     private Date dataHoraExpirarToken;
+    private String scope;
 
     public InfoTokenOauth2(String pToken) {
         tokenValido = pToken;
@@ -61,6 +62,14 @@ public class InfoTokenOauth2 implements ItfTokenDeAcessoExterno {
 
     public void setDataHoraExpirarToken(Date dataHoraExpirarToken) {
         this.dataHoraExpirarToken = dataHoraExpirarToken;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 
     @Override

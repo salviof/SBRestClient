@@ -40,8 +40,8 @@ public class RespostaWebServiceSimples implements ItfRespostaWebServiceSimples, 
             case REDIRECIONAMENTO:
                 addAlerta("Houve solicitação de redirecionamento");
                 break;
-            case ERROS_DO_CLIENTE:
-                addErro("Dados inválidos foram enviados para o servidor");
+            case ACESSO_NEGADO:
+                addErro("Acesso negado ");
                 addErro(respostaErro);
                 break;
             case ERRO_DO_SERVICO:
@@ -63,6 +63,7 @@ public class RespostaWebServiceSimples implements ItfRespostaWebServiceSimples, 
 
     }
 
+    @Override
     public int getCodigoResposta() {
         return codigoResposta;
     }
@@ -72,6 +73,7 @@ public class RespostaWebServiceSimples implements ItfRespostaWebServiceSimples, 
     }
 
     public String getRespostaErro() {
+
         return respostaErro;
     }
 
@@ -125,6 +127,7 @@ public class RespostaWebServiceSimples implements ItfRespostaWebServiceSimples, 
     }
 
     @Override
+    @Deprecated
     public ItfResposta setRetornoDisparaERetorna(Object pObjetoResultante) {
         return resp.setRetornoDisparaERetorna(pObjetoResultante);
     }

@@ -4,6 +4,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
+import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
@@ -11,6 +12,8 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTok
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiCliente;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfResposta;
+import com.super_bits.modulosSB.SBCore.modulos.erp.ItfSistemaERP;
+import com.super_bits.modulosSB.SBCore.modulos.erp.SolicitacaoControllerERP;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 
 /**
@@ -74,9 +77,32 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiClien
         return fabricaIntegracao;
     }
 
+    private String getIdentificadorSisteServicoByParametros(Object[] pParametros) {
+        if (idTipoAplicacao != null) {
+            return idTipoAplicacao;
+        } else {
+            for (Object pr : pParametros) {
+                if (pr instanceof SolicitacaoControllerERP) {
+
+                    return ((SolicitacaoControllerERP) pr).getErpServico();
+                }
+                if (pr instanceof ItfSistemaERP) {
+                    return ((ItfSistemaERP) pr).getHashChavePublica();
+                }
+
+            }
+        }
+        return null;
+    }
+
     @Override
     public ItfTokenGestao getTokenGestao() {
+        String prIDsistema = getIdentificadorSisteServicoByParametros(parametros);
 
+        if (prIDsistema != null) {
+            tokenGestao = MapaTokensGerenciados.getAutenticadorUsuario(fabricaIntegracao.getClasseGestaoOauth(), SBCore.getUsuarioLogado(), prIDsistema);
+            return tokenGestao;
+        }
         if (tokenGestao == null) {
             switch (tipoAgente) {
                 case USUARIO:
@@ -101,4 +127,9 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiClien
 
         return tokenGestao;
     }
+
+    public String getIdTipoAplicacao() {
+        return idTipoAplicacao;
+    }
+
 }

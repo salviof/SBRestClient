@@ -8,6 +8,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.g
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.simuladorResposta.ItfSimulacaoRespostaServlet;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.FabStatusToken;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.InfoTokenOauth2;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
@@ -16,6 +17,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.Ch
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClientOauth2;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import java.lang.reflect.Constructor;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
@@ -132,13 +134,23 @@ public abstract class GestaoTokenOath2Base extends GestaoTokenDinamico implement
                 UtilSBApiRestClientOauth2.solicitarAutenticacaoExterna(this);
                 throw new UnsupportedOperationException("O código de solitação não foi encontrado");
             }
-            chamadaObterChaveDeAcesso = gerarChamadaTokenObterChaveAcesso();
+            if (chamadaObterChaveDeAcesso == null) {
+                chamadaObterChaveDeAcesso = gerarChamadaTokenObterChaveAcesso();
+            }
             gerarUrlRetornoSucessoGeracaoTokenDeAcesso();
 
             System.out.println("Gerando token com solicitação" + codigoSolicitacao);
-
-            RespostaWebServiceSimples resp = UtilSBApiRestClient.getRespostaRest(chamadaObterChaveDeAcesso);
-
+            RespostaWebServiceSimples resp = null;
+            if (SBCore.isEmModoDesenvolvimento() && SBCore.getNomeProjeto().equals("intERPRestful")) {
+                Class simulacaoPostTrasferenciaToken = this.getClass().getClassLoader().loadClass("br.org.coletivoJava.fw.erp.implementacao.erpintegracao.teste.simulacaoComunicacao.EnvelopePostToken");
+                Constructor constructor = simulacaoPostTrasferenciaToken.getConstructor(ChamadaHttpSimples.class);
+                ItfSimulacaoRespostaServlet simulacao = (ItfSimulacaoRespostaServlet) constructor.newInstance(chamadaObterChaveDeAcesso);
+                resp = simulacao.getRespostaWS();
+                System.out.println(simulacaoPostTrasferenciaToken.getClass().getSimpleName());
+                System.out.println("");
+            } else {
+                resp = UtilSBApiRestClient.getRespostaRest(chamadaObterChaveDeAcesso);
+            }
             if (resp.isSucesso()) {
                 JSONObject respostaJson = resp.getRespostaComoObjetoJson();
 
