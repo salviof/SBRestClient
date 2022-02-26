@@ -35,6 +35,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servletRecep
 
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.FabPropriedadeModuloIntegracaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.GestaoTokenOath2Base;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados;
 import com.super_bits.modulosSB.SBCore.modulos.erp.ItfSistemaERP;
 import com.super_bits.modulosSB.SBCore.modulos.erp.SolicitacaoControllerERP;
@@ -167,9 +168,11 @@ public class UtilSBApiRestClient {
             HttpURLConnection conn = getHTTPConexaoPadrao(pURL, ignorarValidacaoCertificadoSSL);
 
             conn.setRequestMethod(pTipoConexao.getMetodoRequest());
-            pCabecalho.keySet().forEach((cabecalho) -> {
-                conn.setRequestProperty(cabecalho, pCabecalho.get(cabecalho));
-            });
+            if (pCabecalho != null) {
+                pCabecalho.keySet().forEach((cabecalho) -> {
+                    conn.setRequestProperty(cabecalho, pCabecalho.get(cabecalho));
+                });
+            }
 
             if (pPostarInformcoesCorpoRequisicao) {
 
@@ -330,19 +333,19 @@ public class UtilSBApiRestClient {
                 if (conexao != null) {
                     conexao.setCodigoSolicitacao(codigoSolicitacoa);
                     if (UtilSBCoreStringValidador.isNAO_NuloNemBranco(codigoSolicitacoa)) {
-
                         conexao.gerarNovoToken();
+                        return conexao.isTemTokemAtivo();
                     } else {
                         System.out.println("A conexão Oath existe, porém, o parametro [" + nomeParametro + "] não foi encontrado com o código de soliciação");
                     }
                 } else {
-
                     System.out.println("COnexões não encontradas, as conexoões deste modulo registradas são:");
                     MapaTokensGerenciados.printConexoesAtivas();
+                    return false;
                 }
 
             }
-            return true;
+            return false;
         } catch (Throwable t) {
             return false;
         }

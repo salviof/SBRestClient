@@ -151,6 +151,9 @@ public abstract class GestaoTokenOath2Base extends GestaoTokenDinamico implement
             } else {
                 resp = UtilSBApiRestClient.getRespostaRest(chamadaObterChaveDeAcesso);
             }
+            if (resp == null) {
+                return null;
+            }
             if (resp.isSucesso()) {
                 JSONObject respostaJson = resp.getRespostaComoObjetoJson();
 
