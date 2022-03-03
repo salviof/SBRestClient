@@ -312,15 +312,25 @@ public class UtilSBApiRestClient {
             String nomeModulo = parametrosDeUrl.getValorComoString(FabUrlServletRecepcaoOauth.IDENTIFICADOR_API);
             String nomeParametro = req.getParameter(nomeParametroRetorno);
             String codigoSolicitacoa = req.getParameter(nomeParametroRetorno);
+            ItfUsuario usuario = null;
+            if (req.getAttribute("usuario") != null) {
+                usuario = (ItfUsuario) req.getAttribute("usuario");
+            }
 
             if (nomeParametro != null) {
                 TipoClienteOauth tipoCliente = (TipoClienteOauth) parametrosDeUrl.getValorComoBeanSimples(FabUrlServletRecepcaoOauth.TIPO_CLIENTE_OAUTH);
                 ItfTokenGestaoOauth conexao = null;
                 switch (tipoCliente.getEnumVinculado()) {
                     case USUARIO:
-                        conexao = (ItfTokenGestaoOauth) MapaTokensGerenciados
-                                .getAutenticadorUsuario(nomeModulo, SBCore.getUsuarioLogado(), pidAplicacaoERP);
 
+                        if (usuario == null) {
+                            usuario = SBCore.getUsuarioLogado();
+                        }
+                        conexao = (ItfTokenGestaoOauth) MapaTokensGerenciados
+                                .getAutenticadorUsuario(nomeModulo, usuario, pidAplicacaoERP);
+                        if (conexao == null) {
+                            System.out.println("Gestão de token para " + usuario + " Apl: " + pidAplicacaoERP + " não econtrada");
+                        }
                         break;
                     case SISTEMA:
                         conexao = (ItfTokenGestaoOauth) MapaTokensGerenciados.getAutenticadorSistema(nomeModulo);
@@ -331,9 +341,13 @@ public class UtilSBApiRestClient {
                 }
 
                 if (conexao != null) {
-                    conexao.setCodigoSolicitacao(codigoSolicitacoa);
+                    System.out.println("Gerando token com chave" + codigoSolicitacoa);
+
                     if (UtilSBCoreStringValidador.isNAO_NuloNemBranco(codigoSolicitacoa)) {
+                        conexao.setCodigoSolicitacao(codigoSolicitacoa);
+                        System.out.println("Codigo de solicitação registrado");
                         conexao.gerarNovoToken();
+                        System.out.println("Novo token definido");
                         return conexao.isTemTokemAtivo();
                     } else {
                         System.out.println("A conexão Oath existe, porém, o parametro [" + nomeParametro + "] não foi encontrado com o código de soliciação");
@@ -347,6 +361,7 @@ public class UtilSBApiRestClient {
             }
             return false;
         } catch (Throwable t) {
+            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Falha obtendo token de acesso " + t.getMessage(), t);
             return false;
         }
 
