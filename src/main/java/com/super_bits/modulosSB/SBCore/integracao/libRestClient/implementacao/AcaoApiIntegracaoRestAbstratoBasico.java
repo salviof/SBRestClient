@@ -161,7 +161,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
 
     @Override
     protected void executarAcao() {
-        if (!getTokenGestao().isTemTokemAtivo()) {
+        if (getTokenGestao() == null || !getTokenGestao().isTemTokemAtivo()) {
             try {
                 getTokenGestao().gerarNovoToken();
             } catch (Throwable t) {
@@ -257,7 +257,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
     }
 
     @Override
-    public final String getUrlServidor() {
+    public String getUrlServidor() {
 
         if (urlServidor == null) {
             ConfigModulo config = getConfiguracao();
