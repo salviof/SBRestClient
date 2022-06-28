@@ -87,7 +87,7 @@ public class RespostaWebServiceSimples implements ItfRespostaWebServiceSimples, 
                 return null;
             }
         } catch (Throwable t) {
-            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro interpretando Json" + t.getMessage(), t);
+            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro interpretando Json" + t.getMessage() + "->" + getRetorno(), t);
             return null;
         }
     }

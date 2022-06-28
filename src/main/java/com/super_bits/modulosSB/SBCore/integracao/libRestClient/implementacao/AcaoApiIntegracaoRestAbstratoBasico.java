@@ -85,7 +85,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
 
                 if (urlReq.contains("{")) {
                     List<String> parametrosRelatadosUrl = UtilSBCoreStringBuscaTrecho.getPartesEntreChaves(urlReq);
-                    if (parametrosRelatadosUrl.size() != getParametros().length) {
+                    if (parametrosRelatadosUrl.size() > getParametros().length) {
                         throw new UnsupportedOperationException("São experados" + parametrosRelatadosUrl.size() + " parametros");
                     }
                     for (String p : parametrosRelatadosUrl) {
@@ -106,6 +106,15 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
 
     @Override
     public String gerarCorpoRequisicao() {
+        switch (tipoRequisicao) {
+            case POST:
+            case PUT:
+
+                throw new UnsupportedOperationException("Implemente o corpo da requisição para a classe" + this.getClass().getSimpleName());
+
+            default:
+
+        }
         return "";
     }
 
@@ -113,7 +122,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
         switch (tipoRequisicao) {
             case POST:
             case PUT:
-            case DELET:
+            case DELETE:
                 return true;
 
             case GET:
@@ -184,7 +193,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
                 @Override
                 public RespostaWebServiceSimples efetuarConexao() {
                     return buildResposta(UtilSBApiRestClient.getRespostaRest(
-                            urlRequisicaoGerada, tipoRequisicao, postarInformacoes, cabecalhoGerado, corpoRequisicaoGerado));
+                            urlRequisicaoGerada, tipoRequisicao, postarInformacoes, cabecalhoGerado, corpoRequisicaoGerado, infoRest.aceitarCertificadoDeHostNaoConfiavel()));
 
                 }
 

@@ -26,4 +26,9 @@ public abstract class AcaoApiIntegracaoAbstrato extends AcaoApiIntegracaoRestAbs
 
     }
 
+    @Override
+    public String gerarCorpoRequisicao() {
+        return super.gerarCorpoRequisicao(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+    }
+
 }

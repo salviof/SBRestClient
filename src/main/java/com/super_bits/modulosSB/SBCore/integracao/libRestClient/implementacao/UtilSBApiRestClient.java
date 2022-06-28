@@ -25,8 +25,6 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
@@ -35,7 +33,8 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servletRecep
 
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.FabPropriedadeModuloIntegracaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.GestaoTokenOath2Base;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.conexao.ssl.EstrategiaConfiarEmTodos;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.conexao.ssl.HostnameVerifierPromiscuo;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados;
 import com.super_bits.modulosSB.SBCore.modulos.erp.ItfSistemaERP;
 import com.super_bits.modulosSB.SBCore.modulos.erp.SolicitacaoControllerERP;
@@ -49,12 +48,10 @@ import java.net.SocketTimeoutException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
-import javax.net.ssl.SSLSession;
 import org.apache.http.conn.ssl.TrustAllStrategy;
 import org.apache.http.ssl.SSLContexts;
 
@@ -116,21 +113,25 @@ public class UtilSBApiRestClient {
             HttpsURLConnection conn = (HttpsURLConnection) endereco.openConnection();
 
             try {
+
                 if (pInorarValidacaoCertificado) {
-                    SSLContext sslcontext = SSLContexts.custom()
-                            .loadTrustMaterial(new TrustAllStrategy())
-                            .build();
+
+                    SSLContext sslcontext = SSLContext.getInstance("SSL");
+                    sslcontext.init(null, EstrategiaConfiarEmTodos.trustAllCerts, new java.security.SecureRandom());
+                    HttpsURLConnection.setDefaultSSLSocketFactory(sslcontext.getSocketFactory());
+
+                    //  SSLContext sslcontext = SSLContexts.custom()
+                    //          .loadTrustMaterial(new EstrategiaConfiarEmTodos())
+                    //           .build();
+                    conn.setConnectTimeout(10000);
+                    conn.setReadTimeout(10000);
+                    conn.setDefaultUseCaches(false);
+
                     conn.setSSLSocketFactory(sslcontext.getSocketFactory());
-                    HostnameVerifier verificadorDeDominioResaponsavelPromiscuo = new HostnameVerifier() {
-                        @Override
-                        public boolean verify(String string, SSLSession ssls) {
-                            return true;
-                        }
-                    };
-                    conn.setHostnameVerifier(verificadorDeDominioResaponsavelPromiscuo);
+                    conn.setHostnameVerifier(new HostnameVerifierPromiscuo());
                 }
                 return conn;
-            } catch (KeyManagementException | KeyStoreException | NoSuchAlgorithmException t) {
+            } catch (KeyManagementException | NoSuchAlgorithmException t) {
                 throw new UnsupportedOperationException("Falha conectando com " + url + " " + t.getMessage());
             }
         } else {
@@ -164,7 +165,7 @@ public class UtilSBApiRestClient {
             //  pPostarInformcoesCorpoRequisicao = true;
             //}
             System.out.println("conectando com" + pURL);
-
+            //       ignorarValidacaoCertificadoSSL = false;
             HttpURLConnection conn = getHTTPConexaoPadrao(pURL, ignorarValidacaoCertificadoSSL);
 
             conn.setRequestMethod(pTipoConexao.getMetodoRequest());
@@ -191,7 +192,8 @@ public class UtilSBApiRestClient {
             try {
                 br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
             } catch (IOException io) {
-                System.out.println("Erro obtendo stream via " + pURL);
+                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro estabelecendo conexão com " + pURL, io);
+                //System.out.println("Erro obtendo stream via " + pURL);
             } catch (Throwable t) {
                 System.out.println("Erro obtendo stream via " + pURL);
             }
@@ -233,6 +235,7 @@ public class UtilSBApiRestClient {
             }
             return new RespostaWebServiceSimples(codigoResposta, respostaStr, mensagemErro);
         } catch (SSLHandshakeException sslHadshakError) {
+            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Falha estabelecendo handshake SSL com a url:" + pURL, sslHadshakError);
             if (!respostaStr.isEmpty()) {
                 return new RespostaWebServiceSimples(0, respostaStr, respostaStr);
             } else {

@@ -10,7 +10,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebSe
  */
 public enum FabTipoConexaoRest {
 
-    POST, GET, PUT, PATCH, DELET, OPTIONS, INDETERMINADO;
+    POST, GET, PUT, PATCH, DELETE, OPTIONS, INDETERMINADO;
 
     public String getMetodoRequest() {
         switch (this) {
@@ -25,8 +25,8 @@ public enum FabTipoConexaoRest {
                 return "PUT";
             case PATCH:
                 return "PATCH";
-            case DELET:
-                return "DELET";
+            case DELETE:
+                return "DELETE";
             case OPTIONS:
                 return "OPTIONS";
 
