@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -72,6 +73,26 @@ public abstract class DTO_SB_JSON_PROCESSADOR_GENERICO<T> extends StdDeserialize
         try {
 
             getObjectBuilder().add(pnome.toLowerCase(), node.get(pCaminho).asText().equals(valorVerdadeiro));
+            return true;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    protected boolean adicionarPropriedadeBoolean(String pnome, List<String> pValoresVerdadeiro, JsonNode node, String pCaminho) {
+        try {
+
+            if (pValoresVerdadeiro == null) {
+                getObjectBuilder().add(pnome.toLowerCase(), node.get(pCaminho).isNull());
+            } else {
+                String valorJson = node.get(pCaminho).asText();
+                Optional<String> pesquisaValorCompativel = pValoresVerdadeiro
+                        .stream()
+                        .filter(pValorAceitavel -> valorJson.equals(pValorAceitavel)).findFirst();
+
+                getObjectBuilder().add(pnome.toLowerCase(), pesquisaValorCompativel.isPresent());
+            }
+
             return true;
         } catch (Throwable t) {
             return false;

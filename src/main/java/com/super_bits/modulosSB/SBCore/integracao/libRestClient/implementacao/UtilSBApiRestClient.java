@@ -46,7 +46,6 @@ import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.security.KeyManagementException;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
@@ -192,7 +191,9 @@ public class UtilSBApiRestClient {
             try {
                 br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
             } catch (IOException io) {
-                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro estabelecendo conexão com " + pURL, io);
+                if (SBCore.isEmModoDesenvolvimento()) {
+                    SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro estabelecendo conexão com " + pURL, io);
+                }
                 //System.out.println("Erro obtendo stream via " + pURL);
             } catch (Throwable t) {
                 System.out.println("Erro obtendo stream via " + pURL);
