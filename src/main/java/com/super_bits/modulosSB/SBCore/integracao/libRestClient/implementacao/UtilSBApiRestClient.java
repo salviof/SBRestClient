@@ -192,7 +192,8 @@ public class UtilSBApiRestClient {
                 br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
             } catch (IOException io) {
                 if (SBCore.isEmModoDesenvolvimento()) {
-                    SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro estabelecendo conexão com " + pURL, io);
+                    // Um retorno codigo 400 ou 500 pode ser capturado aqui
+                    //  SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro estabelecendo conexão com " + pURL, io);
                 }
                 //System.out.println("Erro obtendo stream via " + pURL);
             } catch (Throwable t) {
