@@ -204,6 +204,14 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
     }
 
     protected RespostaWebServiceSimples buildResposta(RespostaWebServiceSimples pRespostaWSSemTratamento) {
+        try {
+            if (pRespostaWSSemTratamento == null) {
+                throw new UnsupportedOperationException("Nenhuma resposta foi gerada");
+            }
+        } catch (Throwable t) {
+
+        }
+
         return pRespostaWSSemTratamento;
     }
 
@@ -218,6 +226,9 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
 
     @Override
     public void gerarResposta(ConsumoWSExecucao pConsumoRest) {
+        if (pConsumoRest == null) {
+            pConsumoRest = consumoWS;
+        }
         if (!getTokenGestao().isTemTokemAtivo()) {
             if (getTokenGestao() instanceof ItfTokenGestaoOauth) {
                 ItfTokenGestaoOauth tokenOauth = (ItfTokenGestaoOauth) getTokenGestao();
@@ -235,6 +246,10 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
                     String urlservicoRetornoCodigoSolicitacao = getTokenGestao().getComoGestaoOauth().getUrlRetornoReceberCodigoSolicitacao() + "/" + UtilSBApiRestClientOauth2.PATH_TESTE_DE_VIDA_SERVICO_RECEPCAO;
                     RespostaWebServiceSimples resp = UtilSBApiRestClient.getRespostaRest(urlservicoRetornoCodigoSolicitacao, FabTipoConexaoRest.GET,
                             false, cabecalhos, "Apenas teste");
+                    String retorno = resp.getResposta();
+                    if (!retorno.contains("OK")) {
+                        resp.addErro("Resposta do ping diferente do esperado");
+                    }
                     if (resp == null || !resp.isSucesso()) {
                         try {
                             throw new UnsupportedOperationException("O SERVIÇO DE RECEPÇÃO DE CÓDIGOS PARA OBENÇÃO DE CÓDIGO DE ACESSO NÃO ESTÁ ATIVO, ANTES DE INICIAR O TESTE INICIE O SERVIÇO, QUE SE ENCONTRA NO PACOTE DE TESTES DE API, utilize  ServicoRecepcaoOauthTestes.iniciarServico()");
@@ -249,7 +264,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
                         UtilSBCoreWebBrowser.abrirLinkEmBrownser(urlObterCodigoParaAutenticacao);
                         try {
                             Thread.sleep(10000);
-                            Thread.sleep(10000000);
+
                         } catch (Throwable t) {
                             System.out.println("Aguardando a validação em 10 segundos");
                         }
@@ -260,7 +275,8 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
                 resposta = new RespostaWebServiceRestIntegracao(token, 400, "A chamada não foi realizada pois não foi possível obter o Token de acesso");
             }
         } else {
-            consumoWS.start();
+            pConsumoRest.start();
+            System.out.println("Aguardando resposta");
             resposta = pConsumoRest.getResposta();
         }
     }

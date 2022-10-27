@@ -5,13 +5,15 @@
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfResposta;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.comunicacao.RespostaSimples;
 import com.super_bits.modulosSB.SBCore.modulos.Mensagens.ItfMensagem;
+import jakarta.json.JsonObject;
 import java.util.List;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
-import org.json.simple.JSONObject;
+
 import org.json.simple.parser.JSONParser;
 
 /**
@@ -36,9 +38,11 @@ public class RespostaWebServiceSimples implements ItfRespostaWebServiceSimples, 
             case INFORMATIVO:
                 break;
             case SUCESSO:
+
                 break;
             case REDIRECIONAMENTO:
-                addAlerta("Houve solicitação de redirecionamento");
+                addErro("Houve solicitação de redirecionamento da url.");
+
                 break;
             case ACESSO_NEGADO:
                 addErro("Acesso negado ");
@@ -55,6 +59,9 @@ public class RespostaWebServiceSimples implements ItfRespostaWebServiceSimples, 
                 break;
             case FALHA_DE_CONEXAO:
                 addErro("Falha de conexão com API");
+                break;
+            case RECURSO_NAO_ENCONTRADO:
+                addErro("Recurso não encontrado Código: " + pCodigo);
                 break;
             default:
                 throw new AssertionError(tipoRetorno.name());
@@ -78,11 +85,12 @@ public class RespostaWebServiceSimples implements ItfRespostaWebServiceSimples, 
     }
 
     @Override
-    public JSONObject getRespostaComoObjetoJson() {
+    public JsonObject getRespostaComoObjetoJson() {
         try {
             if (isSucesso()) {
-                JSONParser parser = new JSONParser();
-                return (JSONObject) parser.parse((String) getRetorno());
+
+                return UtilSBCoreJson.getJsonObjectByTexto((String) getRetorno());
+
             } else {
                 return null;
             }

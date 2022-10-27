@@ -15,7 +15,8 @@ public enum FabTipoCodigoRetornoHttp {
     REDIRECIONAMENTO,
     ACESSO_NEGADO,
     ERRO_DO_SERVICO,
-    FALHA_DE_CONEXAO;
+    FALHA_DE_CONEXAO,
+    RECURSO_NAO_ENCONTRADO,;
 
     public static FabTipoCodigoRetornoHttp getTipoCodigoBycod(int codigo) {
         if (codigo == 0) {
@@ -30,10 +31,19 @@ public enum FabTipoCodigoRetornoHttp {
         if (codigo >= 300 && codigo <= 399) {
             return REDIRECIONAMENTO;
         }
-        if (codigo >= 400 && codigo <= 499) {
+        if (codigo >= 401 && codigo <= 403) {
+
+            //401  Unauthorized
+            //402 Payment Required Experimental
+            //403 Forbidden
             return ACESSO_NEGADO;
         }
-        if (codigo >= 500 && codigo <= 599) {
+        if (codigo == 400 || codigo == 404) {
+            //400 Bad Request
+            //404 Not Found
+            return RECURSO_NAO_ENCONTRADO;
+        }
+        if (codigo == 400 || codigo >= 500 && codigo <= 599) {
             return ERRO_DO_SERVICO;
         }
         return FALHA_DE_CONEXAO;

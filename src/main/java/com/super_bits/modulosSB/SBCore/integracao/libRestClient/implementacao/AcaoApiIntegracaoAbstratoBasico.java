@@ -101,6 +101,10 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiClien
 
         if (prIDsistema != null) {
             tokenGestao = MapaTokensGerenciados.getAutenticadorUsuario(fabricaIntegracao.getClasseGestaoOauth(), SBCore.getUsuarioLogado(), prIDsistema);
+            if (tokenGestao == null) {
+                tokenGestao = UtilSBIntegracaoClientReflexao.getNovaInstanciaGestaoAutenticador(fabricaIntegracao, tipoAgente, usuario, idTipoAplicacao);
+                MapaTokensGerenciados.registrarAutenticadorUsuario(tokenGestao, usuario, idTipoAplicacao);
+            }
             return tokenGestao;
         }
         if (tokenGestao == null) {

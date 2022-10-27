@@ -46,9 +46,10 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
         usuario = pUsuario;
         configuracoesAmbiente = UtilSBIntegracaoClientReflexao.getConfigmodulo(pClasseEndpoints);
         classeFabricaAcessos = pClasseEndpoints;
-        token = loadTokenArmazenado();
         tipoAplicacao = pTipoApicacao;
         identificadorToken = MapaTokensGerenciados.gerarIdIdentificador(this.getClass(), usuario, tipoAplicacao);
+        token = loadTokenArmazenado();
+
     }
 
     @Override

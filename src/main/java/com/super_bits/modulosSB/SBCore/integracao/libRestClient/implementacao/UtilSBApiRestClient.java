@@ -6,7 +6,6 @@
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringListas;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringSlugs;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoApi;
@@ -23,7 +22,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Map;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
@@ -41,16 +39,25 @@ import com.super_bits.modulosSB.SBCore.modulos.erp.SolicitacaoControllerERP;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import com.super_bits.modulosSB.webPaginas.controller.servletes.urls.UrlInterpretada;
 import com.super_bits.modulosSB.webPaginas.controller.servletes.util.UtilFabUrlServlet;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.TrustAllStrategy;
 import org.apache.http.ssl.SSLContexts;
 
@@ -71,6 +78,34 @@ public class UtilSBApiRestClient {
             return null;
         }
 
+    }
+
+    public static Map<String, String[]> getParametroHttpServletRequestQuery(HttpServletRequest pRequisicao) {
+        if (pRequisicao == null) {
+            return new HashMap<>();
+        }
+        Map<String, String[]> queryParameters = new HashMap<>();
+        String queryString = pRequisicao.getQueryString();
+        if (StringUtils.isNotEmpty(queryString)) {
+            try {
+                queryString = URLDecoder.decode(queryString, StandardCharsets.UTF_8.toString());
+                if (queryString == null || queryString.length() < 3) {
+                    new HashMap<>();
+                }
+            } catch (UnsupportedEncodingException ex) {
+                new HashMap<>();
+            }
+            String[] parameters = queryString.split("&");
+            for (String parameter : parameters) {
+                String[] keyValuePair = parameter.split("=");
+                String[] values = queryParameters.get(keyValuePair[0]);
+                //length is one if no value is available.
+                values = keyValuePair.length == 1 ? ArrayUtils.add(values, "")
+                        : ArrayUtils.addAll(values, keyValuePair[1].split(",")); //handles CSV separated query param values.
+                queryParameters.put(keyValuePair[0], values);
+            }
+        }
+        return queryParameters;
     }
 
     public static InfoConfigRestClientIntegracao getInfoConfigRest(ItfFabricaIntegracaoRest pConexao) {
@@ -199,30 +234,45 @@ public class UtilSBApiRestClient {
             } catch (Throwable t) {
                 System.out.println("Erro obtendo stream via " + pURL);
             }
-
-            String inputResposta;
-
+            final StringBuilder inputRespostaBuilder = new StringBuilder();
             if (br != null) {
-                while ((inputResposta = br.readLine()) != null) {
-                    respostaStr += inputResposta;
+                br.lines().forEach(linha -> inputRespostaBuilder.append(linha).append("\n"));
+                try {
+                    respostaStr = inputRespostaBuilder.toString();
+                } catch (Throwable t) {
+
                 }
             }
+            //if (br != null) {
+            //     while ((inputResposta = br.readLine()) != null) {
+            //        respostaStr += inputResposta;
+            //     }
+            // }
 
             int codigoResposta = conn.getResponseCode();
             String mensagemErro = "";
             if (codigoResposta < 200 || codigoResposta > 220) {
-                mensagemErro = conn.getResponseCode() + conn.getResponseMessage();
-                try {
-                    br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-                    ArrayList<String> respostaErro = new ArrayList<>();
-                    String linha = br.readLine();
-                    while (linha != null) {
-                        respostaErro.add(linha);
-                        linha = br.readLine();
-                    }
-                    mensagemErro += UtilSBCoreStringListas.getStringDaListaComBarraN(respostaErro);
 
-                } catch (IOException t) {
+                try {
+                    InputStream streamMensagemErro = conn.getErrorStream();
+                    if (streamMensagemErro != null) {
+                        BufferedReader brMensagemErro = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+
+                        final StringBuilder inputRespostaErroBuilder = new StringBuilder();
+                        brMensagemErro.lines().forEach(linha
+                                -> inputRespostaErroBuilder.append(linha).append("\n")
+                        );
+
+                        //while (linha != null) {
+                        //     respostaErro.add(linha);
+                        //     linha = br.readLine();
+                        //  }
+                        mensagemErro += inputRespostaErroBuilder.toString();
+                    }
+                    if (mensagemErro == null || mensagemErro.isEmpty()) {
+                        mensagemErro = conn.getResponseCode() + conn.getResponseMessage();
+                    }
+                } catch (Throwable t) {
                     SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro processando informações de erro", t);
                 }
 
@@ -231,7 +281,7 @@ public class UtilSBApiRestClient {
 
             conn.disconnect();
             if (UtilSBCoreStringValidador.isNuloOuEmbranco(respostaStr)) {
-                if (!UtilSBCoreStringValidador.isNuloOuEmbranco(respostaStr)) {
+                if (!UtilSBCoreStringValidador.isNuloOuEmbranco(mensagemErro)) {
                     respostaStr = mensagemErro;
                 }
             }
@@ -388,7 +438,7 @@ public class UtilSBApiRestClient {
 
         return pUrlHostRecepcao
                 + "/solicitacaoAuth2Recept/" + pCaminhoParametroCodigo + "/" + UtilSBCoreStringSlugs.gerarSlugSimples(pTipoAgente.getRegistro().getNome())
-                + "/" + pEndPoint.getClass().getSimpleName() + "/";
+                + "/" + pEndPoint.getSimpleName() + "/";
 
     }
 

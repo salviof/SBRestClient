@@ -6,6 +6,7 @@
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.simuladorResposta.ItfSimulacaoRespostaServlet;
@@ -17,6 +18,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.Ch
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClientOauth2;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import jakarta.json.JsonObject;
 import java.lang.reflect.Constructor;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
@@ -132,7 +134,9 @@ public abstract class GestaoTokenOath2Base extends GestaoTokenDinamico implement
         try {
             if (codigoSolicitacao == null) {
                 UtilSBApiRestClientOauth2.solicitarAutenticacaoExterna(this);
-                throw new UnsupportedOperationException("O código de solitação não foi encontrado");
+                if (codigoSolicitacao == null) {
+                    throw new UnsupportedOperationException("O código de solitação não foi encontrado");
+                }
             }
             if (chamadaObterChaveDeAcesso == null) {
                 chamadaObterChaveDeAcesso = gerarChamadaTokenObterChaveAcesso();
@@ -155,9 +159,8 @@ public abstract class GestaoTokenOath2Base extends GestaoTokenDinamico implement
                 return null;
             }
             if (resp.isSucesso()) {
-                JSONObject respostaJson = resp.getRespostaComoObjetoJson();
-
-                armazenarRespostaToken(respostaJson.toJSONString());
+                JsonObject respostaJson = resp.getRespostaComoObjetoJson();
+                armazenarRespostaToken(UtilSBCoreJson.getTextoByJsonObjeect(respostaJson));
                 loadTokenArmazenado();
                 return getTokenCompleto();
             }
@@ -170,4 +173,16 @@ public abstract class GestaoTokenOath2Base extends GestaoTokenDinamico implement
         return null;
 
     }
+
+    @Override
+    public boolean excluirToken() {
+        try {
+            getConfig().getRepositorioDeArquivosExternos().putConteudoRecursoExterno(getIdentificacaoToken(), "");
+            return true;
+        } catch (Throwable t) {
+            return false;
+        }
+
+    }
+
 }

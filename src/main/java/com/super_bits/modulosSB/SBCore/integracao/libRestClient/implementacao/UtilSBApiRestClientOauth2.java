@@ -10,6 +10,8 @@ import com.super_bits.modulosSB.SBCore.UtilGeral.UTilSBCoreInputs;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreWebBrowser;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -23,7 +25,9 @@ public class UtilSBApiRestClientOauth2 {
 
         if (SBCore.isEmModoProducao()) {
             //todo abrir na pagina
-            SBCore.enviarAvisoAoUsuario("Atenção, autentique em ");
+
+            SBCore.enviarAvisoAoUsuario("Atenção, autentique autentique utilizando a url: " + pAutenticacao.getUrlObterCodigoSolicitacao());
+
         } else if (SBCore.isEmModoDesenvolvimento()) {
             List<String> respostaServidor = UTilSBCoreInputs.getStringsByURL(pAutenticacao.getUrlRetornoReceberCodigoSolicitacao() + "/" + PATH_TESTE_DE_VIDA_SERVICO_RECEPCAO);
             if (respostaServidor == null) {
@@ -34,6 +38,17 @@ public class UtilSBApiRestClientOauth2 {
             }
             String urlAutenticacao = pAutenticacao.getUrlObterCodigoSolicitacao();
             UtilSBCoreWebBrowser.abrirLinkEmBrownser(urlAutenticacao);
+            int tentativas = 0;
+            if (!pAutenticacao.isCodigoSolicitacaoRegistrado() && tentativas < 5) {
+
+                try {
+                    System.out.println("Aguardando Autenticação do usuário");
+                    Thread.sleep(5000);
+                    tentativas++;
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(UtilSBApiRestClientOauth2.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         } else {
 
         }

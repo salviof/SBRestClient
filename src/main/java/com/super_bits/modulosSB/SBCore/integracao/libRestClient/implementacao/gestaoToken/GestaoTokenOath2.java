@@ -53,6 +53,7 @@ public abstract class GestaoTokenOath2 extends GestaoTokenOath2Base implements I
         urlRetornoSucessoObterToken = gerarUrlRetornoSucessoGeracaoTokenDeAcesso();
         urlRetornoReceberCodigoSolicitacao = gerarUrlServicoReceberCodigoSolicitacao();
         urlObterCodigoSolicitacao = gerarUrlAutenticaoObterCodigoSolicitacaoToken();
+        loadTokenArmazenado();
     }
 
     @Override

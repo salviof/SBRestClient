@@ -4,8 +4,10 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient;
 
+import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.RespostaWebServiceRestIntegracao;
 import static java.lang.Thread.sleep;
+import org.coletivojava.fw.api.tratamentoErros.FabErro;
 
 /**
  *
@@ -27,12 +29,15 @@ public abstract class ConsumoWSExecucao extends Thread {
     @Override
     public synchronized void run() {
         try {
-            RespostaWebServiceSimples resp = efetuarConexao();
-            respostaWS = new RespostaWebServiceRestIntegracao(resp);
-            resposta = resp.getResposta();
-            codigoResposta = resp.getCodigoResposta();
-            erroMsg = resp.getRespostaErro();
-
+            try {
+                RespostaWebServiceSimples resp = efetuarConexao();
+                respostaWS = new RespostaWebServiceRestIntegracao(resp);
+                resposta = resp.getResposta();
+                codigoResposta = resp.getCodigoResposta();
+                erroMsg = resp.getRespostaErro();
+            } catch (Throwable t) {
+                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Falha obtendo resposta comunicação HTTP", t);
+            }
         } finally {
             finalizou = true;
         }

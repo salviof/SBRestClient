@@ -5,6 +5,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
+import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfApiRestHeaderPadrao;
 import java.util.HashMap;
@@ -46,6 +47,8 @@ public class AcaoApiIntegracaoHeaderBuilder implements ItfApiRestHeaderPadrao {
         if (acao.isMetodoEnviaDados()) {
             cabecalho.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(acao.getCorpoRequisicao().length()));
         }
+        // Muitos serviços REST exigem a definição do usuário agente.
+        cabecalho.put("User-Agent", "coletivoJavaApiClient (1.0) " + SBCore.getNomeProjeto());
 
     }
 
