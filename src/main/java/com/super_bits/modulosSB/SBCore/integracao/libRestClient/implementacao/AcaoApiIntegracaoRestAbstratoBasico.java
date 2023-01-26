@@ -192,7 +192,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
 
                 @Override
                 public RespostaWebServiceSimples efetuarConexao() {
-                    return buildResposta(UtilSBApiRestClient.getRespostaRest(
+                    return gerarRespostaTratamentoFino(UtilSBApiRestClient.getRespostaRest(
                             urlRequisicaoGerada, tipoRequisicao, postarInformacoes, cabecalhoGerado, corpoRequisicaoGerado, infoRest.aceitarCertificadoDeHostNaoConfiavel()));
 
                 }
@@ -203,7 +203,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
         }
     }
 
-    protected RespostaWebServiceSimples buildResposta(RespostaWebServiceSimples pRespostaWSSemTratamento) {
+    protected RespostaWebServiceSimples gerarRespostaTratamentoFino(RespostaWebServiceSimples pRespostaWSSemTratamento) {
         try {
             if (pRespostaWSSemTratamento == null) {
                 throw new UnsupportedOperationException("Nenhuma resposta foi gerada");

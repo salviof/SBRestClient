@@ -61,7 +61,7 @@ public class RespostaWebServiceSimples implements ItfRespostaWebServiceSimples, 
                 addErro("Falha de conexão com API");
                 break;
             case RECURSO_NAO_ENCONTRADO:
-                addErro("Recurso não encontrado Código: " + pCodigo);
+                addErro("Requisição inválida, recurso não encontrado Código: " + pCodigo);
                 break;
             default:
                 throw new AssertionError(tipoRetorno.name());
@@ -87,13 +87,9 @@ public class RespostaWebServiceSimples implements ItfRespostaWebServiceSimples, 
     @Override
     public JsonObject getRespostaComoObjetoJson() {
         try {
-            if (isSucesso()) {
 
-                return UtilSBCoreJson.getJsonObjectByTexto((String) getRetorno());
+            return UtilSBCoreJson.getJsonObjectByTexto((String) getRetorno());
 
-            } else {
-                return null;
-            }
         } catch (Throwable t) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro interpretando Json" + t.getMessage() + "->" + getRetorno(), t);
             return null;

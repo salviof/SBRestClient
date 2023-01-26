@@ -8,6 +8,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.g
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ItfConfigModulo;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.FabStatusToken;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenDeAcessoExterno;
@@ -100,18 +101,24 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
     @Override
     public boolean excluirToken() {
         token = null;
-        switch (tipoAgente) {
-            case USUARIO:
-                getConfig().getRepositorioDeArquivosExternos().putConteudoRecursoExterno(usuario.getEmail(), "");
-                break;
-            case SISTEMA:
-                getConfig().getRepositorioDeArquivosExternos().putConteudoRecursoExterno("tokensistema", "");
-                break;
-            default:
-                throw new AssertionError(tipoAgente.name());
 
+        try {
+            switch (tipoAgente) {
+                case USUARIO:
+                    getConfig().getRepositorioDeArquivosExternos().putConteudoRecursoExterno(getIdentificacaoToken(), "");
+                    break;
+                case SISTEMA:
+                    getConfig().getRepositorioDeArquivosExternos().putConteudoRecursoExterno(getIdentificacaoToken(), "");
+                    break;
+                default:
+                    throw new AssertionError(tipoAgente.name());
+
+            }
+            return true;
+        } catch (Throwable t) {
+            return false;
         }
-        return true;
+
     }
 
     protected void setToken(ItfTokenDeAcessoExterno pToken) {

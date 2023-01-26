@@ -7,11 +7,13 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.erp.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfBeanSimples;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.ItemSimples;
 import jakarta.json.JsonObject;
 import java.util.List;
 import java.util.Map;
+import org.coletivojava.fw.api.tratamentoErros.FabErro;
 
 /**
  *
@@ -46,7 +48,6 @@ public class DTO_SBGENERICO<T extends ItfDTOSBJSON> extends ItemSimples implemen
                 dtoDecoratorGettersInstanciado = new ObjectMapper().readValue(pJson, (Class<T>) this.getClass());
 
                 ObjectMapper mapper = new ObjectMapper();
-
                 SimpleModule mod = new SimpleModule(pclasseProcessador.getSimpleName());
 
                 try {
@@ -60,8 +61,10 @@ public class DTO_SBGENERICO<T extends ItfDTOSBJSON> extends ItemSimples implemen
                 }
             } catch (Throwable t) {
                 System.out.println("UP");
+                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Falha processando json em DTO", t);
+                throw new UnsupportedOperationException("Falha iniciando DTO");
             }
-            throw new UnsupportedOperationException("Falha iniciando DTO");
+
         }
 
     }

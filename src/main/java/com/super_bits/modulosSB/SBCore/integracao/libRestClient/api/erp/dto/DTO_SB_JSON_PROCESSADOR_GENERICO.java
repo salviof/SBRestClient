@@ -62,17 +62,27 @@ public abstract class DTO_SB_JSON_PROCESSADOR_GENERICO<T> extends StdDeserialize
 
     protected boolean adicionarPropriedadeInteiro(String pnome, JsonNode node, String pCaminho) {
         try {
-            getObjectBuilder().add(pnome.toLowerCase(), node.get(pCaminho).asInt());
+
+            //As int retorna sempre nulo
+            int valor = node.get(pCaminho).asInt();
+
+            getObjectBuilder().add(pnome.toLowerCase(), valor);
             return true;
         } catch (Throwable t) {
             return false;
         }
     }
 
-    protected boolean adicionarPropriedadeBoolean(String pnome, String valorVerdadeiro, JsonNode node, String pCaminho) {
+    protected boolean adicionarPropriedadeBoolean(String pnome, String pValorEsperado, JsonNode node, String pCaminho) {
         try {
-
-            getObjectBuilder().add(pnome.toLowerCase(), node.get(pCaminho).asText().equals(valorVerdadeiro));
+            String valorEncontrado = node.get(pCaminho).asText();
+            if (valorEncontrado == null) {
+                if (pValorEsperado == null) {
+                    getObjectBuilder().add(pnome.toLowerCase(), true);
+                    return true;
+                }
+            }
+            getObjectBuilder().add(pnome.toLowerCase(), valorEncontrado.equals(pValorEsperado));
             return true;
         } catch (Throwable t) {
             return false;
@@ -116,10 +126,10 @@ public abstract class DTO_SB_JSON_PROCESSADOR_GENERICO<T> extends StdDeserialize
         }
     }
 
-    protected boolean adicionarPropriedadeData(String pnome, JsonNode node, String caminho) {
+    protected boolean adicionarPropriedadeData(String pnome, JsonNode node, String pValor) {
         try {
 
-            String valor = node.get(caminho).asText();
+            String valor = node.get(pValor).asText();
             if (valor.charAt(4) == '-') {
                 SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -135,18 +145,18 @@ public abstract class DTO_SB_JSON_PROCESSADOR_GENERICO<T> extends StdDeserialize
         }
     }
 
-    protected boolean adicionarPropriedadeString(String pnome, JsonNode node, String caminho) {
+    protected boolean adicionarPropriedadeString(String pnome, JsonNode node, String pCaminho) {
         try {
-            getObjectBuilder().add(pnome.toLowerCase(), node.get(caminho).asText());
+            getObjectBuilder().add(pnome.toLowerCase(), node.get(pCaminho).asText());
             return true;
         } catch (Throwable t) {
             return false;
         }
     }
 
-    protected boolean adicionarPropriedadeListaObjetos(Class classeObjeto, String pAtributo, JsonNode node, String caminho) {
+    protected boolean adicionarPropriedadeListaObjetos(Class classeObjeto, String pAtributo, JsonNode node, String pCaminho) {
 
-        JsonNode jsonAnalizado = node.get(caminho);
+        JsonNode jsonAnalizado = node.get(pCaminho);
         List<DTO_SBGENERICO> itens = new ArrayList();
 
         for (Iterator<JsonNode> iterator = jsonAnalizado.elements(); iterator.hasNext();) {
