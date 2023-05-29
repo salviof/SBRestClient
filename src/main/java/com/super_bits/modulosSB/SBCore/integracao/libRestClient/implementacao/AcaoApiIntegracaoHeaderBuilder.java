@@ -36,8 +36,7 @@ public class AcaoApiIntegracaoHeaderBuilder implements ItfApiRestHeaderPadrao {
         return cabecalho;
     }
 
-    public void buildHeaderPadrao() {
-
+    public void gerarHeaderPadrao() {
         if (acao.infoRest.tipoInformacaoEnviada().getMediaType() != null) {
             cabecalho.put(HttpHeaders.CONTENT_TYPE, acao.infoRest.tipoInformacaoEnviada().getMediaType().toString());
         }
@@ -49,6 +48,15 @@ public class AcaoApiIntegracaoHeaderBuilder implements ItfApiRestHeaderPadrao {
         }
         // Muitos serviços REST exigem a definição do usuário agente.
         cabecalho.put("User-Agent", "coletivoJavaApiClient (1.0) " + SBCore.getNomeProjeto());
+    }
+
+    /**
+     *
+     * @deprecated Utilizar gerarHeaderPadrao
+     */
+    @Deprecated
+    public void buildHeaderPadrao() {
+        gerarHeaderPadrao();
 
     }
 

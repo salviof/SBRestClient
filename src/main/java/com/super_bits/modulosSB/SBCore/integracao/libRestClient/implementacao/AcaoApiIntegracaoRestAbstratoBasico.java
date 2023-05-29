@@ -24,6 +24,8 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
 import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 
@@ -91,7 +93,8 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
                     for (String p : parametrosRelatadosUrl) {
                         int idParametro = Integer.valueOf(p);
                         String valor = String.valueOf(parametros[idParametro]);
-                        urlReq = urlReq.replace("{" + p + "}", valor);
+                        String parametroEncode = URLEncoder.encode(valor, StandardCharsets.UTF_8.toString());
+                        urlReq = urlReq.replace("{" + p + "}", parametroEncode);
                     }
 
                 }

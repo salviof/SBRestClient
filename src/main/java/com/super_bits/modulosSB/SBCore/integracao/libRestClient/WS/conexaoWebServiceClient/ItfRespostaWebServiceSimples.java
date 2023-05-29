@@ -5,6 +5,7 @@
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient;
 
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfResposta;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import org.json.simple.JSONObject;
 
@@ -15,6 +16,8 @@ import org.json.simple.JSONObject;
 public interface ItfRespostaWebServiceSimples extends ItfResposta {
 
     public JsonObject getRespostaComoObjetoJson();
+
+    public JsonArray getRespostaComoObjetoJsonArray();
 
     public String getRespostaTexto();
 

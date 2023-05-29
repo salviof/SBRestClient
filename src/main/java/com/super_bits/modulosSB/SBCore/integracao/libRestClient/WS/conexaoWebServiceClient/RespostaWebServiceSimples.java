@@ -10,6 +10,7 @@ import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfResposta;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.comunicacao.RespostaSimples;
 import com.super_bits.modulosSB.SBCore.modulos.Mensagens.ItfMensagem;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import java.util.List;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
@@ -89,6 +90,18 @@ public class RespostaWebServiceSimples implements ItfRespostaWebServiceSimples, 
         try {
 
             return UtilSBCoreJson.getJsonObjectByTexto((String) getRetorno());
+
+        } catch (Throwable t) {
+            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro interpretando Json" + t.getMessage() + "->" + getRetorno(), t);
+            return null;
+        }
+    }
+
+    @Override
+    public JsonArray getRespostaComoObjetoJsonArray() {
+        try {
+
+            return UtilSBCoreJson.getJsonArrayByTexto((String) getRetorno());
 
         } catch (Throwable t) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro interpretando Json" + t.getMessage() + "->" + getRetorno(), t);

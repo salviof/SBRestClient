@@ -9,6 +9,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebSer
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfResposta;
 import com.super_bits.modulosSB.SBCore.modulos.Mensagens.ItfMensagem;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import java.util.List;
 
@@ -72,6 +73,11 @@ public class RespostaWebServiceRestIntegracao implements ItfRespostaWebServiceSi
     @Override
     public JsonObject getRespostaComoObjetoJson() {
         return respostaWs.getRespostaComoObjetoJson();
+    }
+
+    @Override
+    public JsonArray getRespostaComoObjetoJsonArray() {
+        return respostaWs.getRespostaComoObjetoJsonArray();
     }
 
     @Override

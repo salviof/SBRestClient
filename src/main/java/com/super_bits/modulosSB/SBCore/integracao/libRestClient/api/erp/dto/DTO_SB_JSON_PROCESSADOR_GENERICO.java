@@ -62,9 +62,16 @@ public abstract class DTO_SB_JSON_PROCESSADOR_GENERICO<T> extends StdDeserialize
 
     protected boolean adicionarPropriedadeInteiro(String pnome, JsonNode node, String pCaminho) {
         try {
-
-            //As int retorna sempre nulo
-            int valor = node.get(pCaminho).asInt();
+            int valor = -1;
+            if (node.get(pCaminho).isInt()) {
+                //As int retorna sempre nulo
+                valor = node.get(pCaminho).asInt();
+            }
+            if (node.get(pCaminho).isTextual()) {
+                valor = node.get(pCaminho).asText().hashCode();
+            } else {
+                valor = node.get(pCaminho).asInt();
+            }
 
             getObjectBuilder().add(pnome.toLowerCase(), valor);
             return true;
