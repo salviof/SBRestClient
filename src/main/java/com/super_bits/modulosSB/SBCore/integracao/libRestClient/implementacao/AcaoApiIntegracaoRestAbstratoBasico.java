@@ -26,6 +26,7 @@ import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -87,17 +88,33 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
 
                 if (urlReq.contains("{")) {
                     List<String> parametrosRelatadosUrl = UtilSBCoreStringBuscaTrecho.getPartesEntreChaves(urlReq);
-                    if (parametrosRelatadosUrl.size() > getParametros().length) {
+                    List<String> parametrosObrigatorios = new ArrayList<>();
+                    List<String> parametrosOpcionais = new ArrayList<>();
+                    parametrosRelatadosUrl.stream().filter(pr -> pr.length() > 1).forEach(parametrosOpcionais::add);
+                    parametrosRelatadosUrl.stream().filter(pr -> pr.length() == 1).forEach(parametrosObrigatorios::add);
+                    if (parametrosObrigatorios.size() > getParametros().length) {
                         throw new UnsupportedOperationException("São experados" + parametrosRelatadosUrl.size() + " parametros");
                     }
                     for (String p : parametrosRelatadosUrl) {
+                        boolean opcional = p.length() > 1;
                         int idParametro = Integer.valueOf(p);
-                        String valor = String.valueOf(parametros[idParametro]);
-                        String parametroEncode = URLEncoder.encode(valor, StandardCharsets.UTF_8.toString());
-                        urlReq = urlReq.replace("{" + p + "}", parametroEncode);
+                        if (!opcional) {
+                            String valor = String.valueOf(parametros[idParametro]);
+                            String parametroEncode = URLEncoder.encode(valor, StandardCharsets.UTF_8.toString());
+                            urlReq = urlReq.replace("{" + p + "}", parametroEncode);
+                        } else {
+                            if (parametros.length <= idParametro) {
+                                urlReq = urlReq.replace("{" + p + "}", "");
+                            } else {
+                                String valor = String.valueOf(parametros[idParametro]);
+                                String parametroEncode = URLEncoder.encode(valor, StandardCharsets.UTF_8.toString());
+                                urlReq = urlReq.replace("{" + p + "}", parametroEncode);
+                            }
+                        }
                     }
 
                 }
+                urlReq = urlReq.replace("////", "");
                 return urlReq;
             } catch (Throwable t) {
                 SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro criando url de solicitação em " + this.getClass().getSimpleName(), t);
