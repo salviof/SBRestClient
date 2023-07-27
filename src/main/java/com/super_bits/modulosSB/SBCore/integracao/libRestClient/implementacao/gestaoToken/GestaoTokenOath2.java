@@ -33,10 +33,10 @@ public abstract class GestaoTokenOath2 extends GestaoTokenOath2Base implements I
         super(pClasseEndpointsClass,
                 pTipoAgente, pUsuario, null);
         try {
-            urlServidorApiRest = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API);
-            chavePrivada = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.CHAVE_PRIVADA);
-            chavePublica = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.CHAVE_PUBLICA);
-            siteCliente = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH);
+            urlServidorApiRest = getConfig().getPropriedade(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API);
+            chavePrivada = getConfig().getPropriedade(FabPropriedadeModuloIntegracaoOauth.CHAVE_PRIVADA);
+            chavePublica = getConfig().getPropriedade(FabPropriedadeModuloIntegracaoOauth.CHAVE_PUBLICA);
+            siteCliente = getConfig().getPropriedade(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH);
             loadDadosIniciais();
 
             if (urlServidorApiRest == null) {

@@ -99,14 +99,14 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
                         boolean opcional = p.length() > 1;
                         int idParametro = Integer.valueOf(p);
                         if (!opcional) {
-                            String valor = String.valueOf(parametros[idParametro]);
+                            String valor = String.valueOf(getParametros()[idParametro]);
                             String parametroEncode = URLEncoder.encode(valor, StandardCharsets.UTF_8.toString());
                             urlReq = urlReq.replace("{" + p + "}", parametroEncode);
                         } else {
-                            if (parametros.length <= idParametro) {
+                            if (parametros.size() <= idParametro) {
                                 urlReq = urlReq.replace("{" + p + "}", "");
                             } else {
-                                String valor = String.valueOf(parametros[idParametro]);
+                                String valor = String.valueOf(getParametros()[idParametro]);
                                 String parametroEncode = URLEncoder.encode(valor, StandardCharsets.UTF_8.toString());
                                 urlReq = urlReq.replace("{" + p + "}", parametroEncode);
                             }
@@ -325,7 +325,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
             return 0;
 
         } else {
-            return parametros.length;
+            return parametros.size();
         }
 
     }

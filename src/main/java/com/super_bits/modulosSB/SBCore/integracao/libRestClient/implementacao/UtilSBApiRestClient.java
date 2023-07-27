@@ -337,7 +337,8 @@ public class UtilSBApiRestClient {
                         Object[].class);
                 return (ItfAcaoApiRest) constructorERP.newInstance(identificacao,
                         pTipoAgente, SBCore.getUsuarioLogado(),
-                        new Object[]{pParametros});
+                        pParametros);
+                //new Object[]{pParametros});
 
             }
 
@@ -428,7 +429,7 @@ public class UtilSBApiRestClient {
 
     public static String gerarUrlServicoReceberCodigoSolicitacaoPadrao(ItfTokenGestaoOauth pEndPoint, String pCaminhoParametroCodigo) {
 
-        return gerarUrlServicoReceberCodigoSolicitacaoPadrao(pEndPoint.getClass(), pEndPoint.getTipoAgente(), pCaminhoParametroCodigo, pEndPoint.getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH));
+        return gerarUrlServicoReceberCodigoSolicitacaoPadrao(pEndPoint.getClass(), pEndPoint.getTipoAgente(), pCaminhoParametroCodigo, pEndPoint.getConfig().getPropriedade(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH));
 
     }
 

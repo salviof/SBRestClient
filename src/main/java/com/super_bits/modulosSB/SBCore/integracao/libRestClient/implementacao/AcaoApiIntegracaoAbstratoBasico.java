@@ -4,6 +4,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
+import com.google.common.collect.Lists;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
@@ -15,6 +16,9 @@ import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfResposta
 import com.super_bits.modulosSB.SBCore.modulos.erp.ItfSistemaERP;
 import com.super_bits.modulosSB.SBCore.modulos.erp.SolicitacaoControllerERP;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -28,20 +32,41 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiClien
 
     protected ItfResposta resposta;
     private final ItfUsuario usuario;
-    protected Object[] parametros;
+    protected List<Object> parametros;
     private final FabTipoAgenteClienteApi tipoAgente;
     private final String idTipoAplicacao;
 
     public AcaoApiIntegracaoAbstratoBasico(String pTipoAplicacao, ItfFabricaIntegracaoRest pIntegracaoEndpoint, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
-        parametros = pParametros;
+
+        parametros = new ArrayList<>();
+
+        if (pParametros != null) {
+            if (pParametros.length == 1) {
+                for (Object pr : pParametros) {
+                    if (pr instanceof Object[]) {
+                        Object[] prtos = (Object[]) pr;
+                        for (Object prEmbended : prtos) {
+                            parametros.add(prEmbended);
+                        }
+
+                    } else {
+                        parametros.add(pr);
+                    }
+                }
+            } else {
+                for (Object pr : pParametros) {
+                    if (pr instanceof Object[]) {
+                        parametros.add(pr);
+                    }
+
+                }
+            }
+
+        }
+
         usuario = pUsuario;
         fabricaIntegracao = pIntegracaoEndpoint;
         idTipoAplicacao = pTipoAplicacao;
-        if (pParametros != null) {
-            parametros = (Object[]) pParametros[0];
-        } else {
-            parametros = null;
-        }
 
         if (usuario == null) {
             tipoAgente = FabTipoAgenteClienteApi.SISTEMA;
@@ -69,7 +94,8 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiClien
 
     @Override
     public Object[] getParametros() {
-        return parametros;
+
+        return parametros.toArray();
     }
 
     @Override
@@ -97,7 +123,7 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiClien
 
     @Override
     public ItfTokenGestao getTokenGestao() {
-        String prIDsistema = getIdentificadorSisteServicoByParametros(parametros);
+        String prIDsistema = getIdentificadorSisteServicoByParametros(getParametros());
 
         if (prIDsistema != null) {
             tokenGestao = MapaTokensGerenciados.getAutenticadorUsuario(fabricaIntegracao.getClasseGestaoOauth(), SBCore.getUsuarioLogado(), prIDsistema);

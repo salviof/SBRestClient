@@ -4,13 +4,14 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth;
 
+import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ItfFabConfigModulo;
 import com.super_bits.modulosSB.SBCore.modulos.fabrica.ItfFabrica;
 
 /**
  *
  * @author SalvioF
  */
-public enum FabPropriedadeModuloIntegracaoOauth implements ItfFabrica {
+public enum FabPropriedadeModuloIntegracaoOauth implements ItfFabConfigModulo, ItfFabrica {
 
     CHAVE_PUBLICA,
     CHAVE_PRIVADA,
@@ -18,5 +19,27 @@ public enum FabPropriedadeModuloIntegracaoOauth implements ItfFabrica {
     URL_SERVIDOR_API,
     USUARIO,
     SENHA;
+
+    @Override
+    public String getValorPadrao() {
+        switch (this) {
+            case CHAVE_PUBLICA:
+                break;
+            case CHAVE_PRIVADA:
+                break;
+            case URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH:
+                break;
+            case URL_SERVIDOR_API:
+                break;
+            case USUARIO:
+                break;
+            case SENHA:
+                break;
+
+            default:
+                throw new AssertionError();
+        }
+        return "não definido";
+    }
 
 }
