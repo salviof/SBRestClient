@@ -37,8 +37,8 @@ public class AcaoApiIntegracaoHeaderBuilder implements ItfApiRestHeaderPadrao {
     }
 
     public void gerarHeaderPadrao() {
-        if (acao.infoRest.tipoInformacaoEnviada().getMediaType() != null) {
-            cabecalho.put(HttpHeaders.CONTENT_TYPE, acao.infoRest.tipoInformacaoEnviada().getMediaType().toString());
+        if (acao.infoRest.tipoInformacaoEnviada().getTextoHeaderContentType() != null) {
+            cabecalho.put(HttpHeaders.CONTENT_TYPE, acao.infoRest.tipoInformacaoEnviada().getTextoHeaderContentType());
         }
         if (acao.infoRest.adicionarAutenticacaoBearer()) {
             cabecalho.put("Authorization", "Bearer " + acao.getTokenGestao().getToken());

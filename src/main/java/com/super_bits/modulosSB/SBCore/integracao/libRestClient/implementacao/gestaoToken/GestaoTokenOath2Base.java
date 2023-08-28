@@ -23,12 +23,7 @@ import java.lang.reflect.Constructor;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
-import org.json.simple.JSONObject;
 
-/**
- *
- * @author sfurbino
- */
 public abstract class GestaoTokenOath2Base extends GestaoTokenDinamico implements ItfTokenGestaoOauth {
 
     protected String codigoSolicitacao;
@@ -164,7 +159,7 @@ public abstract class GestaoTokenOath2Base extends GestaoTokenDinamico implement
                 loadTokenArmazenado();
                 return getTokenCompleto();
             }
-
+            
         } catch (Throwable t) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro " + t.getMessage(), t);
         }
@@ -178,6 +173,7 @@ public abstract class GestaoTokenOath2Base extends GestaoTokenDinamico implement
     public boolean excluirToken() {
         try {
             getConfig().getRepositorioDeArquivosExternos().putConteudoRecursoExterno(getIdentificacaoToken(), "");
+            setToken(null);
             return true;
         } catch (Throwable t) {
             return false;

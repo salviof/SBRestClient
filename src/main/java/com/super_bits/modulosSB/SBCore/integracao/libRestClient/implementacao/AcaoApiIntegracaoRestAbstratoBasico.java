@@ -240,7 +240,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
         return ((tipoRequisicao.equals(FabTipoConexaoRest.PUT)) || (tipoRequisicao.equals(FabTipoConexaoRest.POST)));
     }
 
-    protected String getCorpoRequisicao() {
+    protected final String getCorpoRequisicao() {
         return corpoRequisicaoGerado;
     }
 

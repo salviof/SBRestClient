@@ -5,7 +5,10 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
+import com.google.common.collect.Lists;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJsonRest;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringSlugs;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoApi;
@@ -33,12 +36,18 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.conexao.ssl.EstrategiaConfiarEmTodos;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.conexao.ssl.HostnameVerifierPromiscuo;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.erro.ErroRecebendoCodigoDeAcesso;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados;
+import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfResposta;
+import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
 import com.super_bits.modulosSB.SBCore.modulos.erp.ItfSistemaERP;
 import com.super_bits.modulosSB.SBCore.modulos.erp.SolicitacaoControllerERP;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfSessao;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import com.super_bits.modulosSB.SBCore.modulos.servicosCore.ItfControleDeSessao;
 import com.super_bits.modulosSB.webPaginas.controller.servletes.urls.UrlInterpretada;
 import com.super_bits.modulosSB.webPaginas.controller.servletes.util.UtilFabUrlServlet;
+import jakarta.json.JsonObjectBuilder;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
@@ -50,12 +59,12 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.TrustAllStrategy;
@@ -322,6 +331,37 @@ public class UtilSBApiRestClient {
         return null;
     }
 
+    public static ItfAcaoApiRest getAcaoDoContexto(ItfFabricaIntegracaoApi p, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, SolicitacaoControllerERP pSolicitacao, boolean pAdmin) {
+        Class classeImp = UtilSBIntegracaoClientReflexao.getClasseImplementacao((ItfFabricaIntegracaoApi) p);
+        try {
+            if (pTipoAgente.equals(FabTipoAgenteClienteApi.USUARIO) && pUsuario == null) {
+                pUsuario = SBCore.getUsuarioLogado();
+            }
+            String identificacao = pSolicitacao.getErpServico();
+
+            if (identificacao != null) {
+
+                Constructor constructorERP = classeImp.getConstructor(String.class, FabTipoAgenteClienteApi.class,
+                        ItfUsuario.class,
+                        Object[].class);
+                return (ItfAcaoApiRest) constructorERP.newInstance(identificacao,
+                        pTipoAgente, SBCore.getUsuarioLogado(),
+                        pSolicitacao);
+                //new Object[]{pParametros});
+
+            }
+
+            return (ItfAcaoApiRest) classeImp.getConstructor(FabTipoAgenteClienteApi.class, ItfUsuario.class, Object[].class).newInstance(pTipoAgente, pUsuario, new Object[]{pSolicitacao});
+        } catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException ex) {
+            if (classeImp != null) {
+                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Nenhum constructo válido foi encontrado para classse " + classeImp.getSimpleName(), ex);
+            } else {
+                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Nenhuma implementação encontrada no caminho: " + UtilSBIntegracaoClientReflexao.getNomeCanonicoClasseImplementacao(p), ex);
+            }
+        }
+        return null;
+    }
+
     public static ItfAcaoApiRest getAcaoDoContexto(ItfFabricaIntegracaoApi p, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
         Class classeImp = UtilSBIntegracaoClientReflexao.getClasseImplementacao((ItfFabricaIntegracaoApi) p);
         try {
@@ -357,11 +397,70 @@ public class UtilSBApiRestClient {
         return receberCodigoSolicitacaoOauth(req, null);
     }
 
+    public static void servletReceberCodigoConcessao(HttpServletRequest req, HttpServletResponse resp, ItfSessao pSessaoAtual) throws ErroRecebendoCodigoDeAcesso {
+        String respostaTestReader = new String();
+        try {
+            String resposta;
+            JsonObjectBuilder respostaJson;
+
+            if (req.getRequestURI().contains(UtilSBApiRestClientOauth2.PATH_TESTE_DE_VIDA_SERVICO_RECEPCAO)) {
+                resp.setStatus(200);
+                respostaJson = UtilSBCoreJsonRest.getRespostaJsonBuilderBase(true, ItfResposta.Resultado.SUCESSO, Lists.newArrayList(FabMensagens.AVISO.getMsgUsuario("EUTÔVIVO")));
+                resposta = UtilSBCoreJson.getTextoByJsonObjeect(respostaJson.build());
+                respostaTestReader = resposta;
+                resp.getWriter().append(resposta);
+                resp.getWriter().close();
+
+                return;
+            }
+            String tipoAplicacao = req.getParameter("tipoAplicacao");
+            if (tipoAplicacao == null) {
+                throw new ErroRecebendoCodigoDeAcesso("Tipo aplicação não enviado");
+            }
+            String escopo = req.getParameter("escopo");
+            if (escopo == null) {
+                escopo = "usuario";
+            }
+            if (tipoAplicacao == null) {
+                throw new ErroRecebendoCodigoDeAcesso("Escopo não enviado");
+            }
+            boolean respostaEscopoDeSistema = escopo.contains("sistema");
+            req.setAttribute("usuario", pSessaoAtual.getUsuario());
+
+            if (!UtilSBApiRestClient.receberCodigoSolicitacaoOauth(req, tipoAplicacao)) {
+                throw new ErroRecebendoCodigoDeAcesso("falha recebendo codigo de solictação de token Oauth");
+            }
+            if (respostaEscopoDeSistema) {
+                respostaJson = UtilSBCoreJsonRest.getRespostaJsonBuilderBase(true, ItfResposta.Resultado.SUCESSO, Lists.newArrayList(FabMensagens.AVISO.getMsgUsuario("Chave de Aceso armazenada com sucesso, você está conectado com a aplicação.")));
+                resposta = UtilSBCoreJson.getTextoByJsonObjeect(respostaJson.build());
+            } else {
+                resposta = "Chave de Aceso armazenada com sucesso, você está conectado com a aplicação.";
+            }
+
+            if (SBCore.isEmModoDesenvolvimento()) {
+                try {
+                    respostaTestReader = resposta;
+                    resp.getWriter().append(resposta);
+                    resp.flushBuffer();
+                } catch (Throwable t) {
+
+                }
+            } else {
+                resp.getWriter().append(resposta);
+                resp.flushBuffer();
+            }
+
+        } catch (Throwable t) {
+            throw new ErroRecebendoCodigoDeAcesso(t.getMessage());
+
+        }
+    }
+
     public static boolean receberCodigoSolicitacaoOauth(HttpServletRequest req, String pidAplicacaoERP) {
 
         try {
             UrlInterpretada parametrosDeUrl;
-
+            String patch = req.getPathInfo();
             parametrosDeUrl = UtilFabUrlServlet.getUrlInterpretada(FabUrlServletRecepcaoOauth.class, req);
 
             String nomeParametroRetorno = parametrosDeUrl.getValorComoString(FabUrlServletRecepcaoOauth.NOME_PARAMETRO);
@@ -390,6 +489,12 @@ public class UtilSBApiRestClient {
                         break;
                     case SISTEMA:
                         conexao = (ItfTokenGestaoOauth) MapaTokensGerenciados.getAutenticadorSistema(nomeModulo);
+                        if (conexao == null) {
+                            if (pidAplicacaoERP != null) {
+                                conexao = (ItfTokenGestaoOauth) MapaTokensGerenciados
+                                        .getAutenticadorUsuario(nomeModulo, usuario, pidAplicacaoERP);
+                            }
+                        }
                         break;
                     default:
                         throw new AssertionError(tipoCliente.getEnumVinculado().name());

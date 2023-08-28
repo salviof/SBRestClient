@@ -8,6 +8,7 @@ import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.InfoConsumoRestService;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servicoRegistrado.InfoConfigRestClientIntegracao;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiCliente;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
@@ -30,6 +31,11 @@ public interface ItfFabricaIntegracaoRest extends ItfFabricaIntegracaoApi {
     @Override
     public default ItfAcaoApiRest getAcao(Object... parametros) {
         return UtilSBApiRestClient.getAcaoDoContexto(this, FabTipoAgenteClienteApi.SISTEMA, null, parametros);
+    }
+
+    @Override
+    public default ItfAcaoApiRest getAcao(FabTipoAgenteClienteApi pTipo, ItfUsuario pUsuario, Object... parametros) {
+        return UtilSBApiRestClient.getAcaoDoContexto(this, pTipo, pUsuario, parametros);
     }
 
     @Override

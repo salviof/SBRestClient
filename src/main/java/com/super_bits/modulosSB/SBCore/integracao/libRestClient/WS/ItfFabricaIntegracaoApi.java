@@ -26,6 +26,10 @@ public interface ItfFabricaIntegracaoApi {
         return UtilSBApiRestClient.getAcaoDoContexto(this, FabTipoAgenteClienteApi.SISTEMA, null, parametros);
     }
 
+    public default ItfAcaoApiCliente getAcao(FabTipoAgenteClienteApi pTipo, ItfUsuario pUsuario, Object... parametros) {
+        return UtilSBApiRestClient.getAcaoDoContexto(this, pTipo, pUsuario, parametros);
+    }
+
     public default ItfAcaoApiCliente getAcao(ItfUsuario pUsuario, Object... parametros) {
         return UtilSBApiRestClient.getAcaoDoContexto(this, FabTipoAgenteClienteApi.USUARIO, pUsuario, parametros);
     }

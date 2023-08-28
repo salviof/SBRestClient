@@ -8,7 +8,10 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UTilSBCoreInputs;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreWebBrowser;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.FabTipoConexaoRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,35 +25,51 @@ public class UtilSBApiRestClientOauth2 {
     public static final String PATH_TESTE_DE_VIDA_SERVICO_RECEPCAO = "TESTEVIDA";
 
     public static void solicitarAutenticacaoExterna(ItfTokenGestaoOauth pAutenticacao) {
+        switch (pAutenticacao.getTipoAgente()) {
 
-        if (SBCore.isEmModoProducao()) {
-            //todo abrir na pagina
+            case USUARIO:
+                if (SBCore.isEmModoDesenvolvimento()) {
+                    //todo abrir na pagina
+                    List<String> respostaServidor = UTilSBCoreInputs.getStringsByURL(pAutenticacao.getUrlRetornoReceberCodigoSolicitacao() + "/" + PATH_TESTE_DE_VIDA_SERVICO_RECEPCAO);
+                    if (respostaServidor == null) {
+                        try {
+                            throw new UnsupportedOperationException("O serviçoo de recepção não está ativo em " + pAutenticacao.getUrlRetornoReceberCodigoSolicitacao());
+                        } catch (Exception e) {
+                        }
+                    }
+                    String urlAutenticacao = pAutenticacao.getUrlObterCodigoSolicitacao();
+                    UtilSBCoreWebBrowser.abrirLinkEmBrownser(urlAutenticacao);
+                    int tentativas = 0;
+                    if (!pAutenticacao.isCodigoSolicitacaoRegistrado() && tentativas < 5) {
 
-            SBCore.enviarAvisoAoUsuario("Atenção, autentique autentique utilizando a url: " + pAutenticacao.getUrlObterCodigoSolicitacao());
+                        try {
+                            System.out.println("Aguardando Autenticação do usuário");
+                            Thread.sleep(5000);
+                            tentativas++;
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(UtilSBApiRestClientOauth2.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
 
-        } else if (SBCore.isEmModoDesenvolvimento()) {
-            List<String> respostaServidor = UTilSBCoreInputs.getStringsByURL(pAutenticacao.getUrlRetornoReceberCodigoSolicitacao() + "/" + PATH_TESTE_DE_VIDA_SERVICO_RECEPCAO);
-            if (respostaServidor == null) {
-                try {
-                    throw new UnsupportedOperationException("O serviçoo de recepção não está ativo em " + pAutenticacao.getUrlRetornoReceberCodigoSolicitacao());
-                } catch (Exception e) {
+                } else {
+                    SBCore.enviarAvisoAoUsuario("Atenção, autentique redirecionando o usuário para a  a url: " + pAutenticacao.getUrlObterCodigoSolicitacao());
+
                 }
-            }
-            String urlAutenticacao = pAutenticacao.getUrlObterCodigoSolicitacao();
-            UtilSBCoreWebBrowser.abrirLinkEmBrownser(urlAutenticacao);
-            int tentativas = 0;
-            if (!pAutenticacao.isCodigoSolicitacaoRegistrado() && tentativas < 5) {
-
-                try {
-                    System.out.println("Aguardando Autenticação do usuário");
-                    Thread.sleep(5000);
-                    tentativas++;
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(UtilSBApiRestClientOauth2.class.getName()).log(Level.SEVERE, null, ex);
+                break;
+            case SISTEMA:
+                String urlAutenticacao = pAutenticacao.getUrlObterCodigoSolicitacao();
+                System.out.println("Obtendo codigo de concessão via " + urlAutenticacao);
+                RespostaWebServiceSimples respostaSolicitaca = UtilSBApiRestClient.getRespostaRest(urlAutenticacao, FabTipoConexaoRest.GET, false, new HashMap<String, String>(), null);
+                if (respostaSolicitaca.isSucesso()) {
+                    System.out.println("ok");
+                } else {
+                    System.out.println("Falha ao obter token");
+                    System.out.println(respostaSolicitaca.getRespostaTexto());
                 }
-            }
-        } else {
 
+                break;
+            default:
+                throw new AssertionError();
         }
 
     }
