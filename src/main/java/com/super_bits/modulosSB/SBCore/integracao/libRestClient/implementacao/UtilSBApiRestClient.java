@@ -201,6 +201,13 @@ public class UtilSBApiRestClient {
     public static RespostaWebServiceSimples getRespostaRest(String pURL, FabTipoConexaoRest pTipoConexao,
             boolean pPostarInformcoesCorpoRequisicao,
             Map<String, String> pCabecalho, String pCorpoRequisicao, boolean ignorarValidacaoCertificadoSSL) {
+        return getRespostaRest(pURL, pTipoConexao, pPostarInformcoesCorpoRequisicao,
+                pCabecalho, pCorpoRequisicao, null, ignorarValidacaoCertificadoSSL);
+    }
+
+    public static RespostaWebServiceSimples getRespostaRest(String pURL, FabTipoConexaoRest pTipoConexao,
+            boolean pPostarInformcoesCorpoRequisicao,
+            Map<String, String> pCabecalho, String pCorpoRequisicao, byte[] pBytes, boolean ignorarValidacaoCertificadoSSL) {
         String respostaStr = "";
         try {
             // Um get pode ter corpo? validar essa informção antes de ativar
@@ -225,8 +232,17 @@ public class UtilSBApiRestClient {
                     conn.setDoInput(true);
 
                     OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream(), Charset.forName("UTF-8").newEncoder());
+
                     wr.write(pCorpoRequisicao);
                     wr.flush();
+                }
+                if (pBytes != null) {
+                    conn.setDoOutput(true);
+                    conn.setDoInput(true);
+
+                    conn.getOutputStream().write(pBytes);
+                    conn.getOutputStream().flush();
+
                 }
             }
 

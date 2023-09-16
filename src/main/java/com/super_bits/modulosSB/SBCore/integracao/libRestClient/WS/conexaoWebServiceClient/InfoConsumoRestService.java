@@ -48,4 +48,6 @@ public @interface InfoConsumoRestService {
 
     public boolean aceitarCertificadoDeHostNaoConfiavel() default false;
 
+    public boolean corpoRequisicaoEmBytes() default false;
+
 }

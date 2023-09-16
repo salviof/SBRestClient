@@ -39,6 +39,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
     private ConsumoWSExecucao consumoWS;
 
     private String corpoRequisicaoGerado;
+    private byte[] corpoBytesRequisicaoGerado;
     private String urlRequisicaoGerada;
 
     private FabTipoConexaoRest tipoRequisicao;
@@ -138,6 +139,11 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
         return "";
     }
 
+    @Override
+    public byte[] gerarBytesCorpoRequisicao() {
+        return null;
+    }
+
     private boolean defineRequisicaoPostaInformacoes() {
         switch (tipoRequisicao) {
             case POST:
@@ -206,14 +212,25 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
             tipoRequisicao = gerarTipoRequisicao();
             postarInformacoes = defineRequisicaoPostaInformacoes();
             corpoRequisicaoGerado = gerarCorpoRequisicao();
+            if (infoRest.corpoRequisicaoEmBytes()) {
+                corpoBytesRequisicaoGerado = gerarBytesCorpoRequisicao();
+            }
             cabecalhoGerado = gerarCabecalho();
 
             consumoWS = new ConsumoWSExecucao() {
 
                 @Override
                 public RespostaWebServiceSimples efetuarConexao() {
-                    return gerarRespostaTratamentoFino(UtilSBApiRestClient.getRespostaRest(
-                            urlRequisicaoGerada, tipoRequisicao, postarInformacoes, cabecalhoGerado, corpoRequisicaoGerado, infoRest.aceitarCertificadoDeHostNaoConfiavel()));
+                    if (!infoRest.corpoRequisicaoEmBytes()) {
+                        return gerarRespostaTratamentoFino(UtilSBApiRestClient.getRespostaRest(
+                                urlRequisicaoGerada, tipoRequisicao, postarInformacoes, cabecalhoGerado, corpoRequisicaoGerado, infoRest.aceitarCertificadoDeHostNaoConfiavel()));
+                    } else {
+                        return gerarRespostaTratamentoFino(UtilSBApiRestClient.getRespostaRest(
+                                urlRequisicaoGerada, tipoRequisicao, postarInformacoes, cabecalhoGerado,
+                                null,
+                                corpoBytesRequisicaoGerado,
+                                infoRest.aceitarCertificadoDeHostNaoConfiavel()));
+                    }
 
                 }
 

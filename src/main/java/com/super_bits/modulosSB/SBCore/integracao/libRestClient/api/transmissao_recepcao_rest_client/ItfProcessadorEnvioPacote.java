@@ -27,4 +27,6 @@ public interface ItfProcessadorEnvioPacote {
 
     public String gerarCorpoRequisicao();
 
+    public byte[] gerarBytesCorpoRequisicao();
+
 }
