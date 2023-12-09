@@ -42,4 +42,9 @@ public interface ItfGestaoTokenDinamico extends ItfTokenGestao {
 
     public JSONObject loadTokenArmazenadoComoJsonObject();
 
+    public default ItfTokenDeAcessoExterno renovarToken() {
+        excluirToken();
+        return gerarNovoToken();
+    }
+
 }

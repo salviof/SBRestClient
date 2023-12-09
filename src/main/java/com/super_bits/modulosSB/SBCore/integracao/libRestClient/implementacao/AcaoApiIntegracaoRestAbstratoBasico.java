@@ -198,7 +198,21 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
     protected void executarAcao() {
         if (getTokenGestao() == null || !getTokenGestao().isTemTokemAtivo()) {
             try {
-                getTokenGestao().gerarNovoToken();
+                if (getTokenGestao().isTokenTipoGestaoOauth()) {
+                    if (getTokenGestao().getComoGestaoOauth().getTipoAgente().equals(FabTipoAgenteClienteApi.SISTEMA)) {
+                        try {
+                            if (!getTokenGestao().getComoGestaoOauth().isCodigoSolicitacaoRegistrado()) {
+                                UtilSBApiRestClientOauth2.solicitarAutenticacaoExterna(getTokenGestao().getComoGestaoOauth());
+                            }
+                            getTokenGestao().gerarNovoToken();
+                        } catch (Throwable t) {
+                            System.out.println("Fala solicitando código de autenticação");
+                        }
+
+                    }
+                } else {
+                    getTokenGestao().gerarNovoToken();
+                }// pode gerar situalções de to many conections, a gestão do token deve ser feita por controles externos
             } catch (Throwable t) {
                 gerarResposta(null);
                 resposta = new RespostaWebServiceRestIntegracao(t.getMessage(), -1, "Erro indeterminado gerando token de acesso à api." + t.getMessage());
@@ -313,7 +327,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
             }
         } else {
             pConsumoRest.start();
-            System.out.println("Aguardando resposta");
+
             resposta = pConsumoRest.getResposta();
         }
     }

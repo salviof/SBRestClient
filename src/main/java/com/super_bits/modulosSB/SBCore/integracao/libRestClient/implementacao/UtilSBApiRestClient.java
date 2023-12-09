@@ -214,7 +214,9 @@ public class UtilSBApiRestClient {
             //if (pCorpoRequisicao != null && !pCorpoRequisicao.isEmpty()) {
             //  pPostarInformcoesCorpoRequisicao = true;
             //}
-            System.out.println("conectando com" + pURL);
+            if (!SBCore.isEmModoProducao()) {
+                System.out.println("conectando com" + pURL);
+            }
             //       ignorarValidacaoCertificadoSSL = false;
             HttpURLConnection conn = getHTTPConexaoPadrao(pURL, ignorarValidacaoCertificadoSSL);
 
@@ -312,7 +314,7 @@ public class UtilSBApiRestClient {
             }
             return new RespostaWebServiceSimples(codigoResposta, respostaStr, mensagemErro);
         } catch (SSLHandshakeException sslHadshakError) {
-            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Falha estabelecendo handshake SSL com a url:" + pURL, sslHadshakError);
+            //   SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Falha estabelecendo handshake SSL com a url:" + pURL, sslHadshakError);
             if (!respostaStr.isEmpty()) {
                 return new RespostaWebServiceSimples(0, respostaStr, respostaStr);
             } else {
@@ -392,7 +394,7 @@ public class UtilSBApiRestClient {
                         ItfUsuario.class,
                         Object[].class);
                 return (ItfAcaoApiRest) constructorERP.newInstance(identificacao,
-                        pTipoAgente, SBCore.getUsuarioLogado(),
+                        pTipoAgente, pUsuario,
                         pParametros);
                 //new Object[]{pParametros});
 
@@ -431,16 +433,18 @@ public class UtilSBApiRestClient {
             }
             String tipoAplicacao = req.getParameter("tipoAplicacao");
             if (tipoAplicacao == null) {
-                throw new ErroRecebendoCodigoDeAcesso("Tipo aplicação não enviado");
+                //TIpo aplicação não é enviado via parametro
+                //  throw new ErroRecebendoCodigoDeAcesso("Tipo aplicação não enviado");
             }
             String escopo = req.getParameter("escopo");
             if (escopo == null) {
                 escopo = "usuario";
             }
-            if (tipoAplicacao == null) {
-                throw new ErroRecebendoCodigoDeAcesso("Escopo não enviado");
+            if (escopo == null) {
+                //   throw new ErroRecebendoCodigoDeAcesso("Escopo não enviado");
             }
             boolean respostaEscopoDeSistema = escopo.contains("sistema");
+
             req.setAttribute("usuario", pSessaoAtual.getUsuario());
 
             if (!UtilSBApiRestClient.receberCodigoSolicitacaoOauth(req, tipoAplicacao)) {
@@ -484,16 +488,15 @@ public class UtilSBApiRestClient {
             String nomeParametro = req.getParameter(nomeParametroRetorno);
             String codigoSolicitacoa = req.getParameter(nomeParametroRetorno);
             ItfUsuario usuario = null;
-            if (req.getAttribute("usuario") != null) {
-                usuario = (ItfUsuario) req.getAttribute("usuario");
-            }
 
             if (nomeParametro != null) {
                 TipoClienteOauth tipoCliente = (TipoClienteOauth) parametrosDeUrl.getValorComoBeanSimples(FabUrlServletRecepcaoOauth.TIPO_CLIENTE_OAUTH);
                 ItfTokenGestaoOauth conexao = null;
                 switch (tipoCliente.getEnumVinculado()) {
                     case USUARIO:
-
+                        if (req.getAttribute("usuario") != null) {
+                            usuario = (ItfUsuario) req.getAttribute("usuario");
+                        }
                         if (usuario == null) {
                             usuario = SBCore.getUsuarioLogado();
                         }
@@ -504,11 +507,14 @@ public class UtilSBApiRestClient {
                         }
                         break;
                     case SISTEMA:
+
                         conexao = (ItfTokenGestaoOauth) MapaTokensGerenciados.getAutenticadorSistema(nomeModulo);
                         if (conexao == null) {
                             if (pidAplicacaoERP != null) {
+
                                 conexao = (ItfTokenGestaoOauth) MapaTokensGerenciados
-                                        .getAutenticadorUsuario(nomeModulo, usuario, pidAplicacaoERP);
+                                        .getAutenticadorSistema(nomeModulo, pidAplicacaoERP);
+
                             }
                         }
                         break;

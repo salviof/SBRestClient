@@ -42,6 +42,10 @@ public interface ItfTokenGestao {
         return (ItfTokenGestaoOauth) this;
     }
 
+    public default boolean isTokenTipoGestaoOauth() {
+        return this instanceof ItfTokenGestaoOauth;
+    }
+
     public default ItfGestaoTokenDinamico getComoTokenDinamico() {
         return (ItfGestaoTokenDinamico) this;
     }

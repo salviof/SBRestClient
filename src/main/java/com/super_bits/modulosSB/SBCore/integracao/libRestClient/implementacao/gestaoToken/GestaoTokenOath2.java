@@ -9,6 +9,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgent
 
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.FabPropriedadeModuloIntegracaoOauth;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.InfoPropriedadeConfigRestIntegracao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
@@ -33,10 +34,11 @@ public abstract class GestaoTokenOath2 extends GestaoTokenOath2Base implements I
         super(pClasseEndpointsClass,
                 pTipoAgente, pUsuario, null);
         try {
-            urlServidorApiRest = getConfig().getPropriedade(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API);
-            chavePrivada = getConfig().getPropriedade(FabPropriedadeModuloIntegracaoOauth.CHAVE_PRIVADA);
-            chavePublica = getConfig().getPropriedade(FabPropriedadeModuloIntegracaoOauth.CHAVE_PUBLICA);
-            siteCliente = getConfig().getPropriedade(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH);
+
+            urlServidorApiRest = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API);
+            chavePrivada = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.CHAVE_PRIVADA);
+            chavePublica = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.CHAVE_PUBLICA);
+            siteCliente = getConfig().getPropriedadePorAnotacao(FabPropriedadeModuloIntegracaoOauth.URL_SERVIDOR_API_RECEPCAO_TOKEN_OAUTH);
             loadDadosIniciais();
 
             if (urlServidorApiRest == null) {

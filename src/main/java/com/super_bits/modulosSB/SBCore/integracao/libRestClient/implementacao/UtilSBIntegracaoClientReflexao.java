@@ -17,6 +17,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgent
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfApiRestHeaderPadrao;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -137,12 +138,25 @@ public class UtilSBIntegracaoClientReflexao {
         return classeAnotacao;
     }
 
-    public static ItfTokenGestao getNovaInstanciaGestaoAutenticador(ItfFabricaIntegracaoApi pApi, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, String pApiIdentificador) {
+    public static ItfTokenGestao getNovaInstanciaGestaoAutenticador(ItfFabricaIntegracaoApi pApi,
+            FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, String pApiIdentificador) {
+        ItfTokenGestao tokenGestao = null;
+        if (pTipoAgente == FabTipoAgenteClienteApi.SISTEMA) {
+            pUsuario = null;
+            tokenGestao = MapaTokensGerenciados.getAutenticadorSistema(pApi, pApiIdentificador);
+        } else {
+            tokenGestao = MapaTokensGerenciados.getAutenticadorUsuario(pApi.getClasseGestaoOauth(),
+                    pUsuario, pApiIdentificador);
+        }
+        if (tokenGestao != null) {
+            return tokenGestao;
+        }
         Class classe = getClasseToken(pApi);
         boolean possuiEspecificacaoDeApi = true;
         Constructor constructorGestaoToken = null;
         try {
-            constructorGestaoToken = classe.getConstructor(FabTipoAgenteClienteApi.class, ItfUsuario.class, String.class);
+            constructorGestaoToken = classe.getConstructor(FabTipoAgenteClienteApi.class,
+                    ItfUsuario.class, String.class);
         } catch (NoSuchMethodException ex) {
             possuiEspecificacaoDeApi = false;
             try {
@@ -159,13 +173,15 @@ public class UtilSBIntegracaoClientReflexao {
         try {
             if (possuiEspecificacaoDeApi) {
                 novaGestaoToken = (ItfTokenGestao) constructorGestaoToken.newInstance(pTipoAgente, pUsuario, pApiIdentificador);
+                MapaTokensGerenciados.registrarAutenticadorRestfullTipoApp(novaGestaoToken, pApiIdentificador);
             } else {
                 novaGestaoToken = (ItfTokenGestao) constructorGestaoToken.newInstance(pTipoAgente, pUsuario);
+                MapaTokensGerenciados.registrarAutenticadorUsuario(novaGestaoToken, pUsuario, pApiIdentificador);
             }
 
             return novaGestaoToken;
         } catch (Throwable t) {
-            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro obtendo gestor de tolen do cliente rest para:" + pApi, t);
+            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro obtendo gestor de tolen do cliente rest para:" + pApi + t.getMessage(), t);
         }
         return null;
 

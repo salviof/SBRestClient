@@ -10,8 +10,11 @@ import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfResposta;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.comunicacao.RespostaSimples;
 import com.super_bits.modulosSB.SBCore.modulos.Mensagens.ItfMensagem;
+import groovy.json.JsonBuilder;
+import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
+import java.util.HashMap;
 import java.util.List;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 

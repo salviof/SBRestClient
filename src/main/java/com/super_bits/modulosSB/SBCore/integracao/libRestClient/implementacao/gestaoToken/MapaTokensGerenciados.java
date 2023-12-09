@@ -75,6 +75,11 @@ public class MapaTokensGerenciados {
         AUTENTICADORES_REGISTRADOS.put(identificacaoGestaoToken, pAutenticador);
     }
 
+    public static void registrarAutenticadorRestfullTipoApp(ItfTokenGestao pAutenticador, String pTipoAplicacao) {
+        String identificacaoGestaoToken = gerarIdIdentificador(pAutenticador.getClass(), null, pTipoAplicacao);
+        AUTENTICADORES_REGISTRADOS.put(identificacaoGestaoToken, pAutenticador);
+    }
+
     public static void registrarAutenticadorUsuario(ItfTokenGestao pAutenticador, ItfUsuario pUsuario) {
         AUTENTICADORES_REGISTRADOS.put(gerarIdIdentificador(pAutenticador, pUsuario), pAutenticador);
     }
@@ -121,6 +126,16 @@ public class MapaTokensGerenciados {
             throw new UnsupportedOperationException("Enviado nulo obtendo chaves de acesso do usuario para integração com " + pSimplenameGestaoToken);
         }
         String identificador = gerarIdIdentificador(pSimplenameGestaoToken, pUsuario, pIdentificadorAplicacao);
+        return AUTENTICADORES_REGISTRADOS.get(identificador);
+    }
+
+    public static ItfTokenGestao getAutenticadorSistema(ItfFabricaIntegracaoApi api, String pIdeIdentificadorAplicacao) {
+        String identificador = gerarIdIdentificador(api.getClasseGestaoOauth(), null, pIdeIdentificadorAplicacao);
+        return AUTENTICADORES_REGISTRADOS.get(identificador);
+    }
+
+    public static ItfTokenGestao getAutenticadorSistema(String pModuloGestorToken, String pIdeIdentificadorAplicacao) {
+        String identificador = gerarIdIdentificador(pModuloGestorToken, null, pIdeIdentificadorAplicacao);
         return AUTENTICADORES_REGISTRADOS.get(identificador);
     }
 

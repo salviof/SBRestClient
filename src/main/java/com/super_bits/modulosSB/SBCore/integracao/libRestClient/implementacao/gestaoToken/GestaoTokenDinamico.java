@@ -82,7 +82,7 @@ public abstract class GestaoTokenDinamico extends GestaoTokenGenerico implements
         if (getTokenCompleto() == null) {
             loadTokenArmazenado();
         }
-        return super.isTemTokemAtivo(); //To change body of generated methods, choose Tools | Templates.
+        return super.isTemTokemAtivo();
     }
 
     @Override

@@ -122,12 +122,12 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiClien
     }
 
     @Override
-    public ItfTokenGestao getTokenGestao() {
+    public synchronized ItfTokenGestao getTokenGestao() {
         String prIDsistema = getIdentificadorSisteServicoByParametros(getParametros());
 
         if (prIDsistema != null) {
 
-            tokenGestao = MapaTokensGerenciados.getAutenticadorUsuario(fabricaIntegracao.getClasseGestaoOauth(), SBCore.getUsuarioLogado(), prIDsistema);
+            tokenGestao = MapaTokensGerenciados.getAutenticadorUsuario(fabricaIntegracao.getClasseGestaoOauth(), usuario, prIDsistema);
             if (tokenGestao == null) {
                 tokenGestao = UtilSBIntegracaoClientReflexao.getNovaInstanciaGestaoAutenticador(fabricaIntegracao, tipoAgente, usuario, idTipoAplicacao);
                 MapaTokensGerenciados.registrarAutenticadorUsuario(tokenGestao, usuario, idTipoAplicacao);
@@ -146,8 +146,8 @@ public abstract class AcaoApiIntegracaoAbstratoBasico implements ItfAcaoApiClien
                 case SISTEMA:
                     tokenGestao = MapaTokensGerenciados.getAutenticadorSistema(fabricaIntegracao);
                     if (tokenGestao == null) {
-                        tokenGestao = UtilSBIntegracaoClientReflexao.getNovaInstanciaGestaoAutenticador(fabricaIntegracao, tipoAgente, usuario, idTipoAplicacao);
-                        MapaTokensGerenciados.registrarAutenticador(tokenGestao);
+                        tokenGestao = UtilSBIntegracaoClientReflexao.getNovaInstanciaGestaoAutenticador(fabricaIntegracao, tipoAgente, null, idTipoAplicacao);
+                        MapaTokensGerenciados.registrarAutenticadorRestfullTipoApp(tokenGestao, idTipoAplicacao);
                     }
                     break;
                 default:

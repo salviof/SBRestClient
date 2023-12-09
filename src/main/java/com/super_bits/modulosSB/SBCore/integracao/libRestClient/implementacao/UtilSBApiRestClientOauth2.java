@@ -11,8 +11,10 @@ import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreWebBrowser;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.FabTipoConexaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,9 +61,14 @@ public class UtilSBApiRestClientOauth2 {
             case SISTEMA:
                 String urlAutenticacao = pAutenticacao.getUrlObterCodigoSolicitacao();
                 System.out.println("Obtendo codigo de concessão via " + urlAutenticacao);
-                RespostaWebServiceSimples respostaSolicitaca = UtilSBApiRestClient.getRespostaRest(urlAutenticacao, FabTipoConexaoRest.GET, false, new HashMap<String, String>(), null);
+                Map<String, String> cabecalho = new HashMap<>();
+                cabecalho.put("ref", "RESTFULL_OAUTH2_ADMIN_CLIENT_V1.casanovadigital.com.br");
+                RespostaWebServiceSimples respostaSolicitaca = UtilSBApiRestClient
+                        .getRespostaRest(urlAutenticacao, FabTipoConexaoRest.GET, false, cabecalho, null);
                 if (respostaSolicitaca.isSucesso()) {
-                    System.out.println("ok");
+
+                    System.out.println(respostaSolicitaca.getRespostaTexto());
+                    System.out.println("ok ");
                 } else {
                     System.out.println("Falha ao obter token");
                     System.out.println(respostaSolicitaca.getRespostaTexto());

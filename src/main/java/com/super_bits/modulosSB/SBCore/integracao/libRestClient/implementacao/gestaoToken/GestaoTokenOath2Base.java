@@ -128,10 +128,9 @@ public abstract class GestaoTokenOath2Base extends GestaoTokenDinamico implement
     public InfoTokenOauth2 gerarNovoToken() {
         try {
             if (codigoSolicitacao == null) {
-                UtilSBApiRestClientOauth2.solicitarAutenticacaoExterna(this);
-                if (codigoSolicitacao == null) {
-                    throw new UnsupportedOperationException("O código de solitação não foi encontrado");
-                }
+
+                throw new UnsupportedOperationException("Impossível obter token, o código de solitação não foi registrado");
+
             }
             if (chamadaObterChaveDeAcesso == null) {
                 chamadaObterChaveDeAcesso = gerarChamadaTokenObterChaveAcesso();
@@ -159,7 +158,7 @@ public abstract class GestaoTokenOath2Base extends GestaoTokenDinamico implement
                 loadTokenArmazenado();
                 return getTokenCompleto();
             }
-            
+
         } catch (Throwable t) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro " + t.getMessage(), t);
         }
