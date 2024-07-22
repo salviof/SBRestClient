@@ -47,7 +47,8 @@ public class AcaoApiIntegracaoHeaderBuilder implements ItfApiRestHeaderPadrao {
             cabecalho.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(acao.getCorpoRequisicao().length()));
         }
         // Muitos serviços REST exigem a definição do usuário agente.
-        cabecalho.put("User-Agent", "coletivoJavaApiClient (1.0) " + SBCore.getNomeProjeto());
+        UtilSBApiRestClientCabecalho.adicionarAgentePadrao(cabecalho);
+
     }
 
     /**
