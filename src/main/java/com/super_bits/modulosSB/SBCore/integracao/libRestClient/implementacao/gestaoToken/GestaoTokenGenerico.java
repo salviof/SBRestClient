@@ -95,6 +95,7 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
         if (token == null) {
             return false;
         }
+
         return token.isTokenValido();
     }
 

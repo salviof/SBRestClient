@@ -46,7 +46,7 @@ public @interface InfoConsumoRestService {
      */
     public boolean adicionarAutenticacaoBearer() default false;
 
-    public boolean aceitarCertificadoDeHostNaoConfiavel() default false;
+    public boolean aceitarCertificadoDeHostNaoConfiavel() default true;
 
     public boolean corpoRequisicaoEmBytes() default false;
 

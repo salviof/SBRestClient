@@ -59,9 +59,17 @@ public class MapaTokensGerenciados {
             identificador.append(pTipoAplicacao);
         }
         if (pUsuario != null) {
-            identificador.append(".");
-            identificador.append(pUsuario.getEmail());
+            if (pUsuario.getEmail() != null) {
+                identificador.append(".");
+                identificador.append(pUsuario.getEmail());
+            } else {
+
+                identificador.append(".");
+                identificador.append(pUsuario.getId());
+            }
+
         }
+
         return identificador.toString();
     }
 

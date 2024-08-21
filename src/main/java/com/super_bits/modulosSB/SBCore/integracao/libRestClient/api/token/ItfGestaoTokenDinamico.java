@@ -40,7 +40,7 @@ public interface ItfGestaoTokenDinamico extends ItfTokenGestao {
 
     public boolean armazenarRespostaToken(String pJson);
 
-    public JSONObject loadTokenArmazenadoComoJsonObject();
+    public JsonObject loadTokenArmazenadoComoJsonObject();
 
     public default ItfTokenDeAcessoExterno renovarToken() {
         excluirToken();

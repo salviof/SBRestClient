@@ -11,6 +11,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgent
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfGestaoTokenDinamico;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenDeAcessoExterno;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import jakarta.json.JsonObject;
 import org.json.simple.JSONObject;
 
 /**
@@ -30,20 +31,20 @@ public abstract class GestaoTokenDinamico extends GestaoTokenGenerico implements
     }
 
     @Override
-    public JSONObject loadTokenArmazenadoComoJsonObject() {
+    public JsonObject loadTokenArmazenadoComoJsonObject() {
 
         switch (tipoAgente) {
             case USUARIO:
                 if (usuario != null) {
 
-                    JSONObject tokenLoad = getConfig().getRepositorioDeArquivosExternos().getJsonObjeto(getIdentificacaoToken());
+                    JsonObject tokenLoad = getConfig().getRepositorioDeArquivosExternos().getJsonObjeto(getIdentificacaoToken());
                     //    token = extrairToken(tokenLoad);
                     return tokenLoad;
                 }
                 return null;
             case SISTEMA:
 
-                JSONObject tokenLoad = getConfig().getRepositorioDeArquivosExternos().getJsonObjeto(getIdentificacaoToken());
+                JsonObject tokenLoad = getConfig().getRepositorioDeArquivosExternos().getJsonObjeto(getIdentificacaoToken());
                 //  token = extrairToken(tokenLoad);
                 return tokenLoad;
             default:
