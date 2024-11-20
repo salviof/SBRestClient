@@ -46,7 +46,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
     private Map<String, String> cabecalhoGerado;
     private boolean postarInformacoes;
 
-    private ItfUsuario usuario;
+    public ItfUsuario usuario;
     private String token;
     protected InfoConsumoRestService infoRest;
     private String urlServidor;
