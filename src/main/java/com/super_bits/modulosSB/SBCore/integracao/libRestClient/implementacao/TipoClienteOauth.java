@@ -22,7 +22,7 @@ public class TipoClienteOauth extends ItemSimples implements ItfBeanVinculadoAEn
 
     @InfoCampo(tipo = FabTipoAtributoObjeto.ID)
     private int id;
-    @InfoCampo(tipo = FabTipoAtributoObjeto.AAA_NOME)
+    @InfoCampo(tipo = FabTipoAtributoObjeto.NOME)
     private String nome;
     private FabTipoAgenteClienteApi enumVinculado;
 
