@@ -28,8 +28,8 @@ public class DTO_SBGENERICO<T extends ItfDTOSBJSON> extends ItemSimples implemen
     private final T dtoDecoratorGettersInstanciado;
 
     @Override
-    public int getId() {
-        return (int) getValorPorReflexao();
+    public Long getId() {
+        return (long) getValorPorReflexao();
     }
 
     @Override
