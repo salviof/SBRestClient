@@ -21,10 +21,10 @@ public class RepositorioLinkEntidadesGenerico implements ItfServicoLinkDeEntidad
     private static final Map<String, Map<String, String>> mapaLigacaoEstatico = new HashMap<>();
 
     @Override
-    public String getCodigoApiExterna(Class pEntidade, int pCodigoInterno) {
+    public String getCodigoApiExterna(Class pEntidade, Long pCodigoInterno) {
         if (SBCore.isEmModoDesenvolvimento()) {
             if (mapaLigacaoEstatico.containsKey(pEntidade.getSimpleName())) {
-                return mapaLigacaoEstatico.get(pEntidade.getSimpleName()).get(Integer.toString(pCodigoInterno));
+                return mapaLigacaoEstatico.get(pEntidade.getSimpleName()).get(Long.toString(pCodigoInterno));
             }
             return null;
         } else {
@@ -51,7 +51,7 @@ public class RepositorioLinkEntidadesGenerico implements ItfServicoLinkDeEntidad
     }
 
     @Override
-    public boolean registrarCodigoLigacaoApi(Class pEntidade, int codigoInterno, String codigoAPIExterna) {
+    public boolean registrarCodigoLigacaoApi(Class pEntidade, Long codigoInterno, String codigoAPIExterna) {
         if (SBCore.isEmModoDesenvolvimento()) {
             if (!mapaLigacaoEstatico.containsKey(pEntidade.getSimpleName())) {
                 mapaLigacaoEstatico.put(pEntidade.getSimpleName(), new HashMap<>());
