@@ -43,7 +43,12 @@ public interface ItfDTOSBJSON {
         try {
             Method metodo = this.getClass().getMethod(nomeOriginalMetodo);
             Class tipoRetorno = metodo.getReturnType();
-            if (tipoRetorno.isPrimitive() || tipoRetorno.getSimpleName().equals(String.class.getSimpleName())) {
+
+            if (tipoRetorno.getSimpleName().equals("Long")) {
+
+                return getJsonModoPojo().getJsonNumber(nomeAtributo).longValue();
+
+            } else if (tipoRetorno.isPrimitive() || tipoRetorno.getSimpleName().equals(String.class.getSimpleName())) {
                 if (tipoRetorno.getSimpleName().equals("int")) {
                     return getJsonModoPojo().getInt(nomeAtributo);
                 }
