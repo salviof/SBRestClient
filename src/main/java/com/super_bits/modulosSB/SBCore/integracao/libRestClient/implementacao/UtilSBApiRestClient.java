@@ -527,7 +527,7 @@ public class UtilSBApiRestClient {
                 if (conexao != null) {
                     System.out.println("Gerando token com chave" + codigoSolicitacoa);
 
-                    if (UtilSBCoreStringValidador.isNAO_NuloNemBranco(codigoSolicitacoa)) {
+                    if (!UtilSBCoreStringValidador.isNuloOuEmbranco(codigoSolicitacoa)) {
                         conexao.setCodigoSolicitacao(codigoSolicitacoa);
                         System.out.println("Codigo de solicitação registrado");
                         conexao.gerarNovoToken();
@@ -562,8 +562,7 @@ public class UtilSBApiRestClient {
     }
 
     public static String gerarUrlServicoReceberCodigoSolicitacaoPadrao(Class<? extends ItfTokenGestaoOauth> pEndPoint, FabTipoAgenteClienteApi pTipoAgente, String pCaminhoParametroCodigo,
-            String pUrlHostRecepcao
-    ) {
+            String pUrlHostRecepcao) {
 
         return pUrlHostRecepcao
                 + "/solicitacaoAuth2Recept/" + pCaminhoParametroCodigo + "/" + UtilSBCoreStringSlugs.gerarSlugSimples(pTipoAgente.getRegistro().getNome())

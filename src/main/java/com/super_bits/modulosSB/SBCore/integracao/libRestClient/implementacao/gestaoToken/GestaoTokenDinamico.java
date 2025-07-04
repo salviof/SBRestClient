@@ -8,6 +8,8 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.g
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
+import static com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi.SISTEMA;
+import static com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi.USUARIO;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfGestaoTokenDinamico;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenDeAcessoExterno;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
@@ -53,23 +55,28 @@ public abstract class GestaoTokenDinamico extends GestaoTokenGenerico implements
         return null;
     }
 
-    @Override
-    public ItfTokenDeAcessoExterno loadTokenArmazenado() {
-        String textoArmazenado = null;
+    protected String getTextoTokenArmazenado() {
         switch (tipoAgente) {
             case USUARIO:
                 if (usuario != null) {
 
-                    textoArmazenado = getConfig().getRepositorioDeArquivosExternos().getTexto(getIdentificacaoToken());
+                    return getConfig().getRepositorioDeArquivosExternos().getTexto(getIdentificacaoToken());
 
                 }
                 break;
             case SISTEMA:
-                textoArmazenado = getConfig().getRepositorioDeArquivosExternos().getTexto(getIdentificacaoToken());
+                return getConfig().getRepositorioDeArquivosExternos().getTexto(getIdentificacaoToken());
 
             default:
 
         }
+        return null;
+    }
+
+    @Override
+    public ItfTokenDeAcessoExterno loadTokenArmazenado() {
+        String textoArmazenado = getTextoTokenArmazenado();
+
         if (UtilSBCoreStringValidador.isNuloOuEmbranco(textoArmazenado)) {
             return null;
         }

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.coletivojava.fw.api.tratamentoErros.FabErro;
 
 /**
  *
@@ -65,13 +66,14 @@ public class UtilSBApiRestClientOauth2 {
                 cabecalho.put("ref", "RESTFULL_OAUTH2_ADMIN_CLIENT_V1.casanovadigital.com.br");
                 RespostaWebServiceSimples respostaSolicitaca = UtilSBApiRestClient
                         .getRespostaRest(urlAutenticacao, FabTipoConexaoRest.GET, false, cabecalho, null);
-                if (respostaSolicitaca.isSucesso()) {
-
+                try {
+                    if (!respostaSolicitaca.isSucesso()) {
+                        throw new Throwable("Falha ao obter token" + respostaSolicitaca.getRespostaTexto());
+                    }
                     System.out.println(respostaSolicitaca.getRespostaTexto());
                     System.out.println("ok ");
-                } else {
-                    System.out.println("Falha ao obter token");
-                    System.out.println(respostaSolicitaca.getRespostaTexto());
+                } catch (Throwable t) {
+                    SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, urlAutenticacao, t);
                 }
 
                 break;
