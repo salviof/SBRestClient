@@ -22,6 +22,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgent
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.FabPropriedadeModuloIntegracaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.InfoPropriedadeConfigRestIntegracao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.util.UtilSBERPRestFullClient;
 import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import java.net.URLEncoder;
@@ -204,7 +205,9 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
                             if (!getTokenGestao().getComoGestaoOauth().isCodigoSolicitacaoRegistrado()) {
                                 UtilSBApiRestClientOauth2.solicitarAutenticacaoExterna(getTokenGestao().getComoGestaoOauth());
                             }
-                            getTokenGestao().gerarNovoToken();
+                            if (!getTokenGestao().isTemTokemAtivo()) {
+                                getTokenGestao().gerarNovoToken();
+                            }
                         } catch (Throwable t) {
                             System.out.println("Fala solicitando código de autenticação");
                         }
@@ -298,15 +301,19 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
                     RespostaWebServiceSimples resp = UtilSBApiRestClient.getRespostaRest(urlservicoRetornoCodigoSolicitacao, FabTipoConexaoRest.GET,
                             false, cabecalhos, "Apenas teste");
                     String retorno = resp.getResposta();
-                    if (!retorno.contains("OK")) {
-                        resp.addErro("Resposta do ping diferente do esperado");
-                    }
+                    // if (!(retorno.contains(UtilSBERPRestFullClient.TEXTO_RESPOSTA_WEBSERVICE_RESTFUL_PING_SUCESSO))) {
+                    //     resp.addErro("Resposta do ping diferente do esperado");
+                    // }
                     if (resp == null || !resp.isSucesso()) {
                         try {
                             throw new UnsupportedOperationException("O SERVIÇO DE RECEPÇÃO DE CÓDIGOS PARA OBENÇÃO DE CÓDIGO DE ACESSO NÃO ESTÁ ATIVO, ANTES DE INICIAR O TESTE INICIE O SERVIÇO, QUE SE ENCONTRA NO PACOTE DE TESTES DE API, utilize  ServicoRecepcaoOauthTestes.iniciarServico()");
 
                         } catch (Throwable t) {
-                            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, t.getMessage(), t);
+                            if (resp != null) {
+                                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, t.getMessage() + resp.getRespostaTexto(), t);
+                            } else {
+                                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, t.getMessage(), t);
+                            }
                         }
                     } else {
                         SBCore.enviarMensagemUsuario("Você precisa autenticar seu usuário no servidor, para isso funcionar, além das chaves pública e privadas configuradas, o endereço a seguir precisa estar cadastrado como callbak do oauth:" + getTokenGestao().getComoGestaoOauth().getUrlRetornoReceberCodigoSolicitacao(), FabMensagens.AVISO);

@@ -69,9 +69,11 @@ public class UtilSBApiRestClientOauth2 {
                 try {
                     if (!respostaSolicitaca.isSucesso()) {
                         throw new Throwable("Falha ao obter token" + respostaSolicitaca.getRespostaTexto());
+                    } else {
+                        System.out.println("ok ");
                     }
                     System.out.println(respostaSolicitaca.getRespostaTexto());
-                    System.out.println("ok ");
+
                 } catch (Throwable t) {
                     SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, urlAutenticacao, t);
                 }
