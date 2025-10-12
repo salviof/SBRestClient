@@ -6,6 +6,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebSe
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.RespostaWebServiceRestIntegracao;
+import java.io.IOError;
 import static java.lang.Thread.sleep;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 
@@ -31,6 +32,9 @@ public abstract class ConsumoWSExecucao extends Thread {
         try {
             try {
                 RespostaWebServiceSimples resp = efetuarConexao();
+                if (resp == null) {
+                    throw new Throwable("Comunicando com servidor, a resposta não foi obtida");
+                }
                 respostaWS = new RespostaWebServiceRestIntegracao(resp);
                 resposta = resp.getResposta();
                 codigoResposta = resp.getCodigoResposta();

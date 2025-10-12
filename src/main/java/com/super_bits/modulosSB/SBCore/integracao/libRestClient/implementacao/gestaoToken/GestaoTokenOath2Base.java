@@ -160,7 +160,9 @@ public abstract class GestaoTokenOath2Base extends GestaoTokenDinamico implement
             }
 
         } catch (Throwable t) {
+
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro " + t.getMessage(), t);
+
         }
         codigoSolicitacao = null;
 
