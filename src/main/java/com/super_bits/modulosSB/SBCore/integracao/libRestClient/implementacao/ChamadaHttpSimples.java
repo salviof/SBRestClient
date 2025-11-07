@@ -25,16 +25,18 @@ public class ChamadaHttpSimples {
         return tipoConexao;
     }
 
-    public void setTipoConexao(FabTipoConexaoRest tipoConexao) {
+    public ChamadaHttpSimples setTipoConexao(FabTipoConexaoRest tipoConexao) {
         this.tipoConexao = tipoConexao;
+        return this;
     }
 
     public String getEnderecoHost() {
         return enderecoHost;
     }
 
-    public void setEnderecoHost(String enderecoHost) {
+    public ChamadaHttpSimples setEnderecoHost(String enderecoHost) {
         this.enderecoHost = enderecoHost;
+        return this;
     }
 
     public String getPath() {
@@ -49,8 +51,9 @@ public class ChamadaHttpSimples {
         return cabecalhos;
     }
 
-    public void setCabecalhos(Map<String, String> cabecalhos) {
+    public ChamadaHttpSimples setCabecalhos(Map<String, String> cabecalhos) {
         this.cabecalhos = cabecalhos;
+        return this;
     }
 
     public String getCorpo() {
