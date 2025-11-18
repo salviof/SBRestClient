@@ -6,13 +6,13 @@
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken;
 
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import static com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi.SISTEMA;
 import static com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi.USUARIO;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfGestaoTokenDinamico;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenDeAcessoExterno;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoUsuario;
 import jakarta.json.JsonObject;
 import org.json.simple.JSONObject;
 
@@ -22,12 +22,12 @@ import org.json.simple.JSONObject;
  */
 public abstract class GestaoTokenDinamico extends GestaoTokenGenerico implements ItfGestaoTokenDinamico {
 
-    public GestaoTokenDinamico(Class<? extends ItfFabricaIntegracaoRest> pClasseEndpoints, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario) {
+    public GestaoTokenDinamico(Class<? extends ComoFabricaIntegracaoRest> pClasseEndpoints, FabTipoAgenteClienteApi pTipoAgente, ComoUsuario pUsuario) {
         super(pClasseEndpoints, pTipoAgente, pUsuario, null);
 
     }
 
-    public GestaoTokenDinamico(Class<? extends ItfFabricaIntegracaoRest> pClasseEndpoints, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, String pTipoAplicacao) {
+    public GestaoTokenDinamico(Class<? extends ComoFabricaIntegracaoRest> pClasseEndpoints, FabTipoAgenteClienteApi pTipoAgente, ComoUsuario pUsuario, String pTipoAplicacao) {
         super(pClasseEndpoints, pTipoAgente, pUsuario, pTipoAplicacao);
 
     }

@@ -8,7 +8,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS;
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfResposta;
-import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.acoes.ItfAcaoDoSistema;
+import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.acoes.ComoAcaoDoSistema;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.comunicacao.RespostaSimples;
 
 /**

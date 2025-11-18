@@ -8,7 +8,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.erp.dto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfBeanSimples;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoEntidadeSimples;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.ItemSimples;
 import jakarta.json.JsonObject;
 import java.util.List;
@@ -98,7 +98,7 @@ public class DTO_SBGENERICO<T extends ItfDTOSBJSON> extends ItemSimples implemen
     }
 
     @Override
-    public ItfBeanSimples getObjeto(String pNomeAtributop) {
+    public ComoEntidadeSimples getObjeto(String pNomeAtributop) {
         if (!modoPojo) {
             return dtoDecoratorGettersInstanciado.getObjeto(pNomeAtributop);
         }

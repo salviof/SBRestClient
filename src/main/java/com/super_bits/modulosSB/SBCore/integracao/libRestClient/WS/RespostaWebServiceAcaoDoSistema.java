@@ -7,7 +7,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS;
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfRespostaAcaoDoSistema;
-import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.acoes.ItfAcaoDoSistema;
+import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.acoes.ComoAcaoDoSistema;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.comunicacao.RespostaAcaoDoSistema;
 
 /**
@@ -23,7 +23,7 @@ public class RespostaWebServiceAcaoDoSistema extends RespostaAcaoDoSistema {
     @Expose
     private Resultado resultadoWS = Resultado.SUCESSO;
 
-    public RespostaWebServiceAcaoDoSistema(Class pTipoRetorno, ItfAcaoDoSistema pAcaoDoSistema) {
+    public RespostaWebServiceAcaoDoSistema(Class pTipoRetorno, ComoAcaoDoSistema pAcaoDoSistema) {
         super(pTipoRetorno, pAcaoDoSistema);
     }
 

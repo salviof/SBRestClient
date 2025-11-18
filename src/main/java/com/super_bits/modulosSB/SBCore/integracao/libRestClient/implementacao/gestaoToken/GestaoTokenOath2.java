@@ -7,11 +7,11 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.g
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.FabPropriedadeModuloIntegracaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.InfoPropriedadeConfigRestIntegracao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoUsuario;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 
 /**
@@ -29,8 +29,8 @@ public abstract class GestaoTokenOath2 extends GestaoTokenOath2Base implements I
     protected String urlRetornoReceberCodigoSolicitacao;
     protected String urlRetornoSucessoObterToken;
 
-    public GestaoTokenOath2(Class<? extends ItfFabricaIntegracaoRest> pClasseEndpointsClass,
-            FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario) {
+    public GestaoTokenOath2(Class<? extends ComoFabricaIntegracaoRest> pClasseEndpointsClass,
+            FabTipoAgenteClienteApi pTipoAgente, ComoUsuario pUsuario) {
         super(pClasseEndpointsClass,
                 pTipoAgente, pUsuario, null);
         try {

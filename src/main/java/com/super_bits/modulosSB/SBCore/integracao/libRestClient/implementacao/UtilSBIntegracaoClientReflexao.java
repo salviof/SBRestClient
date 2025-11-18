@@ -9,7 +9,7 @@ import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringPosicaoLocalizar;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringsCammelCase;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoApi;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servicoRegistrado.InfoConfigRestClientIntegracao;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfValidacao;
 import org.reflections.ReflectionUtils;
@@ -18,7 +18,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTok
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfApiRestHeaderPadrao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoUsuario;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
@@ -33,22 +33,22 @@ import org.coletivojava.fw.api.tratamentoErros.FabErro;
  */
 public class UtilSBIntegracaoClientReflexao {
 
-    public static InfoConfigRestClientIntegracao getInfoConfigWebService(ItfFabricaIntegracaoApi p) {
+    public static InfoConfigRestClientIntegracao getInfoConfigWebService(ComoFabricaIntegracaoApi p) {
         return getInfoConfigWebService(p.getClass());
     }
 
-    public static InfoConfigRestClientIntegracao getInfoConfigWebService(Class<? extends ItfFabricaIntegracaoApi> p) {
+    public static InfoConfigRestClientIntegracao getInfoConfigWebService(Class<? extends ComoFabricaIntegracaoApi> p) {
         return p.getAnnotation(InfoConfigRestClientIntegracao.class);
     }
 
-    public static String getNomeClasseAnotacao(ItfFabricaIntegracaoApi p) {
+    public static String getNomeClasseAnotacao(ComoFabricaIntegracaoApi p) {
         InfoConfigRestClientIntegracao info = getInfoConfigWebService(p);
         String nomeClasse = p.getClass().getSimpleName();
         String descricaoModulo = nomeClasse.substring(UtilSBCoreStringPosicaoLocalizar.getUltimaLetraMaiuscula(nomeClasse), nomeClasse.length());
         return "InfoIntegracaoRest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiusculaSemCaracterEspecial(info.nomeIntegracao()) + descricaoModulo;
     }
 
-    public static String getNomeClasseImplementacao(ItfFabricaIntegracaoApi p) {
+    public static String getNomeClasseImplementacao(ComoFabricaIntegracaoApi p) {
         InfoConfigRestClientIntegracao info = getInfoConfigWebService(p);
         if (info == null) {
             throw new UnsupportedOperationException(InfoConfigRestClientIntegracao.class.getSimpleName() + "Não foi definido para" + p.getClass().getSimpleName());
@@ -58,7 +58,7 @@ public class UtilSBIntegracaoClientReflexao {
         return "IntegracaoRest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome) + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(p.toString());
     }
 
-    public static String getNomeClasseImplementacaoGestaoToken(Class<? extends ItfFabricaIntegracaoApi> p) {
+    public static String getNomeClasseImplementacaoGestaoToken(Class<? extends ComoFabricaIntegracaoApi> p) {
         InfoConfigRestClientIntegracao info = getInfoConfigWebService(p);
         if (info == null) {
             throw new UnsupportedOperationException(InfoConfigRestClientIntegracao.class.getSimpleName() + "Não foi definido para" + p.getClass().getSimpleName());
@@ -68,11 +68,11 @@ public class UtilSBIntegracaoClientReflexao {
         return "GestaoTokenRest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome);
     }
 
-    public static String getNomeClasseImplementacaoGestaoToken(ItfFabricaIntegracaoApi p) {
+    public static String getNomeClasseImplementacaoGestaoToken(ComoFabricaIntegracaoApi p) {
         return getNomeClasseImplementacaoGestaoToken(p.getClass());
     }
 
-    public static String getNomeClasseImplementacaoGestaoHeaderPadrao(ItfFabricaIntegracaoApi p) {
+    public static String getNomeClasseImplementacaoGestaoHeaderPadrao(ComoFabricaIntegracaoApi p) {
         InfoConfigRestClientIntegracao info = getInfoConfigWebService(p);
         if (info == null) {
             throw new UnsupportedOperationException(InfoConfigRestClientIntegracao.class.getSimpleName() + "Não foi definido para" + p.getClass().getSimpleName());
@@ -82,7 +82,7 @@ public class UtilSBIntegracaoClientReflexao {
         return "IntegracaoRest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome) + "_HeaderPadrao";
     }
 
-    public static ItfApiRestHeaderPadrao getHeaderPadrao(ItfFabricaIntegracaoApi fabrica, ItfAcaoApiRest p) {
+    public static ItfApiRestHeaderPadrao getHeaderPadrao(ComoFabricaIntegracaoApi fabrica, ItfAcaoApiRest p) {
         String caminhoCompleto = getPacoteImplementacao(fabrica)
                 + "." + getNomeClasseImplementacaoGestaoHeaderPadrao(fabrica);
         Class classeHeaderPadrao = (Class<? extends ItfValidacao>) ReflectionUtils.forName(caminhoCompleto);
@@ -94,7 +94,7 @@ public class UtilSBIntegracaoClientReflexao {
         return null;
     }
 
-    public static String getPacoteApi(ItfFabricaIntegracaoApi p) {
+    public static String getPacoteApi(ComoFabricaIntegracaoApi p) {
         InfoConfigRestClientIntegracao info = getInfoConfigWebService(p);
         if (info == null) {
             throw new UnsupportedOperationException(InfoConfigRestClientIntegracao.class.getSimpleName()
@@ -104,7 +104,7 @@ public class UtilSBIntegracaoClientReflexao {
         return "br.org.coletivoJava.integracoes.rest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome) + ".api";
     }
 
-    public static String getPacoteImplementacao(ItfFabricaIntegracaoApi p) {
+    public static String getPacoteImplementacao(ComoFabricaIntegracaoApi p) {
         InfoConfigRestClientIntegracao info = getInfoConfigWebService(p);
         if (info == null) {
             throw new UnsupportedOperationException(InfoConfigRestClientIntegracao.class.getSimpleName() + "Não foi definido para" + p.getClass().getSimpleName());
@@ -113,33 +113,33 @@ public class UtilSBIntegracaoClientReflexao {
         return "br.org.coletivoJava.integracoes.rest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome) + ".implementacao";
     }
 
-    public static Class getClasseAnotacao(ItfFabricaIntegracaoApi pApi) {
+    public static Class getClasseAnotacao(ComoFabricaIntegracaoApi pApi) {
         String caminhoCompleto = getPacoteApi(pApi)
                 + "." + getNomeClasseAnotacao(pApi);
         Class classeAnotacao = (Class<? extends ItfValidacao>) ReflectionUtils.forName(caminhoCompleto);
         return classeAnotacao;
     }
 
-    public static String getNomeCanonicoClasseImplementacao(ItfFabricaIntegracaoApi pApi) {
+    public static String getNomeCanonicoClasseImplementacao(ComoFabricaIntegracaoApi pApi) {
         return getPacoteImplementacao(pApi)
                 + "." + getNomeClasseImplementacao(pApi);
     }
 
-    public static Class getClasseImplementacao(ItfFabricaIntegracaoApi pApi) {
+    public static Class getClasseImplementacao(ComoFabricaIntegracaoApi pApi) {
         String caminhoCompleto = getNomeCanonicoClasseImplementacao(pApi);
         Class classeValidacao = (Class<? extends ItfValidacao>) ReflectionUtils.forName(caminhoCompleto);
         return classeValidacao;
     }
 
-    public static Class getClasseToken(ItfFabricaIntegracaoApi pApi) {
+    public static Class getClasseToken(ComoFabricaIntegracaoApi pApi) {
         String caminhoCompleto = getPacoteImplementacao(pApi)
                 + "." + getNomeClasseImplementacaoGestaoToken(pApi);
         Class classeAnotacao = (Class<? extends ItfValidacao>) ReflectionUtils.forName(caminhoCompleto);
         return classeAnotacao;
     }
 
-    public static ItfTokenGestao getNovaInstanciaGestaoAutenticador(ItfFabricaIntegracaoApi pApi,
-            FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, String pApiIdentificador) {
+    public static ItfTokenGestao getNovaInstanciaGestaoAutenticador(ComoFabricaIntegracaoApi pApi,
+            FabTipoAgenteClienteApi pTipoAgente, ComoUsuario pUsuario, String pApiIdentificador) {
         ItfTokenGestao tokenGestao = null;
         if (pTipoAgente == FabTipoAgenteClienteApi.SISTEMA) {
             pUsuario = null;
@@ -156,11 +156,11 @@ public class UtilSBIntegracaoClientReflexao {
         Constructor constructorGestaoToken = null;
         try {
             constructorGestaoToken = classe.getConstructor(FabTipoAgenteClienteApi.class,
-                    ItfUsuario.class, String.class);
+                    ComoUsuario.class, String.class);
         } catch (NoSuchMethodException ex) {
             possuiEspecificacaoDeApi = false;
             try {
-                constructorGestaoToken = classe.getConstructor(FabTipoAgenteClienteApi.class, ItfUsuario.class);
+                constructorGestaoToken = classe.getConstructor(FabTipoAgenteClienteApi.class, ComoUsuario.class);
             } catch (NoSuchMethodException ex1) {
                 SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro obtendo gestor de tolen do cliente rest para:" + pApi + " " + classe.getSimpleName() + " não possui um código adequado", ex1);
             } catch (SecurityException ex1) {
@@ -187,11 +187,11 @@ public class UtilSBIntegracaoClientReflexao {
 
     }
 
-    public static ConfigModulo getConfigmodulo(ItfFabricaIntegracaoApi pApi) {
+    public static ConfigModulo getConfigmodulo(ComoFabricaIntegracaoApi pApi) {
         return getConfigmodulo(pApi.getClass());
     }
 
-    public static ConfigModulo getConfigmodulo(Class<? extends ItfFabricaIntegracaoApi> pApi) {
+    public static ConfigModulo getConfigmodulo(Class<? extends ComoFabricaIntegracaoApi> pApi) {
         InfoConfigRestClientIntegracao informacoes = pApi.getAnnotation(InfoConfigRestClientIntegracao.class);
         return SBCore.getConfigModulo(informacoes.configuracao());
     }

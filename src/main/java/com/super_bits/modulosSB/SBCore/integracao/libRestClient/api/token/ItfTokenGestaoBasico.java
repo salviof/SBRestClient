@@ -5,7 +5,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token;
 
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoUsuario;
 
 /**
  * @author sfurbino

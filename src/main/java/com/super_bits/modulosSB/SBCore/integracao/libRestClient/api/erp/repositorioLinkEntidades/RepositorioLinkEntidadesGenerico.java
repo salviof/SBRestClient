@@ -7,7 +7,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.erp.reposit
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.modulos.erp.ItfServicoLinkDeEntidadesERP;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfBeanSimplesSomenteLeitura;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoEntidadeSimplesSomenteLeitura;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -66,7 +66,7 @@ public class RepositorioLinkEntidadesGenerico implements ItfServicoLinkDeEntidad
 
     @Override
     @Deprecated
-    public <T extends ItfBeanSimplesSomenteLeitura> T getObjetoDTOFromJson(Class<? extends T> pClass, String Json) {
+    public <T extends ComoEntidadeSimplesSomenteLeitura> T getObjetoDTOFromJson(Class<? extends T> pClass, String Json) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

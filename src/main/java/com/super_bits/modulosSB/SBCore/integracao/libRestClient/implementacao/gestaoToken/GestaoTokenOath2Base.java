@@ -7,7 +7,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.g
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.simuladorResposta.ItfSimulacaoRespostaServlet;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.FabStatusToken;
@@ -17,7 +17,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTok
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.ChamadaHttpSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClientOauth2;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoUsuario;
 import jakarta.json.JsonObject;
 import java.lang.reflect.Constructor;
 import java.util.Date;
@@ -35,8 +35,8 @@ public abstract class GestaoTokenOath2Base extends GestaoTokenDinamico implement
 
     protected abstract String gerarUrlRetornoSucessoGeracaoTokenDeAcesso();
 
-    public GestaoTokenOath2Base(Class<? extends ItfFabricaIntegracaoRest> pClasseEndpointsClass,
-            FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, String pIdentificacaoAPi) {
+    public GestaoTokenOath2Base(Class<? extends ComoFabricaIntegracaoRest> pClasseEndpointsClass,
+            FabTipoAgenteClienteApi pTipoAgente, ComoUsuario pUsuario, String pIdentificacaoAPi) {
         super(pClasseEndpointsClass, pTipoAgente, pUsuario, pIdentificacaoAPi);
     }
 

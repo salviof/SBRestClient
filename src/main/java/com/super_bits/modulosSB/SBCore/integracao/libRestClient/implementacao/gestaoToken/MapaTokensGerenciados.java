@@ -7,10 +7,10 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.g
 import com.google.common.collect.Lists;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreListas;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoApi;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoApi;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoUsuario;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,25 +30,25 @@ public class MapaTokensGerenciados {
 
     }
 
-    public static String gerarIdIdentificador(Class<? extends ItfTokenGestao> pClasseGestaoToken, ItfUsuario pUsuario) {
+    public static String gerarIdIdentificador(Class<? extends ItfTokenGestao> pClasseGestaoToken, ComoUsuario pUsuario) {
         if (pClasseGestaoToken == null) {
             throw new UnsupportedOperationException("Gestor de token não foi enviado");
         }
         return gerarIdIdentificador(pClasseGestaoToken.getSimpleName(), pUsuario, null);
     }
 
-    public static String gerarIdIdentificador(Class<? extends ItfTokenGestao> pClasseGestaoToken, ItfUsuario pUsuario, String pTipoAplicacao) {
+    public static String gerarIdIdentificador(Class<? extends ItfTokenGestao> pClasseGestaoToken, ComoUsuario pUsuario, String pTipoAplicacao) {
         if (pClasseGestaoToken == null) {
             throw new UnsupportedOperationException("Gestor de token não foi enviado");
         }
         return gerarIdIdentificador(pClasseGestaoToken.getSimpleName(), pUsuario, pTipoAplicacao);
     }
 
-    public static String gerarIdIdentificador(String simpleNameGestaoToken, ItfUsuario pUsuario) {
+    public static String gerarIdIdentificador(String simpleNameGestaoToken, ComoUsuario pUsuario) {
         return gerarIdIdentificador(simpleNameGestaoToken, pUsuario, null);
     }
 
-    public static String gerarIdIdentificador(String simpleNameGestaoToken, ItfUsuario pUsuario, String pTipoAplicacao) {
+    public static String gerarIdIdentificador(String simpleNameGestaoToken, ComoUsuario pUsuario, String pTipoAplicacao) {
         if (simpleNameGestaoToken == null) {
             throw new UnsupportedOperationException("Gestor de token não foi enviado");
         }
@@ -73,12 +73,12 @@ public class MapaTokensGerenciados {
         return identificador.toString();
     }
 
-    public static String gerarIdIdentificador(ItfTokenGestao pGetao, ItfUsuario pUsuario) {
+    public static String gerarIdIdentificador(ItfTokenGestao pGetao, ComoUsuario pUsuario) {
         return gerarIdIdentificador(pGetao.getClass(), pUsuario);
 
     }
 
-    public static void registrarAutenticadorUsuario(ItfTokenGestao pAutenticador, ItfUsuario pUsuario, String pTipoAplicacao) {
+    public static void registrarAutenticadorUsuario(ItfTokenGestao pAutenticador, ComoUsuario pUsuario, String pTipoAplicacao) {
         String identificacaoGestaoToken = gerarIdIdentificador(pAutenticador.getClass(), pUsuario, pTipoAplicacao);
         AUTENTICADORES_REGISTRADOS.put(identificacaoGestaoToken, pAutenticador);
     }
@@ -88,7 +88,7 @@ public class MapaTokensGerenciados {
         AUTENTICADORES_REGISTRADOS.put(identificacaoGestaoToken, pAutenticador);
     }
 
-    public static void registrarAutenticadorUsuario(ItfTokenGestao pAutenticador, ItfUsuario pUsuario) {
+    public static void registrarAutenticadorUsuario(ItfTokenGestao pAutenticador, ComoUsuario pUsuario) {
         AUTENTICADORES_REGISTRADOS.put(gerarIdIdentificador(pAutenticador, pUsuario), pAutenticador);
     }
 
@@ -98,7 +98,7 @@ public class MapaTokensGerenciados {
      * @param pUsuario
      * @return
      */
-    public static ItfTokenGestao getAutenticadorUsuario(@NotNull final Class<? extends ItfTokenGestao> gestaoToken, @NotNull ItfUsuario pUsuario) {
+    public static ItfTokenGestao getAutenticadorUsuario(@NotNull final Class<? extends ItfTokenGestao> gestaoToken, @NotNull ComoUsuario pUsuario) {
         if (pUsuario == null) {
             throw new UnsupportedOperationException("Enviado nulo obtendo chaves de acesso do usuario para integração com " + gestaoToken.getSimpleName());
         }
@@ -107,7 +107,7 @@ public class MapaTokensGerenciados {
         return AUTENTICADORES_REGISTRADOS.get(identificador);
     }
 
-    public static ItfTokenGestao getAutenticadorUsuario(@NotNull final Class<? extends ItfTokenGestao> gestaoToken, @NotNull ItfUsuario pUsuario, String pIdentificadorAplicacao) {
+    public static ItfTokenGestao getAutenticadorUsuario(@NotNull final Class<? extends ItfTokenGestao> gestaoToken, @NotNull ComoUsuario pUsuario, String pIdentificadorAplicacao) {
         if (pUsuario == null) {
             throw new UnsupportedOperationException("Enviado nulo obtendo chaves de acesso do usuario para integração com " + gestaoToken.getSimpleName());
         }
@@ -129,7 +129,7 @@ public class MapaTokensGerenciados {
         return getAutenticadorSistema(pSimplenameGestaoToken.getSimpleName());
     }
 
-    public static ItfTokenGestao getAutenticadorUsuario(@NotNull final String pSimplenameGestaoToken, @NotNull ItfUsuario pUsuario, @NotNull String pIdentificadorAplicacao) {
+    public static ItfTokenGestao getAutenticadorUsuario(@NotNull final String pSimplenameGestaoToken, @NotNull ComoUsuario pUsuario, @NotNull String pIdentificadorAplicacao) {
         if (pUsuario == null) {
             throw new UnsupportedOperationException("Enviado nulo obtendo chaves de acesso do usuario para integração com " + pSimplenameGestaoToken);
         }
@@ -137,7 +137,7 @@ public class MapaTokensGerenciados {
         return AUTENTICADORES_REGISTRADOS.get(identificador);
     }
 
-    public static ItfTokenGestao getAutenticadorSistema(ItfFabricaIntegracaoApi api, String pIdeIdentificadorAplicacao) {
+    public static ItfTokenGestao getAutenticadorSistema(ComoFabricaIntegracaoApi api, String pIdeIdentificadorAplicacao) {
         String identificador = gerarIdIdentificador(api.getClasseGestaoOauth(), null, pIdeIdentificadorAplicacao);
         return AUTENTICADORES_REGISTRADOS.get(identificador);
     }
@@ -147,7 +147,7 @@ public class MapaTokensGerenciados {
         return AUTENTICADORES_REGISTRADOS.get(identificador);
     }
 
-    public static ItfTokenGestao getAutenticadorSistema(ItfFabricaIntegracaoApi api) {
+    public static ItfTokenGestao getAutenticadorSistema(ComoFabricaIntegracaoApi api) {
         ItfTokenGestao token = AUTENTICADORES_REGISTRADOS.get(gerarIdIdentificador(api.getClasseGestaoOauth()));
         if (token == null) {
             api.getGestaoToken();
@@ -156,13 +156,13 @@ public class MapaTokensGerenciados {
         return getAutenticadorSistema(api.getClasseGestaoOauth());
     }
 
-    public static ItfTokenGestao getAutenticadorUsuario(ItfFabricaIntegracaoApi api, ItfUsuario pUsuario) {
+    public static ItfTokenGestao getAutenticadorUsuario(ComoFabricaIntegracaoApi api, ComoUsuario pUsuario) {
 
         return getAutenticadorUsuario(api.getClasseGestaoOauth(),
                 pUsuario);
     }
 
-    public static ItfTokenGestao getAutenticadorUsuarioLogado(ItfFabricaIntegracaoRest api) {
+    public static ItfTokenGestao getAutenticadorUsuarioLogado(ComoFabricaIntegracaoRest api) {
         if (AUTENTICADORES_REGISTRADOS.get(gerarIdIdentificador(api.getClasseGestaoOauth(), SBCore.getUsuarioLogado())) == null) {
             api.getGestaoToken(SBCore.getUsuarioLogado());
         }

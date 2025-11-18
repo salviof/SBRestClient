@@ -6,11 +6,11 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 
-import com.super_bits.modulosSB.SBCore.modulos.fabrica.ItfFabrica;
+import com.super_bits.modulosSB.SBCore.modulos.fabrica.ComoFabrica;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoCampo;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoObjetoSB;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.campo.FabTipoAtributoObjeto;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfBeanVinculadoAEnum;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoEntidadeVinculadoAEnum;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.ItemSimples;
 
 /**
@@ -18,7 +18,7 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.ItemSimples;
  * @author SalvioF
  */
 @InfoObjetoSB(plural = "tipo Clientes", tags = {"Tipo Cliente"}, fabricaVinculada = FabTipoAgenteClienteApi.class)
-public class TipoClienteOauth extends ItemSimples implements ItfBeanVinculadoAEnum {
+public class TipoClienteOauth extends ItemSimples implements ComoEntidadeVinculadoAEnum {
 
     @InfoCampo(tipo = FabTipoAtributoObjeto.ID)
     private Long id;
@@ -27,7 +27,7 @@ public class TipoClienteOauth extends ItemSimples implements ItfBeanVinculadoAEn
     private FabTipoAgenteClienteApi enumVinculado;
 
     @Override
-    public void setEnumVinculado(ItfFabrica pFabrica) {
+    public void setEnumVinculado(ComoFabrica pFabrica) {
         enumVinculado = (FabTipoAgenteClienteApi) pFabrica;
     }
 

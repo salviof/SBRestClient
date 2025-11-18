@@ -10,31 +10,30 @@ import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigMo
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoUsuario;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBIntegracaoClientReflexao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiCliente;
-import static com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados.gerarIdIdentificador;
 
 /**
  *
  * @author sfurbino
  */
-public interface ItfFabricaIntegracaoApi {
+public interface ComoFabricaIntegracaoApi {
 
     public default ItfAcaoApiCliente getAcao(Object... parametros) {
         return UtilSBApiRestClient.getAcaoDoContexto(this, FabTipoAgenteClienteApi.SISTEMA, null, parametros);
     }
 
-    public default ItfAcaoApiCliente getAcao(FabTipoAgenteClienteApi pTipo, ItfUsuario pUsuario, Object... parametros) {
+    public default ItfAcaoApiCliente getAcao(FabTipoAgenteClienteApi pTipo, ComoUsuario pUsuario, Object... parametros) {
         return UtilSBApiRestClient.getAcaoDoContexto(this, pTipo, pUsuario, parametros);
     }
 
-    public default ItfAcaoApiCliente getAcao(ItfUsuario pUsuario, Object... parametros) {
+    public default ItfAcaoApiCliente getAcao(ComoUsuario pUsuario, Object... parametros) {
         return UtilSBApiRestClient.getAcaoDoContexto(this, FabTipoAgenteClienteApi.USUARIO, pUsuario, parametros);
     }
 
-    public default ItfAcaoApiCliente getAcaoUsuarioLogado(ItfUsuario pUsuario, Object... parametros) {
+    public default ItfAcaoApiCliente getAcaoUsuarioLogado(ComoUsuario pUsuario, Object... parametros) {
         return UtilSBApiRestClient.getAcaoDoContexto(this, FabTipoAgenteClienteApi.USUARIO, SBCore.getUsuarioLogado(), parametros);
     }
 
@@ -60,7 +59,7 @@ public interface ItfFabricaIntegracaoApi {
 
     }
 
-    public default ItfTokenGestao getGestaoToken(ItfUsuario pUsuario, String pIdentificadorApi) {
+    public default ItfTokenGestao getGestaoToken(ComoUsuario pUsuario, String pIdentificadorApi) {
         ItfTokenGestao tokenGestao = MapaTokensGerenciados.getAutenticadorUsuario(getClasseGestaoOauth(), pUsuario, pIdentificadorApi);
         if (tokenGestao == null) {
             tokenGestao = UtilSBIntegracaoClientReflexao.getNovaInstanciaGestaoAutenticador(this, FabTipoAgenteClienteApi.USUARIO, pUsuario, pIdentificadorApi);
@@ -70,7 +69,7 @@ public interface ItfFabricaIntegracaoApi {
         return MapaTokensGerenciados.getAutenticadorUsuario(tokenGestao.getClass(), pUsuario, pIdentificadorApi);
     }
 
-    public default ItfTokenGestao getGestaoToken(ItfUsuario pUsuario) {
+    public default ItfTokenGestao getGestaoToken(ComoUsuario pUsuario) {
         ItfTokenGestao tokenGestao = MapaTokensGerenciados.getAutenticadorUsuario(getClasseGestaoOauth(), pUsuario);
         if (tokenGestao == null) {
             tokenGestao = UtilSBIntegracaoClientReflexao.getNovaInstanciaGestaoAutenticador(this, FabTipoAgenteClienteApi.USUARIO, pUsuario, null);

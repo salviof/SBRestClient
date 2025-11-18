@@ -10,7 +10,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgent
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servicoRegistrado.InfoConfigRestClientIntegracao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoUsuario;
 
 /**
  *
@@ -21,7 +21,7 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basic
  * @author desenvolvedor
  * @param <T>
  */
-public interface ItfFabricaIntegracaoRest extends ItfFabricaIntegracaoApi {
+public interface ComoFabricaIntegracaoRest extends ComoFabricaIntegracaoApi {
 
     public default InfoConsumoRestService getInformacoesConsumo() {
         return UtilSBApiRestClient.getInformacoesConsumoRest(this);
@@ -33,17 +33,17 @@ public interface ItfFabricaIntegracaoRest extends ItfFabricaIntegracaoApi {
     }
 
     @Override
-    public default ItfAcaoApiRest getAcao(FabTipoAgenteClienteApi pTipo, ItfUsuario pUsuario, Object... parametros) {
+    public default ItfAcaoApiRest getAcao(FabTipoAgenteClienteApi pTipo, ComoUsuario pUsuario, Object... parametros) {
         return UtilSBApiRestClient.getAcaoDoContexto(this, pTipo, pUsuario, parametros);
     }
 
     @Override
-    public default ItfAcaoApiRest getAcao(ItfUsuario pUsuario, Object... parametros) {
+    public default ItfAcaoApiRest getAcao(ComoUsuario pUsuario, Object... parametros) {
         return UtilSBApiRestClient.getAcaoDoContexto(this, FabTipoAgenteClienteApi.USUARIO, pUsuario, parametros);
     }
 
     @Override
-    public default ItfAcaoApiRest getAcaoUsuarioLogado(ItfUsuario pUsuario, Object... parametros) {
+    public default ItfAcaoApiRest getAcaoUsuarioLogado(ComoUsuario pUsuario, Object... parametros) {
         return UtilSBApiRestClient.getAcaoDoContexto(this, FabTipoAgenteClienteApi.USUARIO, SBCore.getUsuarioLogado(), parametros);
     }
 

@@ -16,7 +16,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebSer
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client.ItfAcaoApiRest;
 import java.util.Map;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth.FabPropriedadeModuloIntegracaoOauth;
@@ -24,7 +24,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.util.UtilSBERPRestFullClient;
 import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoUsuario;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -47,16 +47,16 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
     private Map<String, String> cabecalhoGerado;
     private boolean postarInformacoes;
 
-    public ItfUsuario usuario;
+    public ComoUsuario usuario;
     private String token;
     protected InfoConsumoRestService infoRest;
     private String urlServidor;
 
-    public AcaoApiIntegracaoRestAbstratoBasico(ItfFabricaIntegracaoRest pIntegracaoEndpoint, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
+    public AcaoApiIntegracaoRestAbstratoBasico(ComoFabricaIntegracaoRest pIntegracaoEndpoint, FabTipoAgenteClienteApi pTipoAgente, ComoUsuario pUsuario, Object... pParametros) {
         this(null, pIntegracaoEndpoint, pTipoAgente, pUsuario, pParametros);
     }
 
-    public AcaoApiIntegracaoRestAbstratoBasico(String pTipoAplicacao, ItfFabricaIntegracaoRest pIntegracaoEndpoint, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
+    public AcaoApiIntegracaoRestAbstratoBasico(String pTipoAplicacao, ComoFabricaIntegracaoRest pIntegracaoEndpoint, FabTipoAgenteClienteApi pTipoAgente, ComoUsuario pUsuario, Object... pParametros) {
         super(pTipoAplicacao, pIntegracaoEndpoint, pTipoAgente, pUsuario, pParametros);
         try {
 
@@ -369,8 +369,8 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
     }
 
     @Override
-    public ItfFabricaIntegracaoRest getFabricaApi() {
-        return (ItfFabricaIntegracaoRest) super.getFabricaApi();
+    public ComoFabricaIntegracaoRest getFabricaApi() {
+        return (ComoFabricaIntegracaoRest) super.getFabricaApi();
     }
 
 }

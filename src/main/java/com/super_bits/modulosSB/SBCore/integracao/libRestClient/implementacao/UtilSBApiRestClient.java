@@ -11,7 +11,7 @@ import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJsonRest;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringSlugs;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoApi;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.FabTipoConexaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.InfoConsumoRestService;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
@@ -27,7 +27,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Map;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servicoRegistrado.InfoConfigRestClientIntegracao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servletRecepcaoTokenOauth.FabUrlServletRecepcaoOauth;
@@ -42,9 +42,8 @@ import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfResposta
 import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
 import com.super_bits.modulosSB.SBCore.modulos.erp.ItfSistemaERP;
 import com.super_bits.modulosSB.SBCore.modulos.erp.SolicitacaoControllerERP;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfSessao;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
-import com.super_bits.modulosSB.SBCore.modulos.servicosCore.ItfControleDeSessao;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoSessao;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoUsuario;
 import com.super_bits.modulosSB.webPaginas.controller.servletes.urls.UrlInterpretada;
 import com.super_bits.modulosSB.webPaginas.controller.servletes.util.UtilFabUrlServlet;
 import jakarta.json.JsonObjectBuilder;
@@ -63,9 +62,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.HttpHeaders;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.TrustAllStrategy;
@@ -79,7 +76,7 @@ import org.apache.http.ssl.SSLContexts;
  */
 public class UtilSBApiRestClient {
 
-    public static InfoConsumoRestService getInformacoesConsumoRest(ItfFabricaIntegracaoRest pConexao) {
+    public static InfoConsumoRestService getInformacoesConsumoRest(ComoFabricaIntegracaoRest pConexao) {
 
         try {
             Field campo = pConexao.getClass().getField(pConexao.toString());
@@ -118,7 +115,7 @@ public class UtilSBApiRestClient {
         return queryParameters;
     }
 
-    public static InfoConfigRestClientIntegracao getInfoConfigRest(ItfFabricaIntegracaoRest pConexao) {
+    public static InfoConfigRestClientIntegracao getInfoConfigRest(ComoFabricaIntegracaoRest pConexao) {
         try {
             return pConexao.getClass().getAnnotation(InfoConfigRestClientIntegracao.class);
         } catch (Throwable t) {
@@ -350,8 +347,8 @@ public class UtilSBApiRestClient {
         return null;
     }
 
-    public static ItfAcaoApiRest getAcaoDoContexto(ItfFabricaIntegracaoApi p, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, SolicitacaoControllerERP pSolicitacao, boolean pAdmin) {
-        Class classeImp = UtilSBIntegracaoClientReflexao.getClasseImplementacao((ItfFabricaIntegracaoApi) p);
+    public static ItfAcaoApiRest getAcaoDoContexto(ComoFabricaIntegracaoApi p, FabTipoAgenteClienteApi pTipoAgente, ComoUsuario pUsuario, SolicitacaoControllerERP pSolicitacao, boolean pAdmin) {
+        Class classeImp = UtilSBIntegracaoClientReflexao.getClasseImplementacao((ComoFabricaIntegracaoApi) p);
         try {
             if (pTipoAgente.equals(FabTipoAgenteClienteApi.USUARIO) && pUsuario == null) {
                 pUsuario = SBCore.getUsuarioLogado();
@@ -361,7 +358,7 @@ public class UtilSBApiRestClient {
             if (identificacao != null) {
 
                 Constructor constructorERP = classeImp.getConstructor(String.class, FabTipoAgenteClienteApi.class,
-                        ItfUsuario.class,
+                        ComoUsuario.class,
                         Object[].class);
                 return (ItfAcaoApiRest) constructorERP.newInstance(identificacao,
                         pTipoAgente, SBCore.getUsuarioLogado(),
@@ -370,7 +367,7 @@ public class UtilSBApiRestClient {
 
             }
 
-            return (ItfAcaoApiRest) classeImp.getConstructor(FabTipoAgenteClienteApi.class, ItfUsuario.class, Object[].class).newInstance(pTipoAgente, pUsuario, new Object[]{pSolicitacao});
+            return (ItfAcaoApiRest) classeImp.getConstructor(FabTipoAgenteClienteApi.class, ComoUsuario.class, Object[].class).newInstance(pTipoAgente, pUsuario, new Object[]{pSolicitacao});
         } catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException ex) {
             if (classeImp != null) {
                 SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Nenhum constructo válido foi encontrado para classse " + classeImp.getSimpleName(), ex);
@@ -381,8 +378,8 @@ public class UtilSBApiRestClient {
         return null;
     }
 
-    public static ItfAcaoApiRest getAcaoDoContexto(ItfFabricaIntegracaoApi p, FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, Object... pParametros) {
-        Class classeImp = UtilSBIntegracaoClientReflexao.getClasseImplementacao((ItfFabricaIntegracaoApi) p);
+    public static ItfAcaoApiRest getAcaoDoContexto(ComoFabricaIntegracaoApi p, FabTipoAgenteClienteApi pTipoAgente, ComoUsuario pUsuario, Object... pParametros) {
+        Class classeImp = UtilSBIntegracaoClientReflexao.getClasseImplementacao((ComoFabricaIntegracaoApi) p);
         try {
             if (pTipoAgente.equals(FabTipoAgenteClienteApi.USUARIO) && pUsuario == null) {
                 pUsuario = SBCore.getUsuarioLogado();
@@ -392,7 +389,7 @@ public class UtilSBApiRestClient {
             if (identificacao != null) {
 
                 Constructor constructorERP = classeImp.getConstructor(String.class, FabTipoAgenteClienteApi.class,
-                        ItfUsuario.class,
+                        ComoUsuario.class,
                         Object[].class);
                 return (ItfAcaoApiRest) constructorERP.newInstance(identificacao,
                         pTipoAgente, pUsuario,
@@ -401,7 +398,7 @@ public class UtilSBApiRestClient {
 
             }
 
-            return (ItfAcaoApiRest) classeImp.getConstructor(FabTipoAgenteClienteApi.class, ItfUsuario.class, Object[].class).newInstance(pTipoAgente, pUsuario, new Object[]{pParametros});
+            return (ItfAcaoApiRest) classeImp.getConstructor(FabTipoAgenteClienteApi.class, ComoUsuario.class, Object[].class).newInstance(pTipoAgente, pUsuario, new Object[]{pParametros});
         } catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException ex) {
             if (classeImp != null) {
                 SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Nenhum constructo válido foi encontrado para classse " + classeImp.getSimpleName(), ex);
@@ -416,7 +413,7 @@ public class UtilSBApiRestClient {
         return receberCodigoSolicitacaoOauth(req, null);
     }
 
-    public static void servletReceberCodigoConcessao(HttpServletRequest req, HttpServletResponse resp, ItfSessao pSessaoAtual) throws ErroRecebendoCodigoDeAcesso {
+    public static void servletReceberCodigoConcessao(HttpServletRequest req, HttpServletResponse resp, ComoSessao pSessaoAtual) throws ErroRecebendoCodigoDeAcesso {
         String respostaTestReader = new String();
         try {
             String resposta;
@@ -488,7 +485,7 @@ public class UtilSBApiRestClient {
             String nomeModulo = parametrosDeUrl.getValorComoString(FabUrlServletRecepcaoOauth.IDENTIFICADOR_API);
             String nomeParametro = req.getParameter(nomeParametroRetorno);
             String codigoSolicitacoa = req.getParameter(nomeParametroRetorno);
-            ItfUsuario usuario = null;
+            ComoUsuario usuario = null;
 
             if (nomeParametro != null) {
                 TipoClienteOauth tipoCliente = (TipoClienteOauth) parametrosDeUrl.getValorComoBeanSimples(FabUrlServletRecepcaoOauth.TIPO_CLIENTE_OAUTH);
@@ -496,7 +493,7 @@ public class UtilSBApiRestClient {
                 switch (tipoCliente.getEnumVinculado()) {
                     case USUARIO:
                         if (req.getAttribute("usuario") != null) {
-                            usuario = (ItfUsuario) req.getAttribute("usuario");
+                            usuario = (ComoUsuario) req.getAttribute("usuario");
                         }
                         if (usuario == null) {
                             usuario = SBCore.getUsuarioLogado();

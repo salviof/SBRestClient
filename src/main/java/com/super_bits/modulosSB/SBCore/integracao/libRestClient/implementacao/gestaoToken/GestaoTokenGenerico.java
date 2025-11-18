@@ -7,14 +7,14 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.g
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ItfConfigModulo;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.FabStatusToken;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenDeAcessoExterno;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBIntegracaoClientReflexao;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoUsuario;
 
 /**
  *
@@ -28,8 +28,8 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basic
 public abstract class GestaoTokenGenerico implements ItfTokenGestao {
 
     protected final FabTipoAgenteClienteApi tipoAgente;
-    protected final ItfUsuario usuario;
-    protected final Class<? extends ItfFabricaIntegracaoRest> classeFabricaAcessos;
+    protected final ComoUsuario usuario;
+    protected final Class<? extends ComoFabricaIntegracaoRest> classeFabricaAcessos;
     protected final ItfConfigModulo configuracoesAmbiente;
 
     private ItfTokenDeAcessoExterno token;
@@ -41,8 +41,8 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
         return identificadorToken;
     }
 
-    public GestaoTokenGenerico(Class<? extends ItfFabricaIntegracaoRest> pClasseEndpoints,
-            FabTipoAgenteClienteApi pTipoAgente, ItfUsuario pUsuario, String pTipoApicacao) {
+    public GestaoTokenGenerico(Class<? extends ComoFabricaIntegracaoRest> pClasseEndpoints,
+            FabTipoAgenteClienteApi pTipoAgente, ComoUsuario pUsuario, String pTipoApicacao) {
         tipoAgente = pTipoAgente;
         usuario = pUsuario;
         configuracoesAmbiente = UtilSBIntegracaoClientReflexao.getConfigmodulo(pClasseEndpoints);
@@ -126,7 +126,7 @@ public abstract class GestaoTokenGenerico implements ItfTokenGestao {
         token = pToken;
     }
 
-    public ItfUsuario getUsuario() {
+    public ComoUsuario getUsuario() {
         return usuario;
     }
 

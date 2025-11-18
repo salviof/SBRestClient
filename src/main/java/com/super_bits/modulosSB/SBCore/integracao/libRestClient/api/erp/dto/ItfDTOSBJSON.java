@@ -5,7 +5,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.erp.dto;
 
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfBeanSimples;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoEntidadeSimples;
 import jakarta.json.JsonObject;
 import java.lang.reflect.Method;
 import java.util.Date;
@@ -23,7 +23,7 @@ public interface ItfDTOSBJSON {
 
     public List getLista(String pNomeAtributop);
 
-    public ItfBeanSimples getObjeto(String pNomeAtributop);
+    public ComoEntidadeSimples getObjeto(String pNomeAtributop);
 
     public default Object getValorPorReflexao() {
 

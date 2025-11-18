@@ -5,13 +5,13 @@
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.integracaoOauth;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ItfFabConfigModulo;
-import com.super_bits.modulosSB.SBCore.modulos.fabrica.ItfFabrica;
+import com.super_bits.modulosSB.SBCore.modulos.fabrica.ComoFabrica;
 
 /**
  *
  * @author SalvioF
  */
-public enum FabPropriedadeModuloIntegracaoOauth implements ItfFabConfigModulo, ItfFabrica {
+public enum FabPropriedadeModuloIntegracaoOauth implements ItfFabConfigModulo, ComoFabrica {
 
     CHAVE_PUBLICA,
     CHAVE_PRIVADA,

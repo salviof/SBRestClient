@@ -5,7 +5,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.transmissao_recepcao_rest_client;
 
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ItfFabricaIntegracaoRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 
 /**
@@ -19,6 +19,6 @@ public interface ItfAcaoApiRest extends ItfProcessadorEnvioPacote, ItfProcessado
     public ItfRespostaWebServiceSimples getResposta();
 
     @Override
-    public ItfFabricaIntegracaoRest getFabricaApi();
+    public ComoFabricaIntegracaoRest getFabricaApi();
 
 }

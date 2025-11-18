@@ -5,14 +5,14 @@
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api;
 
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.TipoClienteOauth;
-import com.super_bits.modulosSB.SBCore.modulos.fabrica.ItfFabrica;
+import com.super_bits.modulosSB.SBCore.modulos.fabrica.ComoFabrica;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoObjetoDaFabrica;
 
 /**
  *
  * @author SalvioF
  */
-public enum FabTipoAgenteClienteApi implements ItfFabrica {
+public enum FabTipoAgenteClienteApi implements ComoFabrica {
 
     @InfoObjetoDaFabrica(id = 1, nomeObjeto = "Usuário", classeObjeto = TipoClienteOauth.class)
     USUARIO,
@@ -21,7 +21,7 @@ public enum FabTipoAgenteClienteApi implements ItfFabrica {
 
     @Override
     public TipoClienteOauth getRegistro() {
-        return (TipoClienteOauth) ItfFabrica.super.getRegistro(); //chamada super do metodo (implementação classe pai)
+        return (TipoClienteOauth) ComoFabrica.super.getRegistro(); //chamada super do metodo (implementação classe pai)
     }
 
 }
