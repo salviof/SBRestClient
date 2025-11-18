@@ -11,14 +11,14 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.Info
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoObjetoSB;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.campo.FabTipoAtributoObjeto;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoEntidadeVinculadoAEnum;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.ItemSimples;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.EntidadeSimples;
 
 /**
  *
  * @author SalvioF
  */
 @InfoObjetoSB(plural = "tipo Clientes", tags = {"Tipo Cliente"}, fabricaVinculada = FabTipoAgenteClienteApi.class)
-public class TipoClienteOauth extends ItemSimples implements ComoEntidadeVinculadoAEnum {
+public class TipoClienteOauth extends EntidadeSimples implements ComoEntidadeVinculadoAEnum {
 
     @InfoCampo(tipo = FabTipoAtributoObjeto.ID)
     private Long id;

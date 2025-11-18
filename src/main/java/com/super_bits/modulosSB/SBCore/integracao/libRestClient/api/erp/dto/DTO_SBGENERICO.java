@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoEntidadeSimples;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.ItemSimples;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.EntidadeSimples;
 import jakarta.json.JsonObject;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +19,7 @@ import org.coletivojava.fw.api.tratamentoErros.FabErro;
  *
  * @author sfurbino
  */
-public class DTO_SBGENERICO<T extends ItfDTOSBJSON> extends ItemSimples implements ItfDTOSBJSON {
+public class DTO_SBGENERICO<T extends ItfDTOSBJSON> extends EntidadeSimples implements ItfDTOSBJSON {
 
     private Map<String, DTO_SBGENERICO> objetosArmazenados;
     private Map<String, List<DTO_SBGENERICO>> listasArmazenadas;
