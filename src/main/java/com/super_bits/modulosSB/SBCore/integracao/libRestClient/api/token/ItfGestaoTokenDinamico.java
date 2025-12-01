@@ -6,7 +6,7 @@
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCJson;
 import jakarta.json.JsonObject;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 import org.json.simple.JSONObject;
@@ -22,7 +22,7 @@ public interface ItfGestaoTokenDinamico extends ItfTokenGestao {
     public default ItfTokenDeAcessoExterno extrairToken(String pString) {
 
         try {
-            JsonObject json = UtilSBCoreJson.getJsonObjectByTexto(pString);
+            JsonObject json = UtilCRCJson.getJsonObjectByTexto(pString);
             if (json == null) {
                 throw new UnsupportedOperationException("falha lendo json na string" + pString);
             }

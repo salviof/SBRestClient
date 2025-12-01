@@ -6,8 +6,8 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringBuscaTrecho;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreWebBrowser;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringBuscaTrecho;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCWebBrowser;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.RespostaWebServiceRestIntegracao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ConsumoWSExecucao;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.FabTipoConexaoRest;
@@ -89,7 +89,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
                 String urlReq = getUrlServidor() + infoRest.getPachServico();
 
                 if (urlReq.contains("{")) {
-                    List<String> parametrosRelatadosUrl = UtilSBCoreStringBuscaTrecho.getPartesEntreChaves(urlReq);
+                    List<String> parametrosRelatadosUrl = UtilCRCStringBuscaTrecho.getPartesEntreChaves(urlReq);
                     List<String> parametrosObrigatorios = new ArrayList<>();
                     List<String> parametrosOpcionais = new ArrayList<>();
                     parametrosRelatadosUrl.stream().filter(pr -> pr.length() > 1).forEach(parametrosOpcionais::add);
@@ -287,10 +287,17 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
             if (getTokenGestao() instanceof ItfTokenGestaoOauth) {
                 ItfTokenGestaoOauth tokenOauth = (ItfTokenGestaoOauth) getTokenGestao();
                 resposta = new RespostaWebServiceRestIntegracao(token, 400, "A chamada não foi realizada pois o Token não está ativo, acesse: " + tokenOauth.getUrlObterCodigoSolicitacao());
+                switch (getTokenGestao().getTipoAgente()) {
 
-                if (!SBCore.isEmModoDesenvolvimento()) {
-                    SBCore.enviarAvisoAoUsuario("O acesso ao serviço precisa ser renovado em " + getTokenGestao().getComoGestaoOauth().getUrlObterCodigoSolicitacao());
-
+                    case USUARIO:
+                        if (!SBCore.isEmModoDesenvolvimento()) {
+                            SBCore.enviarAvisoAoUsuario("O acesso ao serviço precisa ser renovado em " + getTokenGestao().getComoGestaoOauth().getUrlObterCodigoSolicitacao());
+                        }
+                        break;
+                    case SISTEMA:
+                        break;
+                    default:
+                        throw new AssertionError();
                 }
 
                 if (SBCore.isEmModoDesenvolvimento()) {
@@ -319,7 +326,7 @@ public abstract class AcaoApiIntegracaoRestAbstratoBasico extends AcaoApiIntegra
                         SBCore.enviarMensagemUsuario("Você precisa autenticar seu usuário no servidor, para isso funcionar, além das chaves pública e privadas configuradas, o endereço a seguir precisa estar cadastrado como callbak do oauth:" + getTokenGestao().getComoGestaoOauth().getUrlRetornoReceberCodigoSolicitacao(), FabMensagens.AVISO);
                         String urlObterCodigoParaAutenticacao = getTokenGestao().getComoGestaoOauth().getUrlObterCodigoSolicitacao();
                         SBCore.enviarMensagemUsuario("10 segundos para você autenticar o usuário na janela que abriu com o endereço: " + urlObterCodigoParaAutenticacao, FabMensagens.AVISO);
-                        UtilSBCoreWebBrowser.abrirLinkEmBrownser(urlObterCodigoParaAutenticacao);
+                        UtilCRCWebBrowser.abrirLinkEmBrownser(urlObterCodigoParaAutenticacao);
                         try {
                             Thread.sleep(10000);
 

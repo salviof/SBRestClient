@@ -7,7 +7,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UTilSBCoreInputs;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreWebBrowser;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCWebBrowser;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.FabTipoConexaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
@@ -41,7 +41,7 @@ public class UtilSBApiRestClientOauth2 {
                         }
                     }
                     String urlAutenticacao = pAutenticacao.getUrlObterCodigoSolicitacao();
-                    UtilSBCoreWebBrowser.abrirLinkEmBrownser(urlAutenticacao);
+                    UtilCRCWebBrowser.abrirLinkEmBrownser(urlAutenticacao);
                     int tentativas = 0;
                     if (!pAutenticacao.isCodigoSolicitacaoRegistrado() && tentativas < 5) {
 

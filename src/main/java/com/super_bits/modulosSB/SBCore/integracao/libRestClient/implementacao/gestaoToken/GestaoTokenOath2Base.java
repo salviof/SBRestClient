@@ -6,7 +6,7 @@
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCJson;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.simuladorResposta.ItfSimulacaoRespostaServlet;
@@ -154,7 +154,7 @@ public abstract class GestaoTokenOath2Base extends GestaoTokenDinamico implement
             }
             if (resp.isSucesso()) {
                 JsonObject respostaJson = resp.getRespostaComoObjetoJson();
-                armazenarRespostaToken(UtilSBCoreJson.getTextoByJsonObjeect(respostaJson));
+                armazenarRespostaToken(UtilCRCJson.getTextoByJsonObjeect(respostaJson));
                 loadTokenArmazenado();
                 return getTokenCompleto();
             }

@@ -7,8 +7,8 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringPosicaoLocalizar;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringsCammelCase;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringPosicaoLocalizar;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringsCammelCase;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.servicoRegistrado.InfoConfigRestClientIntegracao;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfValidacao;
@@ -44,8 +44,8 @@ public class UtilSBIntegracaoClientReflexao {
     public static String getNomeClasseAnotacao(ComoFabricaIntegracaoApi p) {
         InfoConfigRestClientIntegracao info = getInfoConfigWebService(p);
         String nomeClasse = p.getClass().getSimpleName();
-        String descricaoModulo = nomeClasse.substring(UtilSBCoreStringPosicaoLocalizar.getUltimaLetraMaiuscula(nomeClasse), nomeClasse.length());
-        return "InfoIntegracaoRest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiusculaSemCaracterEspecial(info.nomeIntegracao()) + descricaoModulo;
+        String descricaoModulo = nomeClasse.substring(UtilCRCStringPosicaoLocalizar.getUltimaLetraMaiuscula(nomeClasse), nomeClasse.length());
+        return "InfoIntegracaoRest" + UtilCRCStringsCammelCase.getCamelByTextoPrimeiraLetraMaiusculaSemCaracterEspecial(info.nomeIntegracao()) + descricaoModulo;
     }
 
     public static String getNomeClasseImplementacao(ComoFabricaIntegracaoApi p) {
@@ -55,7 +55,7 @@ public class UtilSBIntegracaoClientReflexao {
         }
         String nome = info.nomeIntegracao();
 
-        return "IntegracaoRest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome) + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(p.toString());
+        return "IntegracaoRest" + UtilCRCStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome) + UtilCRCStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(p.toString());
     }
 
     public static String getNomeClasseImplementacaoGestaoToken(Class<? extends ComoFabricaIntegracaoApi> p) {
@@ -65,7 +65,7 @@ public class UtilSBIntegracaoClientReflexao {
         }
         String nome = info.nomeIntegracao();
 
-        return "GestaoTokenRest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome);
+        return "GestaoTokenRest" + UtilCRCStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome);
     }
 
     public static String getNomeClasseImplementacaoGestaoToken(ComoFabricaIntegracaoApi p) {
@@ -79,7 +79,7 @@ public class UtilSBIntegracaoClientReflexao {
         }
         String nome = info.nomeIntegracao();
 
-        return "IntegracaoRest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome) + "_HeaderPadrao";
+        return "IntegracaoRest" + UtilCRCStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome) + "_HeaderPadrao";
     }
 
     public static ItfApiRestHeaderPadrao getHeaderPadrao(ComoFabricaIntegracaoApi fabrica, ItfAcaoApiRest p) {
@@ -101,7 +101,7 @@ public class UtilSBIntegracaoClientReflexao {
                     + "Não foi definido para" + p.getClass().getSimpleName());
         }
         String nome = info.nomeIntegracao();
-        return "br.org.coletivoJava.integracoes.rest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome) + ".api";
+        return "br.org.coletivoJava.integracoes.rest" + UtilCRCStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome) + ".api";
     }
 
     public static String getPacoteImplementacao(ComoFabricaIntegracaoApi p) {
@@ -110,7 +110,7 @@ public class UtilSBIntegracaoClientReflexao {
             throw new UnsupportedOperationException(InfoConfigRestClientIntegracao.class.getSimpleName() + "Não foi definido para" + p.getClass().getSimpleName());
         }
         String nome = info.nomeIntegracao();
-        return "br.org.coletivoJava.integracoes.rest" + UtilSBCoreStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome) + ".implementacao";
+        return "br.org.coletivoJava.integracoes.rest" + UtilCRCStringsCammelCase.getCamelByTextoPrimeiraLetraMaiuscula(nome) + ".implementacao";
     }
 
     public static Class getClasseAnotacao(ComoFabricaIntegracaoApi pApi) {

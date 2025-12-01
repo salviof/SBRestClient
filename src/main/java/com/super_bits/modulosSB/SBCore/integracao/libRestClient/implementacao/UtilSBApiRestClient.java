@@ -7,10 +7,10 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
 import com.google.common.collect.Lists;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJsonRest;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringSlugs;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCJsonRest;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringSlugs;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringValidador;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.FabTipoConexaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.InfoConsumoRestService;
@@ -305,8 +305,8 @@ public class UtilSBApiRestClient {
             }
 
             conn.disconnect();
-            if (UtilSBCoreStringValidador.isNuloOuEmbranco(respostaStr)) {
-                if (!UtilSBCoreStringValidador.isNuloOuEmbranco(mensagemErro)) {
+            if (UtilCRCStringValidador.isNuloOuEmbranco(respostaStr)) {
+                if (!UtilCRCStringValidador.isNuloOuEmbranco(mensagemErro)) {
                     respostaStr = mensagemErro;
                 }
             }
@@ -421,8 +421,8 @@ public class UtilSBApiRestClient {
 
             if (req.getRequestURI().contains(UtilSBApiRestClientOauth2.PATH_TESTE_DE_VIDA_SERVICO_RECEPCAO)) {
                 resp.setStatus(200);
-                respostaJson = UtilSBCoreJsonRest.getRespostaJsonBuilderBase(true, ItfResposta.Resultado.SUCESSO, Lists.newArrayList(FabMensagens.AVISO.getMsgUsuario("EUTÔVIVO")));
-                resposta = UtilSBCoreJson.getTextoByJsonObjeect(respostaJson.build());
+                respostaJson = UtilCRCJsonRest.getRespostaJsonBuilderBase(true, ItfResposta.Resultado.SUCESSO, Lists.newArrayList(FabMensagens.AVISO.getMsgUsuario("EUTÔVIVO")));
+                resposta = UtilCRCJson.getTextoByJsonObjeect(respostaJson.build());
                 respostaTestReader = resposta;
                 resp.getWriter().append(resposta);
                 resp.getWriter().close();
@@ -449,8 +449,8 @@ public class UtilSBApiRestClient {
                 throw new ErroRecebendoCodigoDeAcesso("falha recebendo codigo de solictação de token Oauth");
             }
             if (respostaEscopoDeSistema) {
-                respostaJson = UtilSBCoreJsonRest.getRespostaJsonBuilderBase(true, ItfResposta.Resultado.SUCESSO, Lists.newArrayList(FabMensagens.AVISO.getMsgUsuario("Chave de Aceso armazenada com sucesso, você está conectado com a aplicação.")));
-                resposta = UtilSBCoreJson.getTextoByJsonObjeect(respostaJson.build());
+                respostaJson = UtilCRCJsonRest.getRespostaJsonBuilderBase(true, ItfResposta.Resultado.SUCESSO, Lists.newArrayList(FabMensagens.AVISO.getMsgUsuario("Chave de Aceso armazenada com sucesso, você está conectado com a aplicação.")));
+                resposta = UtilCRCJson.getTextoByJsonObjeect(respostaJson.build());
             } else {
                 resposta = "Chave de Aceso armazenada com sucesso, você está conectado com a aplicação.";
             }
@@ -524,7 +524,7 @@ public class UtilSBApiRestClient {
                 if (conexao != null) {
                     System.out.println("Gerando token com chave" + codigoSolicitacoa);
 
-                    if (!UtilSBCoreStringValidador.isNuloOuEmbranco(codigoSolicitacoa)) {
+                    if (!UtilCRCStringValidador.isNuloOuEmbranco(codigoSolicitacoa)) {
                         conexao.setCodigoSolicitacao(codigoSolicitacoa);
                         System.out.println("Codigo de solicitação registrado");
                         conexao.gerarNovoToken();
@@ -562,7 +562,7 @@ public class UtilSBApiRestClient {
             String pUrlHostRecepcao) {
 
         return pUrlHostRecepcao
-                + "/solicitacaoAuth2Recept/" + pCaminhoParametroCodigo + "/" + UtilSBCoreStringSlugs.gerarSlugSimples(pTipoAgente.getRegistro().getNome())
+                + "/solicitacaoAuth2Recept/" + pCaminhoParametroCodigo + "/" + UtilCRCStringSlugs.gerarSlugSimples(pTipoAgente.getRegistro().getNome())
                 + "/" + pEndPoint.getSimpleName() + "/";
 
     }

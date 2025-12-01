@@ -5,7 +5,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken;
 
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringValidador;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import static com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi.SISTEMA;
@@ -77,7 +77,7 @@ public abstract class GestaoTokenDinamico extends GestaoTokenGenerico implements
     public ItfTokenDeAcessoExterno loadTokenArmazenado() {
         String textoArmazenado = getTextoTokenArmazenado();
 
-        if (UtilSBCoreStringValidador.isNuloOuEmbranco(textoArmazenado)) {
+        if (UtilCRCStringValidador.isNuloOuEmbranco(textoArmazenado)) {
             return null;
         }
         setToken(extrairToken(textoArmazenado));

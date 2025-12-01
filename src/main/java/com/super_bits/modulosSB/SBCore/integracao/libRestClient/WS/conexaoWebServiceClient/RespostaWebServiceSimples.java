@@ -5,8 +5,8 @@
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient;
 
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringValidador;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfResposta;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.comunicacao.RespostaSimples;
 import com.super_bits.modulosSB.SBCore.modulos.Mensagens.ItfMensagem;
@@ -92,7 +92,7 @@ public class RespostaWebServiceSimples implements ItfRespostaWebServiceSimples, 
     public JsonObject getRespostaComoObjetoJson() {
         try {
 
-            return UtilSBCoreJson.getJsonObjectByTexto((String) getRetorno());
+            return UtilCRCJson.getJsonObjectByTexto((String) getRetorno());
 
         } catch (Throwable t) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro interpretando Json" + t.getMessage() + "->" + getRetorno(), t);
@@ -104,7 +104,7 @@ public class RespostaWebServiceSimples implements ItfRespostaWebServiceSimples, 
     public JsonArray getRespostaComoObjetoJsonArray() {
         try {
 
-            return UtilSBCoreJson.getJsonArrayByTexto((String) getRetorno());
+            return UtilCRCJson.getJsonArrayByTexto((String) getRetorno());
 
         } catch (Throwable t) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro interpretando Json" + t.getMessage() + "->" + getRetorno(), t);
@@ -114,7 +114,7 @@ public class RespostaWebServiceSimples implements ItfRespostaWebServiceSimples, 
 
     @Override
     public String getRespostaTexto() {
-        if (UtilSBCoreStringValidador.isNAO_NuloNemBranco(respostaErro)) {
+        if (UtilCRCStringValidador.isNAO_NuloNemBranco(respostaErro)) {
             return respostaErro;
         } else {
             return resposta;

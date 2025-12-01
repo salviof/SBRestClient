@@ -6,7 +6,7 @@ package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.g
 
 import com.google.common.collect.Lists;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreListas;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCListas;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.ComoFabricaIntegracaoRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
@@ -172,9 +172,9 @@ public class MapaTokensGerenciados {
 
     public static void printConexoesAtivas() {
         System.out.println("Atenticadores Registrados:");
-        System.out.println(UtilSBCoreListas.getValoresSeparadosPorPontoVirgula(Lists.newArrayList(AUTENTICADORES_REGISTRADOS.keySet())));
+        System.out.println(UtilCRCListas.getValoresSeparadosPorPontoVirgula(Lists.newArrayList(AUTENTICADORES_REGISTRADOS.keySet())));
         System.out.println("Api por Chace pública:");
-        System.out.println(UtilSBCoreListas.getValoresSeparadosPorPontoVirgula(Lists.newArrayList(API_POR_CHAVE_PUBLICA.keySet())));
+        System.out.println(UtilCRCListas.getValoresSeparadosPorPontoVirgula(Lists.newArrayList(API_POR_CHAVE_PUBLICA.keySet())));
 
     }
 }
