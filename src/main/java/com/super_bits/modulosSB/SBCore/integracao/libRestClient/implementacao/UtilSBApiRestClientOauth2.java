@@ -68,6 +68,7 @@ public class UtilSBApiRestClientOauth2 {
                         .getRespostaRest(urlAutenticacao, FabTipoConexaoRest.GET, false, cabecalho, null);
                 try {
                     if (!respostaSolicitaca.isSucesso()) {
+
                         throw new Throwable("Falha ao obter token" + respostaSolicitaca.getRespostaTexto());
                     } else {
                         System.out.println("ok ");
