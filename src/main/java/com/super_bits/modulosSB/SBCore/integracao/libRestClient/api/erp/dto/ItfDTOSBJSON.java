@@ -5,7 +5,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.erp.dto;
 
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoEntidadeSimples;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.entidade.basico.ComoEntidadeSimples;
 import jakarta.json.JsonObject;
 import java.lang.reflect.Method;
 import java.util.Date;

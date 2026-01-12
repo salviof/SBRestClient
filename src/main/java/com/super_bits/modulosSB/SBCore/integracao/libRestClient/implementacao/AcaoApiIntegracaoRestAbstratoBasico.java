@@ -24,7 +24,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.tipoModulos.
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.util.UtilSBERPRestFullClient;
 import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoUsuario;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.entidade.basico.ComoUsuario;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
