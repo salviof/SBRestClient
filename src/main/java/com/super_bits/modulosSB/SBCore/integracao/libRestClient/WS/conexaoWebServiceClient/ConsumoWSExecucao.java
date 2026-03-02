@@ -71,6 +71,7 @@ public abstract class ConsumoWSExecucao extends Thread {
         }
         if (resposta == null) {
             System.out.println("Resposta encontrada igual a nulo, impossível determinar a RespostaWS");
+
             return null;
         } else {
             if (respostaWS == null) {
