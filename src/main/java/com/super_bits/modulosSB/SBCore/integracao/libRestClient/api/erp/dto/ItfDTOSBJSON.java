@@ -30,7 +30,7 @@ public interface ItfDTOSBJSON {
         final Thread t = Thread.currentThread();
         final StackTraceElement[] stackTraceTodosMetodos = t.getStackTrace();
 
-        String nomeOriginalMetodo = stackTraceTodosMetodos[2].getMethodName();//"getParcelas";
+        String nomeOriginalMetodo = stackTraceTodosMetodos[2].getMethodName();
         String nomeAtributo = nomeOriginalMetodo;
         if (nomeOriginalMetodo.startsWith("get")) {
             nomeAtributo = nomeOriginalMetodo.replaceFirst("get", "");

@@ -4,15 +4,11 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao;
 
+import com.super_bits.modulosSB.SBCore.ConfigGeral.CarameloCode;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
