@@ -5,6 +5,7 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.erp.dto;
 
+import com.super_bits.modulosSB.SBCore.modulos.objetos.dto.ComoDTOCaramelo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
@@ -19,7 +20,7 @@ import org.coletivojava.fw.api.tratamentoErros.FabErro;
  *
  * @author sfurbino
  */
-public class DTO_SBGENERICO<T extends ItfDTOSBJSON> extends EntidadeSimples implements ItfDTOSBJSON {
+public class DTO_SBGENERICO<T extends ComoDTOCaramelo> extends EntidadeSimples implements ComoDTOCaramelo {
 
     private Map<String, DTO_SBGENERICO> objetosArmazenados;
     private Map<String, List<DTO_SBGENERICO>> listasArmazenadas;
