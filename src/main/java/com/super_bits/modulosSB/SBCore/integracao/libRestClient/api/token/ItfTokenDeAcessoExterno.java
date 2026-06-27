@@ -5,15 +5,13 @@
  */
 package com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token;
 
+import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.permissoes.token.ComoTokenAcessoBasico;
+
 /**
  *
  * @author sfurbino
  */
-public interface ItfTokenDeAcessoExterno {
-
-    public String getToken();
-
-    public boolean isTokenValido();
+public interface ItfTokenDeAcessoExterno extends ComoTokenAcessoBasico {
 
     public default TokenDeAcessoExternoChavePublicaPrivada getComoTokenChavePublicaPrivada() {
         return (TokenDeAcessoExternoChavePublicaPrivada) this;
